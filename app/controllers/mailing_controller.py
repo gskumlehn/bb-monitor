@@ -1,46 +1,58 @@
 # app/controllers/mailing_controller.py
-from flask import Blueprint, request, jsonify, render_template
-
+from flask import Blueprint, jsonify, request, render_template, current_app as app
 from app.services.mailing_service import MailingService
+from app.infra.bq_sa import get_session_local
 
-mailing_bp = Blueprint("mailing", __name__, url_prefix="/mailing")
-svc = MailingService()
+mailing_bp = Blueprint("mailing", __name__)
+mailing_bp.strict_slashes = False  # NÃO redirecionar por barra final
 
-@mailing_bp.get("/")
-@mailing_bp.get("")
-def list_all():
-    data = svc.list_all()
-    return jsonify(data)
-
-@mailing_bp.post("/")
-@mailing_bp.post("")
-def add():
-    if request.is_json:
-        email = (request.json.get("email") or "").strip()
-        code  = (request.json.get("directorate_code") or "").strip()
-    else:
-        email = (request.form.get("email") or "").strip()
-        code  = (request.form.get("directorate_code") or "").strip()
-
-    if not email or not code:
-        return jsonify({"error": "Informe email e directorate_code"}), 400
-
-    svc.add(email, code)
-    return jsonify({"ok": True})
-
-@mailing_bp.delete("/")
-@mailing_bp.delete("")
-def remove():
-    email = (request.args.get("email") or "").strip()
-    code  = (request.args.get("directorate_code") or "").strip()
-
-    if not email or not code:
-        return jsonify({"error": "Informe email e directorate_code"}), 400
-
-    deleted = svc.remove(email, code)
-    return jsonify({"deleted": deleted})
-
-@mailing_bp.get("/ui/")
 @mailing_bp.get("/ui")
 def ui():
     return render_template("mailing.html")
+
+@mailing_bp.get("")        # /mailing
+@mailing_bp.get("/")       # /mailing/
+def list_all():
+    try:
+        SessionLocal = get_session_local()
+        svc = MailingService(SessionLocal)
+        data = svc.list_all()
+        return jsonify(data)
+    except Exception as e:
+        app.logger.exception("Erro no GET /mailing")
+        return jsonify({"error": "Falha ao listar e-mails", "detail": str(e)}), 500
+
+@mailing_bp.post("")       # /mailing
+@mailing_bp.post("/")      # /mailing/
+def add():
+    try:
+        payload = request.get_json(silent=True) or {}
+        email = (payload.get("email") or "").strip()
+        code = (payload.get("directorate_code") or "").strip()
+        if not email or not code:
+            return jsonify({"error": "email e directorate_code são obrigatórios"}), 400
+
+        SessionLocal = get_session_local()
+        svc = MailingService(SessionLocal)
+        svc.add(email, code)
+        return jsonify({"ok": True})
+    except Exception as e:
+        app.logger.exception("Erro no POST /mailing")
+        return jsonify({"error": "Falha ao adicionar e-mail", "detail": str(e)}), 500
+
+@mailing_bp.delete("")     # /mailing
+@mailing_bp.delete("/")    # /mailing/
+def remove():
+    try:
+        email = (request.args.get("email") or "").strip()
+        code  = (request.args.get("directorate_code") or "").strip()
+        if not email or not code:
+            return jsonify({"error": "email e directorate_code são obrigatórios"}), 400
+
+        SessionLocal = get_session_local()
+        svc = MailingService(SessionLocal)
+        removed = svc.remove(email, code)
+        return jsonify({"removed": removed})
+    except Exception as e:
+        app.logger.exception("Erro no DELETE /mailing")
+        return jsonify({"error": "Falha ao remover e-mail", "detail": str(e)}), 500
