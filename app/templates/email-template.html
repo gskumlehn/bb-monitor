@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alerta de Nível {{NIVEL}} - Monitoramento de Risco de Reputação</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #f5f5f5;">
+    <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background-color: #f5f5f5;">
+        <tr>
+            <td align="center" style="padding: 0;">
+                <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="600" style="max-width: 600px; background-color: #ffffff;">
+
+                    <!-- Cabeçalho Completo com Nível (variável) -->
+                    <tr>
+                        <td align="center" style="padding: 0;">
+                            <img
+                                src="{{BASE_URL}}/images/cabecalho-nivel-{{NIVEL}}.png"
+                                alt="Alerta de nível {{NIVEL}} - Monitoramento de risco de reputação"
+                                width="600"
+                                style="display: block; width: 100%; max-width: 600px; height: auto; border: 0;">
+                        </td>
+                    </tr>
+
+                    <!-- Conteúdo Principal -->
+                    <tr>
+                        <td style="padding: 40px 40px 30px; background-color: #ffffff;">
+                            <p style="margin: 0 0 10px; color: #666; font-size: 14px;">De: {{PERFIL_USUARIO}}</p>
+
+                            <h2 style="margin: 0 0 25px; color: #333; font-size: 22px; font-weight: 700; line-height: 1.4;">
+                                "{{TITULO_POSTAGEM}}"
+                            </h2>
+
+                            <p style="margin: 0 0 15px; color: #666; font-size: 14px; line-height: 1.6;">
+                                <strong>Áreas gestoras:</strong> {{AREAS_GESTORAS}}<br>
+                                <strong>Áreas informadas:</strong> {{AREAS_INFORMADAS}}
+                            </p>
+
+                            <p style="margin: 25px 0; color: #333; font-size: 15px; line-height: 1.7; text-align: justify;">
+                                {{DESCRICAO_COMPLETA}}
+                            </p>
+
+                            <h3 style="margin: 30px 0 15px; color: #333; font-size: 16px; font-weight: 700;">Variáveis envolvidas:</h3>
+                            <ul style="margin: 0 0 30px; padding-left: 20px; color: #666; font-size: 14px; line-height: 1.8;">
+                                {{VARIAVEIS_ENVOLVIDAS}}
+                            </ul>
+
+                            <h3 style="margin: 30px 0 15px; color: #333; font-size: 16px; font-weight: 700;">Stakeholders envolvidos:</h3>
+                            <ul style="margin: 0 0 35px; padding-left: 20px; color: #666; font-size: 14px; line-height: 1.8;">
+                                {{STAKEHOLDERS}}
+                            </ul>
+
+                            <!-- Botão CTA -->
+                            <div align="center" style="margin: 40px 0 30px;">
+                                <a href="{{LINK_DUVIDAS}}" style="display: inline-block;">
+                                    <img
+                                        src="{{BASE_URL}}/images/botao-duvidas.png"
+                                        alt="Tem dúvidas? Clique aqui!"
+                                        width="330"
+                                        style="display: block; max-width: 330px; height: auto; border: 0;">
+                                </a>
+                            </div>
+
+                            <p style="margin: 30px 0 0; color: #666; font-size: 13px; text-align: center; line-height: 1.6;">
+                                Envie e-mail para <a href="mailto:{{EMAIL_CONTATO}}" style="color: #4169E1; text-decoration: underline;">{{EMAIL_CONTATO}}</a> caso precise indicar outros colegas da sua Unidade para receber alertas de risco de reputação.
+                            </p>
+                        </td>
+                    </tr>
+
+                    <!-- Box Informativo -->
+                    <tr>
+                        <td style="padding: 0 40px 40px; background-color: #ffffff;">
+                            <img
+                                src="{{BASE_URL}}/images/observacao.png"
+                                alt="Verifique se este alerta exige ação"
+                                width="520"
+                                style="display: block; width: 100%; max-width: 520px; height: auto; border: 0;">
+                        </td>
+                    </tr>
+
+                    <!-- Footer -->
+                    <tr>
+                        <td align="center" style="padding: 0;">
+                            <img
+                                src="{{BASE_URL}}/images/rodape.png"
+                                alt="Banco do Brasil - Gerência Risco de Reputação"
+                                width="600"
+                                style="display: block; width: 100%; max-width: 600px; height: auto; border: 0;">
+                        </td>
+                    </tr>
+
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>
