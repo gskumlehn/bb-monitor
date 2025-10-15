@@ -7,11 +7,13 @@ mailing_bp = Blueprint("mailing", __name__, url_prefix="/mailing")
 svc = MailingService()
 
 @mailing_bp.get("/")
+@mailing_bp.get("")
 def list_all():
     data = svc.list_all()
     return jsonify(data)
 
 @mailing_bp.post("/")
+@mailing_bp.post("")
 def add():
     if request.is_json:
         email = (request.json.get("email") or "").strip()
@@ -27,6 +29,7 @@ def add():
     return jsonify({"ok": True})
 
 @mailing_bp.delete("/")
+@mailing_bp.delete("")
 def remove():
     email = (request.args.get("email") or "").strip()
     code  = (request.args.get("directorate_code") or "").strip()
@@ -37,6 +40,7 @@ def remove():
     deleted = svc.remove(email, code)
     return jsonify({"deleted": deleted})
 
+@mailing_bp.get("/ui/")
 @mailing_bp.get("/ui")
 def ui():
     return render_template("mailing.html")
