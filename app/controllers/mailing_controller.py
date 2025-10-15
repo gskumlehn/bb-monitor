@@ -4,7 +4,7 @@ from app.services.mailing_service import MailingService
 from app.infra.bq_sa import get_session_local
 
 mailing_bp = Blueprint("mailing", __name__)
-mailing_bp.strict_slashes = False  # NÃO redirecionar por barra final
+mailing_bp.strict_slashes = False
 
 @mailing_bp.get("/ui")
 def ui():

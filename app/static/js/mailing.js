@@ -25,7 +25,6 @@ document.addEventListener('DOMContentLoaded', () => {
 // Load all entries
 async function loadEntries() {
   try {
-    // CHAME SEM BARRA FINAL: evita qualquer redirecionamento
     const url = `${API_BASE}`;
     const response = await fetch(url, { method: 'GET' });
     if (!response.ok) throw new Error(`GET /mailing => ${response.status}`);
