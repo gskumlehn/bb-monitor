@@ -129,6 +129,7 @@ def _env_defaults(monkeypatch):
     monkeypatch.setenv("BW_PASSWORD", "secret")
     monkeypatch.setenv("BW_PROJECT", "project-id")
     monkeypatch.setenv("BW_QUERY_NAME", "OPERAÇÃO BB :: MONITORAMENTO")
+    monkeypatch.setenv("GOOGLE_APPLICATION_CREDENTIALS", "../secrets/service-account.json")
 
 
 @pytest.fixture
