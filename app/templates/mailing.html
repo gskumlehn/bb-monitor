@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciamento de Mailing List</title>
+    <meta name="description" content="Sistema de gerenciamento de mailing list por diretoria">
+    <link rel="stylesheet" href="/static/css/mailing.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <svg class="mail-icon" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="2" y="4" width="20" height="16" rx="2"/>
+                    <path d="m2 7 10 7 10-7"/>
+                </svg>
+                <h1>Gerenciamento de Mailing List</h1>
+            </div>
+        </div>
+    </header>
+
+    <div class="container main-content">
+        <div class="grid">
+            <!-- Form Card -->
+            <div class="card">
+                <div class="card-header">
+                    <svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="12" y1="5" x2="12" y2="19"/>
+                        <line x1="5" y1="12" x2="19" y2="12"/>
+                    </svg>
+                    <h2>Adicionar Novo E-mail</h2>
+                </div>
+                <div class="card-content">
+                    <form id="addForm" class="form">
+                        <div class="form-group">
+                            <label for="email" class="label">
+                                <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="2" y="4" width="20" height="16" rx="2"/>
+                                    <path d="m2 7 10 7 10-7"/>
+                                </svg>
+                                E-mail
+                            </label>
+                            <input
+                                type="email"
+                                id="email"
+                                name="email"
+                                placeholder="exemplo@email.com"
+                                required
+                                class="input"
+                            >
+                        </div>
+
+                        <div class="form-group">
+                            <label for="directorate_code" class="label">
+                                <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                                    <polyline points="9 22 9 12 15 12 15 22"/>
+                                </svg>
+                                Código da Diretoria
+                            </label>
+                            <input
+                                type="text"
+                                id="directorate_code"
+                                name="directorate_code"
+                                placeholder="EX: DIR123"
+                                required
+                                class="input"
+                            >
+                        </div>
+
+                        <button type="submit" class="btn btn-primary" id="submitBtn">
+                            <svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="12" y1="5" x2="12" y2="19"/>
+                                <line x1="5" y1="12" x2="19" y2="12"/>
+                            </svg>
+                            Adicionar à Lista
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- List Card -->
+            <div class="card">
+                <div class="card-header card-header-yellow">
+                    <svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="2" y="4" width="20" height="16" rx="2"/>
+                        <path d="m2 7 10 7 10-7"/>
+                    </svg>
+                    <h2>Lista de E-mails (<span id="emailCount">0</span>)</h2>
+                </div>
+                <div class="card-content">
+                    <div class="list-container" id="emailList">
+                        <div class="empty-state">
+                            <svg class="empty-icon" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="2" y="4" width="20" height="16" rx="2"/>
+                                <path d="m2 7 10 7 10-7"/>
+                            </svg>
+                            <p>Nenhum e-mail cadastrado ainda</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer Info -->
+        <div class="card info-card">
+            <div class="card-content">
+                <div class="info-content">
+                    <div class="info-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="2" y="4" width="20" height="16" rx="2"/>
+                            <path d="m2 7 10 7 10-7"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <strong>Sistema de Gerenciamento de Mailing List</strong>
+                        <br>
+                        Adicione e gerencie e-mails por diretoria. Os dados são salvos automaticamente
+                        e podem ser removidos a qualquer momento.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast"></div>
+
+    <script src="/static/js/mailing.js"></script>
+</body>
+</html>

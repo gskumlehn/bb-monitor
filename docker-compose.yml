@@ -1,0 +1,14 @@
+# docker-compose.yml
+services:
+  web:
+    build: .
+    image: bb-monitor:latest
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env
+    volumes:
+      - ./:/app
+      - ./secrets:/secrets:ro
+    command: >
+      gunicorn --bind 0.0.0.0:8080 --workers 2 --threads 4 wsgi:app
