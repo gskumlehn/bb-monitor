@@ -18,6 +18,29 @@ class BrandwatchClient:
         self._proj = BWProject(project=project, username=username, password=password)
         self._queries = BWQueries(self._proj)
 
+    def get_filtered_mentions(
+        self,
+        query_name: str,
+        start_datetime: datetime,
+        end_datetime: datetime,
+        filters: Optional[Dict[str, Any]] = None,
+        limit: int = 100
+    ) -> List[Dict[str, Any]]:
+        """
+        Recupera menções filtradas usando BWQueries.get_mentions do bcr-api.
+        """
+        start_iso = start_datetime.astimezone(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+        end_iso = end_datetime.astimezone(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+
+        results = self._queries.get_mentions(
+            name=query_name,
+            startDate=start_iso,
+            endDate=end_iso,
+            limit=limit,
+            **(filters or {})
+        )
+        return results or []
+
     def iter_mentions(self, query_name: str, start_utc: datetime, end_utc: datetime, pagesize: int = 5000) -> Iterable[Dict[str, Any]]:
         start_iso = start_utc.astimezone(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
         end_iso   = end_utc.astimezone(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
