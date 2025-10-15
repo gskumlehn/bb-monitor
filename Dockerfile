@@ -20,4 +20,4 @@ EXPOSE 8080
 
 ENV PORT=8080
 
-CMD ["gunicorn", "--bind", "0.0.0.0:8080", "--workers", "3", "wsgi:app"]
+CMD exec gunicorn --bind 0.0.0.0:${PORT:-8080} --workers=2 --threads=8 --timeout=0 --access-logfile - wsgi:app
