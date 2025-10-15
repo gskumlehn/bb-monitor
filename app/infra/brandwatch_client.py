@@ -11,12 +11,11 @@ class BrandwatchClient:
         username = os.getenv("BW_EMAIL")
         password = os.getenv("BW_PASSWORD")
         project  = os.getenv("BW_PROJECT")
-        token    = os.getenv("TOKEN_PATH", "tokens.txt")
 
         if not username or not password or not project:
             raise RuntimeError("Credenciais BW ausentes: BW_EMAIL, BW_PASSWORD, BW_PROJECT")
 
-        self._proj = BWProject(project=project, username=username, password=password, token_path=token)
+        self._proj = BWProject(project=project, username=username, password=password)
         self._queries = BWQueries(self._proj)
 
     def iter_mentions(self, query_name: str, start_utc: datetime, end_utc: datetime, pagesize: int = 5000) -> Iterable[Dict[str, Any]]:
