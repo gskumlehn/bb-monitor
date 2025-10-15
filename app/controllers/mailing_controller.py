@@ -9,8 +9,7 @@ mailing_bp.strict_slashes = False
 def ui():
     return render_template("mailing.html")
 
-@mailing_bp.get("")        # /mailing
-@mailing_bp.get("/")       # /mailing/
+@mailing_bp.get("/")
 def list_all():
     try:
         svc = MailingService()
@@ -20,8 +19,7 @@ def list_all():
         app.logger.exception("Erro no GET /mailing")
         return jsonify({"error": "Falha ao listar e-mails", "detail": str(e)}), 500
 
-@mailing_bp.post("")       # /mailing
-@mailing_bp.post("/")      # /mailing/
+@mailing_bp.post("/")
 def add():
     try:
         payload = request.get_json(silent=True) or {}
@@ -37,8 +35,7 @@ def add():
         app.logger.exception("Erro no POST /mailing")
         return jsonify({"error": "Falha ao adicionar e-mail", "detail": str(e)}), 500
 
-@mailing_bp.delete("")     # /mailing
-@mailing_bp.delete("/")    # /mailing/
+@mailing_bp.delete("/")
 def remove():
     try:
         email = (request.args.get("email") or "").strip()
