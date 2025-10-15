@@ -1,7 +1,6 @@
 # app/controllers/mailing_controller.py
 from flask import Blueprint, jsonify, request, render_template, current_app as app
 from app.services.mailing_service import MailingService
-from app.infra.bq_sa import get_session_local
 
 mailing_bp = Blueprint("mailing", __name__)
 mailing_bp.strict_slashes = False
@@ -14,8 +13,7 @@ def ui():
 @mailing_bp.get("/")       # /mailing/
 def list_all():
     try:
-        SessionLocal = get_session_local()
-        svc = MailingService(SessionLocal)
+        svc = MailingService()
         data = svc.list_all()
         return jsonify(data)
     except Exception as e:
@@ -32,8 +30,7 @@ def add():
         if not email or not code:
             return jsonify({"error": "email e directorate_code são obrigatórios"}), 400
 
-        SessionLocal = get_session_local()
-        svc = MailingService(SessionLocal)
+        svc = MailingService()
         svc.add(email, code)
         return jsonify({"ok": True})
     except Exception as e:
@@ -49,8 +46,7 @@ def remove():
         if not email or not code:
             return jsonify({"error": "email e directorate_code são obrigatórios"}), 400
 
-        SessionLocal = get_session_local()
-        svc = MailingService(SessionLocal)
+        svc = MailingService()
         removed = svc.remove(email, code)
         return jsonify({"removed": removed})
     except Exception as e:

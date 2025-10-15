@@ -1,4 +1,3 @@
-# app/repositories/mailing_repository.py
 from typing import Iterable, List
 from sqlalchemy import select, delete
 from sqlalchemy.orm import Session
@@ -33,7 +32,6 @@ class MailingRepository:
                 Mailing.directorate_code == (directorate_code or "").strip()
             )
         )
-        # SQLAlchemy 2.x: rowcount pode ser None dependendo do driver; normalizamos
         return int(res.rowcount or 0)
 
     def list_all(self) -> List[dict]:

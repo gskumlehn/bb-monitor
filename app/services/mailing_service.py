@@ -1,4 +1,3 @@
-# app/services/mailing_service.py
 from typing import Iterable, List
 from app.infra.bq_sa import get_session
 from app.repositories.mailing_repository import MailingRepository
