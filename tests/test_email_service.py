@@ -42,7 +42,7 @@ def test_send_email_with_template():
         template = template.replace(f"{{{{{key}}}}}", str(value))
 
     # Verifica se o link no rodapé foi gerado corretamente
-    expected_remove_link = f"{context['BASE_URL']}/remove-ui?email={context['EMAIL']}&directorate_code={context['DIRECTORY']}"
+    expected_remove_link = f"{context['BASE_URL']}/mailing/remove-ui?email={context['EMAIL']}&directorate_code={context['DIRECTORY']}"
     assert expected_remove_link in template, "O link de remoção no rodapé não foi gerado corretamente."
 
     subject = f"Alerta de Nível {context['NIVEL']} - {context['TITULO_POSTAGEM']}"
