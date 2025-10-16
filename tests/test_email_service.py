@@ -1,8 +1,11 @@
 import os
 import pytest
 from app.services.email_service import EmailService
+from dotenv import load_dotenv
 
 def test_send_email_with_template():
+    load_dotenv()
+
     sender = os.getenv("EMAIL_USER")
     base_url = os.getenv("BASE_URL")
     assert sender is not None, "EMAIL_USER não está definido no .env"
