@@ -22,8 +22,3 @@ class MailingService:
         with get_session() as db:
             repo = MailingRepository(db)
             return repo.get_emails_by_directorates(codes)
-
-    def replace_directorate_emails(self, directorate_code: str, emails: List[str]) -> None:
-        with get_session() as db:
-            repo = MailingRepository(db)
-            repo.replace_directorate_emails(directorate_code, emails)

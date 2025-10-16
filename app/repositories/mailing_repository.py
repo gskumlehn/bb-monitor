@@ -46,11 +46,3 @@ class MailingRepository:
             return []
         q = select(Mailing.email).where(Mailing.directorate_code.in_(norm)).distinct().order_by(Mailing.email)
         return [r[0] for r in self.db.execute(q).all()]
-
-    def replace_directorate_emails(self, directorate_code: str, emails: List[str]) -> None:
-        directorate_code = (directorate_code or "").strip()
-        self.db.execute(delete(Mailing).where(Mailing.directorate_code == directorate_code))
-
-        uniq = sorted({(e or "").strip() for e in (emails or []) if e and e.strip()})
-        for e in uniq:
-            self.db.add(Mailing(email=e, directorate_code=directorate_code))
