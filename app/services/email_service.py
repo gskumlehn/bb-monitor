@@ -20,18 +20,18 @@ class EmailService:
         self.sender_password = sender_password
 
     def send_email(self, recipient, subject, body):
-        message = MIMEMultipart("alternative")  # Define como multipart para suportar HTML
+        message = MIMEMultipart("alternative")
         message['From'] = self.sender_email
         message['To'] = recipient
         message['Subject'] = subject
-        message.attach(MIMEText(body, 'html'))  # Anexa o corpo como HTML renderizado
+        message.attach(MIMEText(body, 'html'))
 
         server = None
         try:
             server = smtplib.SMTP(self.smtp_server, self.smtp_port)
             if EMAIL_USE_TLS:
                 server.starttls()
-            server.login(self.sender_email, self.sender_password)  # Login após starttls
+            server.login(self.sender_email, self.sender_password)
             server.send_message(message)
             print("E-mail enviado com sucesso!")
         except smtplib.SMTPServerDisconnected as e:

@@ -36,7 +36,6 @@ def test_send_email_with_template():
     with open(template_path, "r", encoding="utf-8") as template_file:
         template = template_file.read()
 
-    # Substituir as variáveis no template
     for key, value in context.items():
         template = template.replace(f"{{{{{key}}}}}", str(value))
 
@@ -44,6 +43,6 @@ def test_send_email_with_template():
 
     email_service = EmailService()
     try:
-        email_service.send_email(sender, subject, template)  # Enviar como HTML renderizado
+        email_service.send_email(sender, subject, template)
     except Exception as e:
         pytest.fail(f"Falha ao enviar e-mail: {e}")
