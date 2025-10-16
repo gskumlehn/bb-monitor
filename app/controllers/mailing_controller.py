@@ -49,3 +49,21 @@ def remove():
     except Exception as e:
         app.logger.exception("Erro no DELETE /mailing")
         return jsonify({"error": "Falha ao remover e-mail", "detail": str(e)}), 500
+
+@mailing_bp.get("/remove-ui")
+def remove_ui():
+    try:
+        email = (request.args.get("email") or "").strip()
+        code = (request.args.get("directorate_code") or "").strip()
+        if not email or not code:
+            return render_template("message.html", message="Erro: email e directorate_code são obrigatórios."), 400
+
+        svc = MailingService()
+        removed = svc.remove(email, code)
+        if removed:
+            return render_template("message.html", message=f"O e-mail '{email}' foi removido com sucesso do diretório '{code}'.")
+        else:
+            return render_template("message.html", message=f"O e-mail '{email}' não foi encontrado no diretório '{code}'.")
+    except Exception as e:
+        app.logger.exception("Erro no GET /remove-ui")
+        return render_template("message.html", message=f"Erro ao remover o e-mail: {str(e)}"), 500
