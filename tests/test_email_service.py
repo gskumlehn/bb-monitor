@@ -30,8 +30,8 @@ def test_send_email_with_template():
         "STAKEHOLDERS": "Clientes; Imprensa; Reguladores",
         "LINK_DUVIDAS": "https://einvestidor.estadao.com.br/ultimas/pix-fora-do-ar-hoje-bancos-itau-nubank-santander/",
         "EMAIL_CONTATO": "reputacao@bb.com.br",
-        "EMAIL": "usuario@exemplo.com",
-        "DIRECTORY": "123"
+        "EMAIL": "gk@gmail.com",
+        "DIRECTORY": "BB"
     }
 
     template_path = "../app/templates/email-template.html"
