@@ -9,3 +9,4 @@ class Mailing(Base):
 
     email = Column(String, primary_key=True)
     directorate_code = Column(String, primary_key=True)
+

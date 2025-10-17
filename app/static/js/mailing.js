@@ -2,7 +2,7 @@
 const API_BASE = '/mailing';
 
 // DOM Elements
-const addForm = document.getElementById('addForm');
+const saveForm = document.getElementById('saveForm');
 const emailInput = document.getElementById('email');
 const directorateCodeInput = document.getElementById('directorate_code');
 const submitBtn = document.getElementById('submitBtn');
@@ -13,7 +13,7 @@ let isLoading = false;
 
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
-    addForm.addEventListener('submit', handleSubmit);
+    saveForm.addEventListener('submit', handleSubmit);
 });
 
 // Handle form submission

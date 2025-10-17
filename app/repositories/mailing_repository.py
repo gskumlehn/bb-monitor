@@ -1,20 +1,19 @@
 from typing import Iterable, List
 from sqlalchemy import select, delete
-from sqlalchemy.orm import Session
-
-from .models import Mailing
+from app.models.mailing import Mailing
+from app.infra.db import get_session
 
 class MailingRepository:
-    def __init__(self, db: Session):
-        self.db = db
+    def __init__(self):
+        self.session = get_session()
 
-    def add(self, email: str, directorate_code: str) -> None:
+    def save(self, email: str, directorate_code: str) -> None:
         email = (email or "").strip()
         directorate_code = (directorate_code or "").strip()
         if not email or not directorate_code:
             return
 
-        exists = self.db.execute(
+        exists = self.session.execute(
             select(Mailing).where(
                 Mailing.email == email,
                 Mailing.directorate_code == directorate_code
@@ -23,26 +22,22 @@ class MailingRepository:
         if exists:
             return
 
-        self.db.add(Mailing(email=email, directorate_code=directorate_code))
+        self.session.add(Mailing(email=email, directorate_code=directorate_code))
+        self.session.commit()
 
-    def remove(self, email: str, directorate_code: str) -> int:
-        res = self.db.execute(
+    def delete(self, email: str, directorate_code: str) -> int:
+        res = self.session.execute(
             delete(Mailing).where(
                 Mailing.email == (email or "").strip(),
                 Mailing.directorate_code == (directorate_code or "").strip()
             )
         )
+        self.session.commit()
         return int(res.rowcount or 0)
-
-    def list_all(self) -> List[dict]:
-        rows = self.db.execute(
-            select(Mailing).order_by(Mailing.directorate_code, Mailing.email)
-        ).scalars().all()
-        return [{"email": r.email, "directorate_code": r.directorate_code} for r in rows]
 
     def get_emails_by_directorates(self, codes: Iterable[str]) -> List[str]:
         norm = sorted({(c or "").strip() for c in (codes or []) if c and c.strip()})
         if not norm:
             return []
         q = select(Mailing.email).where(Mailing.directorate_code.in_(norm)).distinct().order_by(Mailing.email)
-        return [r[0] for r in self.db.execute(q).all()]
+        return [r[0] for r in self.session.execute(q).all()]
