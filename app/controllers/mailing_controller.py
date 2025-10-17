@@ -1,4 +1,3 @@
-# app/controllers/mailing_controller.py
 from flask import Blueprint, jsonify, request, render_template, current_app as app
 from app.services.mailing_service import MailingService
 
