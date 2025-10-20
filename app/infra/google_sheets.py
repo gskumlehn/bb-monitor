@@ -16,9 +16,8 @@ class GoogleSheets:
         except Exception as e:
             raise RuntimeError(f"Erro ao consultar Google Sheets: {e}")
 
-    def get_sheet_data_with_start_row(self, spreadsheet_id, range_name, start_row):
+    def get_sheet_data_with_start_row(self, spreadsheet_id, dynamic_range):
         try:
-            dynamic_range = f"{range_name}!A{start_row}:L"
             sheet = self.service.spreadsheets()
             result = sheet.values().get(spreadsheetId=spreadsheet_id, range=dynamic_range).execute()
             return result.get("values", [])

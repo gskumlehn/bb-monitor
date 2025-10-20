@@ -12,8 +12,9 @@ class IngestionService:
         try:
             last_consumed_row = self.last_consumed_row_service.get_value()
             start_row = last_consumed_row + 1
+            dynamic_range = f"'{IngestionConstants.SHEET_NAME}'!{IngestionConstants.START_COL}{start_row}:{IngestionConstants.END_COL}"
             return self.google_sheets.get_sheet_data_with_start_row(
-                IngestionConstants.SPREADSHEET_ID, IngestionConstants.NAMED_RANGE, start_row
+                IngestionConstants.SPREADSHEET_ID, dynamic_range
             )
         except Exception as e:
             raise RuntimeError(f"Erro ao buscar dados da tabela: {e}")

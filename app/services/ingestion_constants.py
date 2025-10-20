@@ -1,6 +1,9 @@
 class IngestionConstants:
     SPREADSHEET_ID = "1yOD6bD_Syyv-zo5CtYXlCGMaWHIR12gUNzW1Zb7klbs"
     NAMED_RANGE = "Tabela1"
+    SHEET_NAME = "Página1"
+    START_COL = "A"
+    END_COL = "L"
     EXPECTED_COLUMNS = [
         "Controle de Envio",
         "Data de entrega",
@@ -15,4 +18,3 @@ class IngestionConstants:
         "Stakeholders",
         "Historico"
     ]
-

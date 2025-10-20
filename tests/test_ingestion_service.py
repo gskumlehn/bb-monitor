@@ -1,18 +1,29 @@
 import unittest
 import os
 from dotenv import load_dotenv
-from app.services.ingestion_service import IngestionService
+from app.infra.google_sheets import GoogleSheets
+from app.services.ingestion_constants import IngestionConstants
 
-class TestIngestionService(unittest.TestCase):
+class TestGoogleSheets(unittest.TestCase):
     def setUp(self):
         load_dotenv()
         self.credentials_path = f"../{os.getenv('GOOGLE_APPLICATION_CREDENTIALS')}"
         os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = self.credentials_path
+        self.google_sheets = GoogleSheets()
 
-        self.ingestion_service = IngestionService()
+    def test_google_sheets(self):
+        dynamic_range = f"'{IngestionConstants.SHEET_NAME}'!{IngestionConstants.START_COL}1:{IngestionConstants.END_COL}2"
+        result = self.google_sheets.get_sheet_data(
+            IngestionConstants.SPREADSHEET_ID,
+            dynamic_range
+        )
 
-    def test_fetch_table_data(self):
-        result = self.ingestion_service.fetch_table_data()
+        self.assertGreaterEqual(len(result), 2, "A planilha deve retornar ao menos 2 linhas (cabeçalho + 1 linha de dados)")
+
+        for i, column in enumerate(IngestionConstants.EXPECTED_COLUMNS):
+            with self.subTest(column=column):
+                actual_column = result[0][i].strip()
+                self.assertEqual(actual_column, column, rf"Coluna {i + 1}: esperado '{column}', mas veio '{actual_column}'")
 
         expected_first_row = [
             "Enviado",
@@ -29,16 +40,9 @@ class TestIngestionService(unittest.TestCase):
             "07/10/2025 Nível 1\nNas redes sociais, hoje (08), às 16h31 o perfil @itatiaia(https://x.com/itatiaia/status/1976007616393511108) , publicou: \"Vereadores acionam a polícia e pedem interrupção de exposição no CCBB, em BH Clique e leia mais 👇. Junto ao link da matéria completa (https://www.itatiaia.com.br/cidades/vereadores-acionam-a-policia-e-pedem-interrupcao-de-exposicao-no-ccbb-em-bh) A publicação, até o momento, tem 514 visualizações e o perfil conta com um pouco mais de 1,2 milhões seguidores, com alcance até o momento de 47.529 contas."
         ]
 
-        for i, column in enumerate(IngestionService.EXPECTED_COLUMNS):
-            with self.subTest(column=column):
-                actual_column = result[0][i].strip()
-                print(rf"Coluna {i + 1}: esperado '{column}', veio '{actual_column}'")
-                self.assertEqual(actual_column, column, rf"Coluna {i + 1}: esperado '{column}', mas veio '{actual_column}'")
-
         for i, value in enumerate(expected_first_row):
             with self.subTest(value=value):
                 actual_value = result[1][i].strip()
-                print(rf"Valor da coluna {i + 1}: esperado '{value}', veio '{actual_value}'")
                 self.assertEqual(actual_value, value, rf"Valor da coluna {i + 1}: esperado '{value}', mas veio '{actual_value}'")
 
 if __name__ == "__main__":
