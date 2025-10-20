@@ -4,14 +4,16 @@ from app.infra.bq_sa import get_session
 
 class LastConsumedRowRepository:
 
-    def update_value(self, value: int) -> None:
+    @staticmethod
+    def update_value(value: int) -> None:
         with get_session() as session:
             session.execute(
                 update(LastConsumedRow).values(value=value)
             )
             session.commit()
 
-    def load_value(self) -> int:
+    @staticmethod
+    def load_value() -> int:
         with get_session() as session:
             last_consumed_row = session.execute(
                 select(LastConsumedRow.value)
