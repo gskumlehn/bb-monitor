@@ -5,26 +5,28 @@ from app.infra.google_sheets import GoogleSheets
 from app.services.ingestion_constants import IngestionConstants
 
 class TestGoogleSheets(unittest.TestCase):
-    def setUp(self):
+    @classmethod
+    def setUpClass(cls):
         load_dotenv()
-        self.credentials_path = f"../{os.getenv('GOOGLE_APPLICATION_CREDENTIALS')}"
-        os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = self.credentials_path
-        self.google_sheets = GoogleSheets()
-
-    def test_google_sheets(self):
+        credentials_path = f"../{os.getenv('GOOGLE_APPLICATION_CREDENTIALS')}"
+        os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = credentials_path
+        google_sheets = GoogleSheets()
         dynamic_range = f"'{IngestionConstants.SHEET_NAME}'!{IngestionConstants.START_COL}1:{IngestionConstants.END_COL}2"
-        result = self.google_sheets.get_sheet_data(
-            IngestionConstants.SPREADSHEET_ID,
-            dynamic_range
-        )
+        cls.result = google_sheets.get_sheet_data(IngestionConstants.SPREADSHEET_ID, dynamic_range)
 
-        self.assertGreaterEqual(len(result), 2, "A planilha deve retornar ao menos 2 linhas (cabeçalho + 1 linha de dados)")
+    def setUp(self):
+        self.result = self.__class__.result
 
+    def test_collect_two_rows_and_store(self):
+        self.assertGreaterEqual(len(self.result), 2, "A planilha deve retornar ao menos 2 linhas (cabeçalho + 1 linha de dados)")
+
+    def test_header_matches_constants(self):
         for i, column in enumerate(IngestionConstants.EXPECTED_COLUMNS):
             with self.subTest(column=column):
-                actual_column = result[0][i].strip()
+                actual_column = self.result[0][i].strip()
                 self.assertEqual(actual_column, column, rf"Coluna {i + 1}: esperado '{column}', mas veio '{actual_column}'")
 
+    def test_first_row_matches_expected(self):
         expected_first_row = [
             "Enviado",
             "16/10/2025",
@@ -42,7 +44,7 @@ class TestGoogleSheets(unittest.TestCase):
 
         for i, value in enumerate(expected_first_row):
             with self.subTest(value=value):
-                actual_value = result[1][i].strip()
+                actual_value = self.result[1][i].strip()
                 self.assertEqual(actual_value, value, rf"Valor da coluna {i + 1}: esperado '{value}', mas veio '{actual_value}'")
 
 if __name__ == "__main__":
