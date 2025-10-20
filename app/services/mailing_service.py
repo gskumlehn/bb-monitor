@@ -2,6 +2,7 @@ from typing import Iterable, List, Union, Tuple
 from app.repositories.mailing_repository import MailingRepository
 from app.enums.directorate_codes import DirectorateCode
 from app.constants.mailing_constants import MailingConstants
+from app.constants.error_messages import ErrorMessages
 from app.utils.email_utils import EmailUtils
 
 class MailingService:
@@ -19,11 +20,11 @@ class MailingService:
     def validate_email(self, email: str) -> str:
         email_norm = EmailUtils.normalize_email(email)
         if not email_norm:
-            raise ValueError("email não pode ser vazio")
+            raise ValueError(ErrorMessages.model["Mailing.email.empty"])
         if not EmailUtils.is_valid_email(email_norm):
-            raise ValueError("email inválido")
+            raise ValueError(ErrorMessages.model["Mailing.email.invalid"])
         if not EmailUtils.is_allowed_domain(email_norm, MailingConstants.ALLOWED_DOMAINS):
-            raise ValueError("domínio inválido: apenas @futurebrand.com ou @futurebrand.com.br são permitidos")
+            raise ValueError(ErrorMessages.model["Mailing.email.domain.invalid"])
         return email_norm
 
     def delete(self, email: str, directorate_code: str) -> int:
