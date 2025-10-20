@@ -2,7 +2,7 @@ import unittest
 import os
 from dotenv import load_dotenv
 from app.infra.google_sheets import GoogleSheets
-from app.services.ingestion_constants import IngestionConstants
+from app.constants.ingestion_constants import IngestionConstants
 
 class TestGoogleSheets(unittest.TestCase):
     @classmethod
