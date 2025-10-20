@@ -57,13 +57,16 @@
                                 </svg>
                                 Código da Diretoria
                             </label>
-                            <input
-                                type="text"
+                            <select
                                 id="directorate_code"
                                 name="directorate_code"
                                 required
                                 class="input"
                             >
+                                {% for code, label in directorate_codes.items() %}
+                                    <option value="{{ code }}">{{ label }}</option>
+                                {% endfor %}
+                            </select>
                         </div>
 
                         <button type="submit" class="btn btn-primary" id="submitBtn">

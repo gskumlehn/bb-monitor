@@ -1,5 +1,6 @@
 from flask import Blueprint, jsonify, request, render_template
 from app.services.mailing_service import MailingService
+from app.enums.directorate_codes import DirectorateCode
 
 mailing_bp = Blueprint("mailing", __name__)
 mailing_bp.strict_slashes = False
@@ -8,7 +9,8 @@ mailing_service = MailingService()
 
 @mailing_bp.get("/ui")
 def ui():
-    return render_template("mailing.html")
+    directorate_codes = {code.name: code.value for code in DirectorateCode}
+    return render_template("mailing.html", directorate_codes=directorate_codes)
 
 @mailing_bp.post("/")
 def save():
@@ -19,6 +21,8 @@ def save():
 
         mailing_service.save(email, code)
         return jsonify({"ok": True})
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 400
     except Exception as e:
         return jsonify({"error": "Falha ao salvar e-mail", "detail": str(e)}), 500
 
