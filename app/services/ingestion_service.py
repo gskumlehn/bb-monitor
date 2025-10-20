@@ -1,11 +1,11 @@
 from app.infra.google_sheets import GoogleSheets
 from app.constants.ingestion_constants import IngestionConstants
+from app.services.last_consumed_row_service import LastConsumedRowService
 
 class IngestionService:
 
     def __init__(self):
         self.google_sheets = GoogleSheets()
-        from app.services.last_consumed_row_service import LastConsumedRowService
         self.last_consumed_row_service = LastConsumedRowService()
 
     def fetch_table_data(self):
