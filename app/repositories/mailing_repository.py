@@ -4,7 +4,8 @@ from app.models.mailing import Mailing
 from app.infra.bq_sa import get_session  # Corrigir importação
 
 class MailingRepository:
-    def save(self, email: str, directorate_code: str) -> None:
+    @staticmethod
+    def save(email: str, directorate_code: str) -> None:
         email = (email or "").strip()
         directorate_code = (directorate_code or "").strip()
         if not email or not directorate_code:
@@ -23,7 +24,8 @@ class MailingRepository:
             session.add(Mailing(email=email, directorate_code=directorate_code))
             session.commit()
 
-    def delete(self, email: str, directorate_code: str) -> int:
+    @staticmethod
+    def delete(email: str, directorate_code: str) -> int:
         with get_session() as session:  # Usar a sessão diretamente
             res = session.execute(
                 delete(Mailing).where(
@@ -34,7 +36,8 @@ class MailingRepository:
             session.commit()
             return int(res.rowcount or 0)
 
-    def get_emails_by_directorates(self, codes: Iterable[str]) -> List[str]:
+    @staticmethod
+    def get_emails_by_directorates(codes: Iterable[str]) -> List[str]:
         norm = sorted({(c or "").strip() for c in (codes or []) if c and c.strip()})
         if not norm:
             return []
