@@ -1,4 +1,5 @@
 from enum import Enum
+from app.constants.error_messages import ErrorMessages
 
 class DirectorateCode(Enum):
 
@@ -6,10 +7,7 @@ class DirectorateCode(Enum):
 
     @classmethod
     def from_str(cls, name: str):
-        if name is None:
-            raise ValueError("Directorate code cannot be None")
-
-        if name not in cls.__members__:
-            raise ValueError(f"Unknown DirectorateCode: {name}")
+        if name is None or name not in cls.__members__:
+            raise ValueError(ErrorMessages.enum["DirectorateCode.invalid"])
 
         return cls[name]
