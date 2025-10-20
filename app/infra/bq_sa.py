@@ -11,12 +11,7 @@ _engine = None
 _SessionLocal = None
 
 def _resolve_project_id() -> str:
-    project = (
-        os.getenv("BQ_PROJECT")
-        or os.getenv("GOOGLE_CLOUD_PROJECT")
-        or os.getenv("GOOGLE_PROJECT_ID")
-        or os.getenv("GCP_PROJECT")
-    )
+    project = os.getenv("BQ_PROJECT")
     if not project:
         raise RuntimeError("Não foi possível resolver o PROJECT_ID (defina BQ_PROJECT ou GOOGLE_CLOUD_PROJECT).")
     return project
