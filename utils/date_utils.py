@@ -2,6 +2,7 @@ from datetime import datetime
 from zoneinfo import ZoneInfo
 
 class DateUtils:
+
     BRAZIL_TZ = "America/Sao_Paulo"
 
     @staticmethod
