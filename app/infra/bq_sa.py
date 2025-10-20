@@ -11,7 +11,6 @@ _engine = None
 _SessionLocal = None
 
 def _resolve_project_id() -> str:
-    # prioridade: BQ_PROJECT > vars padrão do GCP
     project = (
         os.getenv("BQ_PROJECT")
         or os.getenv("GOOGLE_CLOUD_PROJECT")
@@ -29,7 +28,6 @@ def get_engine():
 
     project = _resolve_project_id()
 
-    # IMPORTANTE: não passar credentials= aqui.
     conn_str = f"bigquery://{project}"
     _logger.info("Criando engine BigQuery para projeto: %s", project)
     _engine = create_engine(conn_str, pool_pre_ping=True)
@@ -47,7 +45,6 @@ def get_session_local():
 
 @contextmanager
 def get_session():
-    """Se você ainda usa este helper em algum lugar."""
     SessionLocal = get_session_local()
     db = SessionLocal()
     try:
