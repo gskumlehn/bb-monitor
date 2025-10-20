@@ -1,6 +1,5 @@
 from sqlalchemy.orm import declarative_base
-from sqlalchemy import Column, String, Enum as SAEnum
-from app.enums.directorate_codes import DirectorateCode
+from sqlalchemy import Column, String
 
 Base = declarative_base()
 
