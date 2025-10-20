@@ -1,7 +1,7 @@
 from typing import Iterable, List
 from sqlalchemy import select, delete
 from app.models.mailing import Mailing
-from app.infra.bq_sa import get_session  # Corrigir importação
+from app.infra.bq_sa import get_session
 
 class MailingRepository:
     @staticmethod
@@ -11,7 +11,7 @@ class MailingRepository:
         if not email or not directorate_code:
             return
 
-        with get_session() as session:  # Usar a sessão diretamente
+        with get_session() as session:
             exists = session.execute(
                 select(Mailing).where(
                     Mailing.email == email,
@@ -26,7 +26,7 @@ class MailingRepository:
 
     @staticmethod
     def delete(email: str, directorate_code: str) -> int:
-        with get_session() as session:  # Usar a sessão diretamente
+        with get_session() as session:
             res = session.execute(
                 delete(Mailing).where(
                     Mailing.email == (email or "").strip(),
@@ -41,6 +41,6 @@ class MailingRepository:
         norm = sorted({(c or "").strip() for c in (codes or []) if c and c.strip()})
         if not norm:
             return []
-        with get_session() as session:  # Usar a sessão diretamente
+        with get_session() as session:
             q = select(Mailing.email).where(Mailing.directorate_code.in_(norm)).distinct().order_by(Mailing.email)
             return [r[0] for r in session.execute(q).all()]
