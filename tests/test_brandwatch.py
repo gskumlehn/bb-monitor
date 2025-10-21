@@ -10,7 +10,7 @@ class TestBrandwatch(unittest.TestCase):
         self.start_local = datetime(2025, 10, 9, 0, 0, tzinfo=ZoneInfo("America/Sao_Paulo"))
         self.start_utc = self.start_local.astimezone(ZoneInfo("UTC"))
         self.end_utc = self.end_local.astimezone(ZoneInfo("UTC"))
-        self.link = "https://g1.globo.com/mg/minas-gerais/noticia/2025/10/09/vereadores-de-bh-vao-ao-ccbb-com-guardas-e-pms-e-cobram-fechamento-de-exposicao.ghtml"
+        self.url = "https://g1.globo.com/mg/minas-gerais/noticia/2025/10/09/vereadores-de-bh-vao-ao-ccbb-com-guardas-e-pms-e-cobram-fechamento-de-exposicao.ghtml"
 
     def test_alerta_exemplo_brandwatch(self):
         print("==== Janela de busca (UTC) ====")
@@ -18,7 +18,7 @@ class TestBrandwatch(unittest.TestCase):
         print("end_utc  :", self.end_utc.strftime("%Y-%m-%dT%H:%M:%SZ"))
 
         bw = BrandwatchClient()
-        filters = {"url": self.link}
+        filters = {"url": self.url}
         mentions = bw.get_filtered_mentions(
             start_datetime=self.start_utc,
             end_datetime=self.end_utc,
@@ -27,10 +27,10 @@ class TestBrandwatch(unittest.TestCase):
         )
 
         print("\n--- LINK ---------------------------------------")
-        print(self.link)
+        print(self.url)
         self.assertTrue(mentions, "Nenhuma menção localizada para o alerta de exemplo no período informado.")
 
-        exact = [m for m in mentions if m.get("url") == self.link or m.get("insightsUrl") == self.link]
+        exact = [m for m in mentions if m.get("url") == self.url or m.get("insightsUrl") == self.url]
         self.assertTrue(exact, "Nenhuma menção com a URL exata localizada no período informado.")
 
         print("found      : True")
