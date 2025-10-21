@@ -19,12 +19,12 @@ class TestMailingService(unittest.TestCase):
 
     def test_create_with_invalid_email(self):
         with self.assertRaises(ValueError) as context:
-            self.service.save("invalid-email", DirectorateCode.FB)
+            self.service.save("invalid-email", DirectorateCode.FB.name)
         self.assertEqual(str(context.exception), ErrorMessages.model["Mailing.email.invalid"])
 
     def test_create_with_disallowed_domain(self):
         with self.assertRaises(ValueError) as context:
-            self.service.save("test@notallowed.com", DirectorateCode.FB)
+            self.service.save("test@notallowed.com", DirectorateCode.FB.name)
         self.assertEqual(
             str(context.exception),
             ErrorMessages.model["Mailing.email.domain.invalid"]
