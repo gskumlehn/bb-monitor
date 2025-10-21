@@ -13,3 +13,4 @@ class DateUtils:
     def from_date_and_time(date_str: str, time_str: str, tz: str = BRAZIL_TZ) -> datetime:
         dt = datetime.strptime(f"{date_str} {time_str}", "%d/%m/%Y %H:%M")
         return dt.replace(tzinfo=ZoneInfo(tz))
+
