@@ -1,7 +1,7 @@
 from app.infra.google_sheets import GoogleSheets
 from app.constants.ingestion_constants import IngestionConstants
 from app.infra.brandwatch_client import BrandwatchClient
-from app.utils.date_utils import DateUtils
+from app.custom_utils.date_utils import DateUtils
 from app.services.alert_service import AlertService
 
 class IngestionService:
@@ -18,7 +18,7 @@ class IngestionService:
         alerts = [alert_service.save(alert_dict) for alert_dict in alert_dicts]
 
     def _fetch_table_data(self):
-        dynamic_range = f"'{IngestionConstants.SHEET_NAME}'!{IngestionConstants.START_COL}:{IngestionConstants.END_COL}"
+        dynamic_range = f"'{IngestionConstants.SHEET_NAME}'!{IngestionConstants.START_COL}2:{IngestionConstants.END_COL}"
         return self.google_sheets.get_sheet_data_with_start_row(IngestionConstants.SPREADSHEET_ID, dynamic_range)
 
     def _convert_table_row_to_alert_dict(self, table_row: list) -> dict:

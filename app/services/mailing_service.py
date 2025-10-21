@@ -4,7 +4,7 @@ from app.repositories.mailing_repository import MailingRepository
 from app.enums.directorate_codes import DirectorateCode
 from app.constants.mailing_constants import MailingConstants
 from app.constants.error_messages import ErrorMessages
-from app.utils.email_utils import EmailUtils
+from app.custom_utils.email_utils import EmailUtils
 
 class MailingService:
 

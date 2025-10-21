@@ -4,7 +4,7 @@ import os
 
 from bcr_api.bwproject import BWProject
 from bcr_api.bwresources import BWQueries
-from utils.date_utils import DateUtils
+from app.custom_utils.date_utils import DateUtils
 
 class BrandwatchClient:
 
