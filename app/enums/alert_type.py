@@ -6,7 +6,7 @@ class AlertType(EnumInterface):
 
     @staticmethod
     def values_csv_to_type_list(csv: str):
-        return [AlertType(value) for value in csv.split(",") if value]
+        return [AlertType(value.strip()) for value in csv.split(",") if value.strip()]
 
     @staticmethod
     def names_csv_to_type_list(csv: str):
@@ -15,4 +15,3 @@ class AlertType(EnumInterface):
     @staticmethod
     def type_list_to_values_csv(types: list):
         return ",".join([type_.value for type_ in types])
-
