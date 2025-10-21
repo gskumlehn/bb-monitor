@@ -21,13 +21,6 @@ def test_send_email_with_template():
         "DESCRICAO_COMPLETA": (
             "De acordo com o portal O Globo, o sistema de transações instantâneas Pix apresenta instabilidades nesta segunda-feira..."
         ),
-        "VARIAVEIS_ENVOLVIDAS": "".join(
-            f"<li>{var}</li>" for var in [
-                "Pix", "instabilidade", "Banco Central", "Downdetector",
-                "bancos brasileiros", "C6 Bank", "Itaú", "Bradesco", "Santander", "Inter"
-            ]
-        ),
-        "STAKEHOLDERS": "Clientes; Imprensa; Reguladores",
         "LINK_DUVIDAS": "https://einvestidor.estadao.com.br/ultimas/pix-fora-do-ar-hoje-bancos-itau-nubank-santander/",
         "EMAIL_CONTATO": "reputacao@bb.com.br",
         "EMAIL": "gk@gmail.com",
@@ -41,7 +34,6 @@ def test_send_email_with_template():
     for key, value in context.items():
         template = template.replace(f"{{{{{key}}}}}", str(value))
 
-    # Verifica se o link no rodapé foi gerado corretamente
     expected_delete_mailing_link = f"{context['BASE_URL']}/mailing/delete-ui?email={context['EMAIL']}&directorate_code={context['DIRECTORY']}"
     assert expected_delete_mailing_link in template, "O link de remoção no rodapé não foi gerado corretamente."
 
