@@ -11,7 +11,7 @@ class MailingRepository:
             exists = session.execute(
                 select(Mailing).where(
                     Mailing.email == mailing.email,
-                    Mailing._directorate_code == mailing._directorate_code
+                    Mailing.directorate_code == mailing._directorate_code
                 )
             ).scalar_one_or_none()
             if exists:
