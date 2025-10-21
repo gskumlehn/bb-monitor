@@ -1,9 +1,9 @@
-# app/__init__.py
 from flask import Flask
 from werkzeug.middleware.proxy_fix import ProxyFix
 
 from .controllers.mailing_controller import mailing_bp
 from .controllers.root_controller import root_bp
+from .controllers.ingestions_controller import ingestion_bp
 
 def create_app():
     app = Flask(
@@ -17,5 +17,6 @@ def create_app():
 
     app.register_blueprint(mailing_bp, url_prefix="/mailing")
     app.register_blueprint(root_bp, url_prefix="/")
+    app.register_blueprint(ingestion_bp, url_prefix="/ingestion")
 
     return app
