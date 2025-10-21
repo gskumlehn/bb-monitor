@@ -3,6 +3,7 @@ from app.constants.ingestion_constants import IngestionConstants
 from app.infra.brandwatch_client import BrandwatchClient
 from app.custom_utils.date_utils import DateUtils
 from app.services.alert_service import AlertService
+import pandas as pd
 
 class IngestionService:
 
@@ -19,22 +20,27 @@ class IngestionService:
 
     def _fetch_table_data(self):
         dynamic_range = f"'{IngestionConstants.SHEET_NAME}'!{IngestionConstants.START_COL}2:{IngestionConstants.END_COL}"
-        return self.google_sheets.get_sheet_data_with_start_row(IngestionConstants.SPREADSHEET_ID, dynamic_range)
+        raw_data = self.google_sheets.get_sheet_data_with_start_row(IngestionConstants.SPREADSHEET_ID, dynamic_range)
 
-    def _convert_table_row_to_alert_dict(self, table_row: list) -> dict:
+        if raw_data:
+            df = pd.DataFrame(data=raw_data, columns=IngestionConstants.EXPECTED_COLUMNS)
+            return df.to_dict(orient="records")
+        return []
+
+    def _convert_table_row_to_alert_dict(self, table_row: dict) -> dict:
         alert_data = {
-            "mailing_status": table_row[0],  # Controle de Envio
-            "date": table_row[1],  # Data de entrega
-            "time": table_row[2],  # Horário
-            "alert_types": table_row[3],  # Tipo
-            "criticality_level": table_row[4],  # Nível de Criticidade
-            "profile_or_portal": table_row[5],  # @ do perfil ou Nome do Portal
-            "url": table_row[6],  # Link
-            "title": table_row[7],  # Título
-            "alert_text": table_row[8],  # Alerta (Texto)
-            "involved_variables": table_row[9],  # Variáveis Envolvidas
-            "stakeholders": table_row[10],  # Stakeholders
-            "history": table_row[11],  # Historico
+            "mailing_status": table_row.get("Controle de Envio"),
+            "date": table_row.get("Data de entrega"),
+            "time": table_row.get("Horário"),
+            "alert_types": table_row.get("Tipo"),
+            "criticality_level": table_row.get("Nível de Criticidade"),
+            "profile_or_portal": table_row.get("@ do perfil ou Nome do Portal"),
+            "url": table_row.get("Link"),
+            "title": table_row.get("Título"),
+            "alert_text": table_row.get("Alerta (Texto)"),
+            "involved_variables": table_row.get("Variáveis Envolvidas"),
+            "stakeholders": table_row.get("Stakeholders"),
+            "history": table_row.get("Histórico"),
         }
 
         return alert_data
