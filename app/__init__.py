@@ -1,9 +1,9 @@
 from flask import Flask
 from werkzeug.middleware.proxy_fix import ProxyFix
 
-from .controllers.mailing_controller import mailing_bp
-from .controllers.root_controller import root_bp
-from .controllers.ingestions_controller import ingestion_bp
+from app.controllers.mailing_controller import mailing_bp
+from app.controllers.root_controller import root_bp
+from app.controllers.ingestion_controller import ingestion_bp
 
 def create_app():
     app = Flask(
