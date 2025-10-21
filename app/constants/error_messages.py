@@ -3,6 +3,7 @@ class ErrorMessages:
         "DirectorateCode.invalid": "Diretoria inválida",
         "MailingStatus.invalid": "Status de envio inválido",
         "CriticalityLevel.invalid": "Nível de criticidade inválido",
+        "AlertType.invalid": "Tipo de alerta inválido",
     }
 
     model = {
