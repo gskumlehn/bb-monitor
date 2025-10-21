@@ -1,15 +1,10 @@
 import unittest
-import os
-from dotenv import load_dotenv
 from app.infra.google_sheets import GoogleSheets
 from app.constants.ingestion_constants import IngestionConstants
 
 class TestGoogleSheets(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        load_dotenv()
-        credentials_path = f"../{os.getenv('GOOGLE_APPLICATION_CREDENTIALS')}"
-        os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = credentials_path
         google_sheets = GoogleSheets()
         dynamic_range = f"'{IngestionConstants.SHEET_NAME}'!{IngestionConstants.START_COL}1:{IngestionConstants.END_COL}2"
         cls.result = google_sheets.get_sheet_data(IngestionConstants.SPREADSHEET_ID, dynamic_range)
