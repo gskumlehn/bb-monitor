@@ -13,7 +13,7 @@ class MailingService:
 
     def validate_save(self, email: str, directorate_code: Union[str, DirectorateCode]) -> Tuple[str, DirectorateCode]:
         email_norm = self.validate_email(email)
-        directorate_code = DirectorateCode.from_str(directorate_code)
+        directorate_code = DirectorateCode.from_name(directorate_code)
 
         return email_norm, directorate_code
 
@@ -28,7 +28,7 @@ class MailingService:
         return email_norm
 
     def delete(self, email: str, directorate_code: str) -> int:
-        return MailingRepository.delete(EmailUtils.normalize_email(email), DirectorateCode.from_str(directorate_code))
+        return MailingRepository.delete(EmailUtils.normalize_email(email), DirectorateCode.from_name(directorate_code))
 
     def get_emails_by_directorates(self, codes: Iterable[DirectorateCode]) -> List[str]:
         return MailingRepository.get_emails_by_directorates(codes)
