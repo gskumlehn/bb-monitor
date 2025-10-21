@@ -6,18 +6,18 @@ from app.enums.directorate_codes import DirectorateCode
 
 class MailingRepository:
     @staticmethod
-    def save(email: str, directorate_code: DirectorateCode) -> None:
+    def save(mailing: Mailing) -> None:
         with get_session() as session:
             exists = session.execute(
                 select(Mailing).where(
-                    Mailing.email == email,
-                    Mailing.directorate_code == directorate_code.name
+                    Mailing.email == mailing.email,
+                    Mailing._directorate_code == mailing._directorate_code
                 )
             ).scalar_one_or_none()
             if exists:
                 return
 
-            session.add(Mailing(email=email, directorate_code=directorate_code.name))
+            session.add(mailing)
             session.commit()
 
     @staticmethod

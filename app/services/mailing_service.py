@@ -1,4 +1,5 @@
 from typing import Iterable, List, Union, Tuple
+from app.models.mailing import Mailing
 from app.repositories.mailing_repository import MailingRepository
 from app.enums.directorate_codes import DirectorateCode
 from app.constants.mailing_constants import MailingConstants
@@ -7,9 +8,16 @@ from app.utils.email_utils import EmailUtils
 
 class MailingService:
 
-    def save(self, email: str, directorate_code: Union[str, DirectorateCode]) -> None:
+    def save(self, email: str, directorate_code: Union[str, DirectorateCode]) -> Mailing:
         email_norm, directorate_code = self.validate_save(email, directorate_code)
-        MailingRepository.save(email_norm, directorate_code)
+
+        mailing = Mailing()
+        mailing.email = email_norm
+        mailing.directorate_code = directorate_code
+
+        MailingRepository.save(mailing)
+
+        return mailing
 
     def validate_save(self, email: str, directorate_code: Union[str, DirectorateCode]) -> Tuple[str, DirectorateCode]:
         email_norm = self.validate_email(email)
@@ -25,6 +33,7 @@ class MailingService:
             raise ValueError(ErrorMessages.model["Mailing.email.invalid"])
         if not EmailUtils.is_allowed_domain(email_norm, MailingConstants.ALLOWED_DOMAINS):
             raise ValueError(ErrorMessages.model["Mailing.email.domain.invalid"])
+
         return email_norm
 
     def delete(self, email: str, directorate_code: str) -> int:
