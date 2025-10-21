@@ -30,11 +30,24 @@ class TestMailingService(unittest.TestCase):
             ErrorMessages.model["Mailing.email.domain.invalid"]
         )
 
-    def test_create_successfully(self):
+    def test_duplicate_insert_and_delete(self):
+        email = "test@futurebrand.com"
+        code = DirectorateCode.FB.name
+
         try:
-            self.service.save("test@futurebrand.com", DirectorateCode.FB)
+            self.service.save(email, code)
         except Exception as e:
             self.fail(f"save() raised an exception unexpectedly: {e}")
+
+        try:
+            self.service.save(email, code)
+        except Exception as e:
+            self.fail(f"save() raised an exception unexpectedly on duplicate insert: {e}")
+
+        try:
+            self.service.delete(email, code)
+        except Exception as e:
+            self.fail(f"delete() raised an exception unexpectedly: {e}")
 
 if __name__ == "__main__":
     unittest.main()
