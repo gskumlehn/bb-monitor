@@ -1,4 +1,5 @@
 .env
-.venv
+.mention.json
+/.venv
 /.idea
 /secrets
