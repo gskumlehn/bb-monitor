@@ -3,7 +3,11 @@ from app.constants.ingestion_constants import IngestionConstants
 from app.infra.brandwatch_client import BrandwatchClient
 from app.custom_utils.date_utils import DateUtils
 from app.services.alert_service import AlertService
+import logging
 import pandas as pd
+from typing import List, Sequence, Any
+
+logger = logging.getLogger(__name__)
 
 class IngestionService:
 
@@ -16,14 +20,41 @@ class IngestionService:
         alert_dicts = self._fetch_alert_guid(alert_dicts)
 
         alert_service = AlertService()
-        alerts = [alert_service.save(alert_dict) for alert_dict in alert_dicts]
+        alerts = []
+        for alert_dict in alert_dicts:
+            try:
+                saved = alert_service.save(alert_dict)
+            except Exception:
+                logger.exception("Erro ao salvar alert durante ingest")
+                saved = None
+            if saved:
+                alerts.append(saved)
+
+        return alerts
+
+    def _normalize_rows(self, raw_rows: Sequence[Sequence[Any]], expected_cols: List[str]) -> List[List[Any]]:
+        expected_len = len(expected_cols)
+        normalized: List[List[Any]] = []
+        for i, row in enumerate(raw_rows):
+            row_list = list(row)
+            if len(row_list) < expected_len:
+                row_list.extend([None] * (expected_len - len(row_list)))
+            elif len(row_list) > expected_len:
+                main = row_list[: expected_len - 1]
+                tail = row_list[expected_len - 1 :]
+                tail_joined = " ".join([str(x) for x in tail if x is not None and str(x).strip() != ""])
+                main.append(tail_joined if tail_joined != "" else None)
+                row_list = main
+            normalized.append(row_list)
+        return normalized
 
     def _fetch_table_data(self):
         dynamic_range = f"'{IngestionConstants.SHEET_NAME}'!{IngestionConstants.START_COL}2:{IngestionConstants.END_COL}"
         raw_data = self.google_sheets.get_sheet_data_with_start_row(IngestionConstants.SPREADSHEET_ID, dynamic_range)
 
         if raw_data:
-            df = pd.DataFrame(data=raw_data, columns=IngestionConstants.EXPECTED_COLUMNS)
+            normalized_rows = self._normalize_rows(raw_data, IngestionConstants.EXPECTED_COLUMNS)
+            df = pd.DataFrame(data=normalized_rows, columns=IngestionConstants.EXPECTED_COLUMNS)
             return df.to_dict(orient="records")
         return []
 
@@ -40,7 +71,7 @@ class IngestionService:
             "alert_text": table_row.get("Alerta (Texto)"),
             "involved_variables": table_row.get("Variáveis Envolvidas"),
             "stakeholders": table_row.get("Stakeholders"),
-            "history": table_row.get("Histórico"),
+            "history": table_row.get("Historico"),
         }
 
         return alert_data
@@ -53,7 +84,7 @@ class IngestionService:
             alert["delivery_datetime"] = alert_datetime
 
             end_utc = alert_datetime
-            start_utc = DateUtils.subtract_days(end_utc, days=7)
+            start_utc = DateUtils.subtract_days(end_utc, days=10)
 
             mentions = bw_client.get_filtered_mentions(
                 start_datetime=start_utc,
