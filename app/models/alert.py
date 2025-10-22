@@ -1,18 +1,23 @@
-from sqlalchemy import Column, Integer, String, DateTime, ARRAY, Text
+from sqlalchemy import Column, Integer, String, ARRAY, Text
+from sqlalchemy_bigquery import TIMESTAMP
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.ext.declarative import declarative_base
+from zoneinfo import ZoneInfo
+from datetime import datetime, timezone
+
 from app.enums.alert_type import AlertType
 from app.enums.criticality_level import CriticalityLevel
 from app.enums.mailing_status import MailingStatus
+from app.custom_utils.date_utils import DateUtils
 
 Base = declarative_base()
 
 class Alert(Base):
-    __tablename__ = "alerts"
+    __tablename__ = "alert"
+    __table_args__ = {"schema": "bb_monitor"}
 
-    id = Column(Integer, primary_key=True, autoincrement=True)
     brandwatch_id = Column(String(255), nullable=True, unique=True)
-    delivery_datetime = Column(DateTime, nullable=False)
+    _delivery_datetime = Column("delivery_datetime", TIMESTAMP, nullable=False)
 
     _mailing_status = Column("mailing_status", String(255), nullable=False)
     _criticality_level = Column("criticality_level", String(255), nullable=False)
@@ -21,11 +26,36 @@ class Alert(Base):
     profile_or_portal = Column(String(255), nullable=False)
     title = Column(Text, nullable=False)
     alert_text = Column(Text, nullable=False)
-    url = Column(Text, nullable=False)
+    url = Column(Text, primary_key=True, nullable=False)
 
     _involved_variables = Column("involved_variables", ARRAY(String), nullable=True)
     _stakeholders = Column("stakeholders", ARRAY(String), nullable=True)
     history = Column(Text, nullable=True)
+
+    SP_TZ = ZoneInfo(DateUtils.BRAZIL_TZ)
+    UTC_TZ = ZoneInfo(DateUtils.UTC_TZ)
+
+    @hybrid_property
+    def delivery_datetime(self) -> datetime:
+        if self._delivery_datetime is None:
+            return None
+        return self._delivery_datetime.astimezone(self.SP_TZ)
+
+    @delivery_datetime.setter
+    def delivery_datetime(self, value: datetime):
+        if value is None:
+            self._delivery_datetime = None
+            return
+        if not isinstance(value, datetime):
+            raise TypeError("delivery_datetime must be a datetime instance")
+        utc_dt = DateUtils.to_utc(value, assume_tz=DateUtils.BRAZIL_TZ)
+        if utc_dt is not None:
+            utc_dt = utc_dt.astimezone(timezone.utc)
+        self._delivery_datetime = utc_dt
+
+    @delivery_datetime.expression
+    def delivery_datetime(cls):
+        return cls._delivery_datetime
 
     @hybrid_property
     def mailing_status(self) -> MailingStatus:
