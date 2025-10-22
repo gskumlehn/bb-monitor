@@ -21,6 +21,7 @@ class AlertService:
     def validate_and_create(self, alert_data: dict) -> Alert:
         alert = Alert()
         alert.url = alert_data.get("url").strip()
+        alert.brandwatch_id = alert_data.get("brandwatch_id")
 
         delivery_datetime = alert_data.get("delivery_datetime")
         if not delivery_datetime:
