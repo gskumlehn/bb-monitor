@@ -5,15 +5,15 @@ from app.infra.bq_sa import get_session
 class AlertRepository:
 
     @staticmethod
-    def save(alert: Alert) -> None:
+    def save(alert: Alert) -> Alert:
         with get_session() as session:
-            exists = session.execute(
-                select(Alert).where(
-                    Alert.url == alert.url,
-                )
-            ).scalar_one_or_none()
-            if exists:
-                return
-
             session.add(alert)
             session.commit()
+            return alert
+
+    @staticmethod
+    def get_by_url(url: str) -> Alert | None:
+        with get_session() as session:
+            return session.execute(
+                select(Alert).where(Alert.url == url)
+            ).scalar_one_or_none()
