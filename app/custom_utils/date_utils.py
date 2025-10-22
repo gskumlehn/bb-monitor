@@ -1,9 +1,10 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from zoneinfo import ZoneInfo
 
 class DateUtils:
 
     BRAZIL_TZ = "America/Sao_Paulo"
+    UTC_TZ = "UTC"
 
     @staticmethod
     def to_iso_format(dt: datetime, tz: str = BRAZIL_TZ) -> str:
@@ -17,3 +18,11 @@ class DateUtils:
     @staticmethod
     def subtract_days(base_datetime: datetime, days: int) -> datetime:
         return base_datetime - timedelta(days=days)
+
+    @staticmethod
+    def to_utc(dt: datetime, assume_tz: str = BRAZIL_TZ) -> datetime:
+        if dt is None:
+            return None
+        if dt.tzinfo is None:
+            dt = dt.replace(tzinfo=ZoneInfo(assume_tz))
+        return dt.astimezone(timezone.utc)
