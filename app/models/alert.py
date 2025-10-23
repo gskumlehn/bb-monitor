@@ -16,6 +16,7 @@ class Alert(Base):
     __tablename__ = "alert"
     __table_args__ = {"schema": "bb_monitor"}
 
+    id = Column(String(64), primary_key=True)
     brandwatch_id = Column(String(255), nullable=True, unique=True)
     _delivery_datetime = Column("delivery_datetime", TIMESTAMP, nullable=False)
 
@@ -26,7 +27,7 @@ class Alert(Base):
     profile_or_portal = Column(String(255), nullable=False)
     title = Column(Text, nullable=False)
     alert_text = Column(Text, nullable=False)
-    url = Column(Text, primary_key=True, nullable=False)
+    url = Column(Text, nullable=False)
 
     _involved_variables = Column("involved_variables", ARRAY(String), nullable=True)
     _stakeholders = Column("stakeholders", ARRAY(String), nullable=True)
