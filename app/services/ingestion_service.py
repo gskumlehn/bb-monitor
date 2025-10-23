@@ -1,6 +1,5 @@
 from app.infra.google_sheets import GoogleSheets
 from app.constants.ingestion_constants import IngestionConstants
-from app.infra.brandwatch_client import BrandwatchClient
 from app.custom_utils.date_utils import DateUtils
 from app.services.alert_service import AlertService
 import logging
@@ -17,7 +16,6 @@ class IngestionService:
     def ingest(self):
         table_data = self._fetch_table_data()
         alert_dicts = [self._convert_table_row_to_alert_dict(row) for row in table_data]
-        alert_dicts = self._fetch_alert_guid(alert_dicts)
 
         alert_service = AlertService()
         alerts = []
@@ -59,10 +57,20 @@ class IngestionService:
         return []
 
     def _convert_table_row_to_alert_dict(self, table_row: dict) -> dict:
+        date_str = table_row.get("Data de entrega")
+        time_str = table_row.get("Horário")
+        delivery_dt = None
+        try:
+            if date_str and time_str:
+                delivery_dt = DateUtils.from_date_and_time(date_str, time_str)
+        except Exception:
+            delivery_dt = None
+
         alert_data = {
             "mailing_status": table_row.get("Controle de Envio"),
-            "date": table_row.get("Data de entrega"),
-            "time": table_row.get("Horário"),
+            "date": date_str,
+            "time": time_str,
+            "delivery_datetime": delivery_dt,
             "alert_types": table_row.get("Tipo"),
             "criticality_level": table_row.get("Nível de Criticidade"),
             "profile_or_portal": table_row.get("@ do perfil ou Nome do Portal"),
@@ -75,25 +83,3 @@ class IngestionService:
         }
 
         return alert_data
-
-    def _fetch_alert_guid(self, alert_dicts: list) -> list:
-        bw_client = BrandwatchClient()
-
-        for alert in alert_dicts:
-            alert_datetime = DateUtils.from_date_and_time(alert.get("date"), alert.get("time"))
-            alert["delivery_datetime"] = alert_datetime
-
-            end_utc = alert_datetime
-            start_utc = DateUtils.subtract_days(end_utc, days=10)
-
-            mentions = bw_client.get_filtered_mentions(
-                start_datetime=start_utc,
-                end_datetime=end_utc,
-                filters={"url": alert.get("url")},
-                limit=1
-            )
-
-            if mentions and mentions[0].get("url") == alert.get("url"):
-                alert["brandwatch_id"] = mentions[0].get("guid")
-
-        return alert_dicts
