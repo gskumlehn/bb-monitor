@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Dict, Any, Optional, Iterable, List
+from typing import Dict, Any, Optional, List
 import os
 
 from bcr_api.bwproject import BWProject
@@ -36,12 +36,3 @@ class BrandwatchClient:
             **(filters or {})
         )
         return results or []
-
-    @staticmethod
-    def extract_categories(m: Dict[str, Any]) -> Dict[str, Any]:
-        return {
-            "categories": m.get("categories") or [],
-            "categoryDetails": m.get("categoryDetails") or [],
-            "categoryMetrics": m.get("categoryMetrics") or {},
-        }
-
