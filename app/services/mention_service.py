@@ -69,42 +69,19 @@ class MentionService:
             end_datetime: datetime,
             days: int = 7,
             limit: int = 100,
-            page: Optional[int] = None
     ) -> List[Dict]:
         try:
             start_dt = DateUtils.subtract_days(end_datetime, days=days)
-            if page is not None:
-                try:
-                    mentions = self._bw.get_filtered_mentions(
-                        start_datetime=start_dt,
-                        end_datetime=end_datetime,
-                        filters=filters or {},
-                        limit=limit,
-                        page=page
-                    )
-                    return mentions or []
-                except TypeError:
-                    total_limit = limit * self.MAX_PAGES
-                    mentions_all = self._bw.get_filtered_mentions(
-                        start_datetime=start_dt,
-                        end_datetime=end_datetime,
-                        filters=filters or {},
-                        limit=total_limit
-                    ) or []
-                    start_idx = (page - 1) * limit
-                    end_idx = start_idx + limit
-                    return mentions_all[start_idx:end_idx]
-            else:
-                mentions = self._bw.get_filtered_mentions(
-                    start_datetime=start_dt,
-                    end_datetime=end_datetime,
-                    filters=filters or {},
-                    limit=limit
-                )
-                return mentions or []
+            mentions = self._bw.get_filtered_mentions(
+                start_datetime=start_dt,
+                end_datetime=end_datetime,
+                filters=filters or {},
+                limit=limit
+            )
+            return mentions or []
         except Exception:
             logger.exception(
-                "Erro ao buscar mentions no Brandwatch com filtros=%s end=%s days=%s page=%s",
-                filters, end_datetime, days, page
+                "Erro ao buscar mentions no Brandwatch com filtros=%s end=%s days=%s",
+                filters, end_datetime, days
             )
             return []
