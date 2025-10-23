@@ -12,7 +12,18 @@ class AlertRepository:
             return alert
 
     @staticmethod
+    def get_by_hash(hash_id: str) -> Alert | None:
+        if not hash_id:
+            return None
+        with get_session() as session:
+            return session.execute(
+                select(Alert).where(Alert.id == hash_id)
+            ).scalar_one_or_none()
+
+    @staticmethod
     def get_by_url(url: str) -> Alert | None:
+        if not url:
+            return None
         with get_session() as session:
             return session.execute(
                 select(Alert).where(Alert.url == url)
