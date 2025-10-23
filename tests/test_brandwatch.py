@@ -33,20 +33,5 @@ class TestBrandwatch(unittest.TestCase):
         exact = [m for m in mentions if m.get("url") == self.url or m.get("insightsUrl") == self.url]
         self.assertTrue(exact, "Nenhuma menção com a URL exata localizada no período informado.")
 
-        print("found      : True")
-        for mention in exact:
-            print("guid       :", mention.get("guid"))
-            print("resource   :", mention.get("resourceType"))
-            print("pageType   :", mention.get("pageType"))
-            print("date       :", mention.get("date"))
-            print("queryId    :", mention.get("queryId"))
-            print("queryName  :", mention.get("queryName"))
-            print("url        :", mention.get("url"))
-            cats = BrandwatchClient.extract_categories(mention)
-            names = [c.get("name") for c in cats.get("categoryDetails")]
-            print("categories :", cats.get("categories"))
-            print("cat_names  :", names)
-            print("cat_metrics:", cats.get("categoryMetrics"))
-
 if __name__ == "__main__":
     unittest.main()
