@@ -1,6 +1,6 @@
 import os
 import pytest
-from app.services.email_service import EmailService
+from app.infra.email_manager import EmailManager
 from dotenv import load_dotenv
 
 def test_send_email_with_template():
@@ -39,8 +39,8 @@ def test_send_email_with_template():
 
     subject = f"Alerta de Nível {context['NIVEL']} - {context['TITULO_POSTAGEM']}"
 
-    email_service = EmailService()
+    email_manager = EmailManager()
     try:
-        email_service.send_email(sender, subject, template)
+        email_manager.send_email(sender, subject, template)
     except Exception as e:
         pytest.fail(f"Falha ao enviar e-mail: {e}")
