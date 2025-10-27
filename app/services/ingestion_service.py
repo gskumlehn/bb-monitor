@@ -2,6 +2,11 @@ from app.infra.google_sheets import GoogleSheets
 from app.constants.ingestion_constants import IngestionConstants
 from app.custom_utils.date_utils import DateUtils
 from app.services.alert_service import AlertService
+from app.enums.alert_type import AlertType
+from app.enums.criticality_level import CriticalityLevel
+from app.enums.mailing_status import MailingStatus
+from app.enums.involved_variables import InvolvedVariables
+from app.enums.stakeholders import Stakeholders
 import logging
 import pandas as pd
 from typing import List, Sequence, Any
@@ -67,19 +72,31 @@ class IngestionService:
             delivery_dt = None
 
         alert_data = {
-            "mailing_status": table_row.get("Controle de Envio"),
-            "date": date_str,
-            "time": time_str,
+            "mailing_status": MailingStatus(table_row.get("Enviado ao Cliente?").strip()),
             "delivery_datetime": delivery_dt,
-            "alert_types": table_row.get("Tipo"),
-            "criticality_level": table_row.get("Nível de Criticidade"),
-            "profile_or_portal": table_row.get("@ do perfil ou Nome do Portal"),
-            "url": table_row.get("Link"),
-            "title": table_row.get("Título"),
-            "alert_text": table_row.get("Alerta (Texto)"),
-            "involved_variables": table_row.get("Variáveis Envolvidas"),
-            "stakeholders": table_row.get("Stakeholders"),
-            "history": table_row.get("Historico"),
+            "alert_types": AlertType.values_csv_to_type_list(table_row.get("Tipo").strip()),
+            "criticality_level": CriticalityLevel(table_row.get("Nível de Criticidade").strip()),
+            "profiles_or_portals": self.parse_list_field(table_row.get("@ do perfil ou Nome do Portal")),
+            "urls": self.parse_list_field(table_row.get("Link")),
+            "title": table_row.get("Título").strip(),
+            "alert_text": table_row.get("Alerta (Texto)").strip(),
+            "involved_variables": InvolvedVariables.values_csv_to_type_list(table_row.get("Variáveis Envolvidas").strip()),
+            "stakeholders": Stakeholders.values_csv_to_type_list(table_row.get("Stakeholders").strip()),
+            "history": table_row.get("Historico").strip() if table_row.get("Historico") else None,
         }
 
         return alert_data
+
+    @staticmethod
+    def parse_list_field(value) -> list[str]:
+        if value is None:
+            return []
+        if isinstance(value, list):
+            return [v.strip() for v in value if isinstance(v, str) and v.strip()]
+        if isinstance(value, str):
+            if "\r\n" in value or "\n" in value:
+                parts = [p.strip() for p in value.splitlines() if p.strip()]
+                if parts:
+                    return parts
+            return [p.strip() for p in value.split(",") if p.strip()]
+        return []
