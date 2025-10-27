@@ -17,7 +17,7 @@ class ErrorMessages:
         "Alert.involvedVariablesInvalid": "involved_variables deve ser uma lista de valores válidos de InvolvedVariables, recebido: {value}",
         "Alert.stakeholdersInvalid": "stakeholders deve ser uma lista de valores válidos de Stakeholders, recebido: {value}",
         "Alert.urlsDuplicate": "O alerta com a mesma lista de URLs já foi ingerido.",
-        "Mailing.emailEmpty": "Email não pode ser vazio.",
-        "Mailing.emailInvalid": "Formato do email é inválido.",
-        "Mailing.emailDomainInvalid": "Domínio do email não é permitido",
+        "Mailing.email.empty": "Email não pode ser vazio.",
+        "Mailing.email.invalid": "Formato do email é inválido.",
+        "Mailing.email.domain.invalid": "Domínio do email não é permitido",
     }
