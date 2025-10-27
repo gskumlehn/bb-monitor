@@ -17,9 +17,16 @@ class AlertService:
 
     def _validate_required_fields(self, alert_data: dict):
         required_fields = [
-            "urls", "title", "delivery_datetime", "mailing_status",
-            "criticality_level", "alert_types", "profiles_or_portals", "alert_text"
+            "urls",
+            "title",
+            "delivery_datetime",
+            "mailing_status",
+            "criticality_level",
+            "alert_types",
+            "profiles_or_portals",
+            "alert_text"
         ]
+
         missing_fields = [field for field in required_fields if field not in alert_data or not alert_data[field]]
         if missing_fields:
             raise ValueError(ErrorMessages.model["Alert.missingFields"].format(fields=", ".join(missing_fields)))
