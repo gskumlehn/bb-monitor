@@ -5,17 +5,16 @@ class IngestionConstants:
     START_COL = "A"
     END_COL = "L"
     EXPECTED_COLUMNS = [
-        "Controle de Envio",
+        "Enviado ao Cliente?",
         "Data de entrega",
         "Horário",
         "Tipo",
-        "Nível de Criticidade",
         "@ do perfil ou Nome do Portal",
         "Link",
         "Título",
         "Alerta (Texto)",
+        "Nível de Criticidade",
         "Variáveis Envolvidas em Consideração para o nível",
         "Stakeholders",
         "Historico"
     ]
-
