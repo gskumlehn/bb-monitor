@@ -23,18 +23,18 @@ class TestGoogleSheets(unittest.TestCase):
 
     def test_first_row_matches_expected(self):
         expected_first_row = [
-            "Enviado",
-            "16/10/2025",
-            "16:30",
-            "Imprensa, Rede Social",
-            "Nível 3",
-            "Portal G1",
-            "https://g1.globo.com/mg/minas-gerais/noticia/2025/10/09/vereadores-de-bh-vao-ao-ccbb-com-guardas-e-pms-e-cobram-fechamento-de-exposicao.ghtml",
-            "“Vereadores de BH vão ao CCBB com guardas e PMs e cobram fechamento de exposição”",
-            "Hoje (09), às 03h01, o portal G1 Minas Gerais que recebe 4 milhões de visitas/dia e com um alcance de 2.625 contas, publicou: “Vereadores de BH vão ao CCBB com guardas e PMs e cobram fechamento de exposição”. A exposição \"Fullgás\" traz obras que abordam o período do fim da ditadura militar. As alegadas cenas de nudez e sexo, são tidas como impróprias pelos parlamentares. \n\nNas redes sociais, às 06h51, o perfil no X Ricardo Carlini @carlinibh  tweetou: “Vereadores exigem reclassificação indicativa em exposição no CCBB”. A publicação, até o momento, possui 23 visualizações, com alcance de 11.822 contas e o perfil conta com pouco mais de 50 mil seguidores.\nOutro perfis como Itatiaia @Itatiaia também veicularam a notícia às 08h46 com o título: “CCBB BH se posiciona após vereadores acionarem a polícia para reclamar de exposição Clique e leia mais”. A publicação, até o momento, possui 1.618 visualizações, com alcance de 47.529 contas e o perfil conta com pouco mais de 1 milhão de seguidores.",
-            "Tema crítico/sensível: Tema sociocultural/político envolvendo o CCBB.\nEmissor: Publicação por pelo menos um veículo relevante; Grupo de acessos A; Cita BB no título; Mega-influenciador ou celebridade; Perfil relevante ou Top Voice; Traz imagem ou vídeo associado ao BB.\nRepercussão: Tempo de exposição acima de 24h.",
-            "Imprensa / Jornalistas\r\nAtores políticos / órgãos fiscalizadores",
-            "07/10/2025 Nível 1\nNas redes sociais, hoje (08), às 16h31 o perfil @itatiaia(https://x.com/itatiaia/status/1976007616393511108) , publicou: \"Vereadores acionam a polícia e pedem interrupção de exposição no CCBB, em BH Clique e leia mais 👇. Junto ao link da matéria completa (https://www.itatiaia.com.br/cidades/vereadores-acionam-a-policia-e-pedem-interrupcao-de-exposicao-no-ccbb-em-bh) A publicação, até o momento, tem 514 visualizações e o perfil conta com um pouco mais de 1,2 milhões seguidores, com alcance até o momento de 47.529 contas."
+            "SIM",
+            "1/10/2025",
+            "08:55",
+            "Rede Social",
+            "@EInvestidor",
+            "https://x.com/EInvestidor/status/1973329546863644676",
+            "Hoje de manhã, (01) às 07h10, o perfil de E-Investidor @EInvestidor, (https://x.com/EInvestidor/status/1973329546863644676?ref_src=twsrc%5Etfw%7Ctwcamp%5Etweetembed%7Ctwterm%5E1973329546863644676%7Ctwgr%5E011dedc8c55992bb9e377e52c0f21464bc90331d%7Ctwcon%5Es1_&ref_url=https%3A%2F%2Fapp.brandwatch.com%2Fproject%2F1998335642%2Fdashboards%2F1909249 )  tweetou: BB Seguridade (BBSE3): Ativa reduz preço-alvo da ação; veja motivos. Até o momento a publicação tem 244 visualizações e a página conta com 107.300 seguidores.",
+            "Nas redes sociais, hoje de manhã (01) às 05h40, o perfil de E-Investidor @EInvestidor, (https://x.com/EInvestidor/status/1973306897466814871?ref_src=twsrc%5Etfw%7Ctwcamp%5Etweetembed%7Ctwterm%5E1973306897466814871%7Ctwgr%5E011dedc8c55992bb9e377e52c0f21464bc90331d%7Ctwcon%5Es1_&ref_url=https%3A%2F%2Fapp.brandwatch.com%2Fproject%2F1998335642%2Fdashboards%2F1909249 )  tweetou: Quando o Banco do Brasil (BBAS3) voltará a pagar dividendos generosos? Empresa traça plano e analistas projetam prazo. Até o momento a publicação tem 429 visualizações e a página conta com 107.300 seguidores. NÍVEL DE CRITICIDADE: 0",
+            "Nível 1",
+            "Micro-Influenciador, Macro-Influenciador, >= 1 veículo relevante, Grupo B, Cita BB no Título, Publicador de Nicho",
+            "Imprensa/Jornalistas",
+            "Variáveis envolvidas:\nTema sensível: rebaixamento de preço-alvo de BBSE3 (impacto de mercado).\nEmissor/Meio: E-Investidor (mídia setorial de finanças; publicação em X/Twitter).\nEngajamento: 244 visualizações.\nAudiência do portal: 2.000.000 acessos/mês.\n"
         ]
 
         for i, value in enumerate(expected_first_row):
