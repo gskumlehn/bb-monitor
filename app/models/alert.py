@@ -25,9 +25,9 @@ class Alert(Base):
     _alert_types = Column("alert_types", ARRAY(String), nullable=False)
 
     profile_or_portal = Column(String(255), nullable=False)
-    title = Column(Text, nullable=False)
+    _titles = Column("titles", ARRAY(Text), nullable=False)
     alert_text = Column(Text, nullable=False)
-    url = Column(Text, nullable=False)
+    _urls = Column("urls", ARRAY(Text), nullable=False)
 
     _involved_variables = Column("involved_variables", ARRAY(String), nullable=True)
     _stakeholders = Column("stakeholders", ARRAY(String), nullable=True)
@@ -117,3 +117,27 @@ class Alert(Base):
     @stakeholders.expression
     def stakeholders(cls):
         return cls._stakeholders
+
+    @hybrid_property
+    def titles(self) -> list[str]:
+        return self._titles or []
+
+    @titles.setter
+    def titles(self, titles: list[str]):
+        self._titles = titles
+
+    @titles.expression
+    def titles(cls):
+        return cls._titles
+
+    @hybrid_property
+    def urls(self) -> list[str]:
+        return self._urls or []
+
+    @urls.setter
+    def urls(self, urls: list[str]):
+        self._urls = urls
+
+    @urls.expression
+    def urls(cls):
+        return cls._urls
