@@ -27,23 +27,23 @@ class AlertService:
     def _validate_enum_fields(self, alert_data: dict):
         mailing_status = alert_data.get("mailing_status")
         if not isinstance(mailing_status, MailingStatus):
-            raise ValueError(ErrorMessages.model["Alert.mailingStatus.invalid"].format(value=mailing_status))
+            raise ValueError(ErrorMessages.model["Alert.mailingStatus.invalid"])
 
         criticality_level = alert_data.get("criticality_level")
         if not isinstance(criticality_level, CriticalityLevel):
-            raise ValueError(ErrorMessages.model["Alert.criticalityLevel.invalid"].format(value=criticality_level))
+            raise ValueError(ErrorMessages.model["Alert.criticalityLevel.invalid"])
 
         alert_types = alert_data.get("alert_types", [])
         if not isinstance(alert_types, list) or not all(isinstance(item, AlertType) for item in alert_types):
-            raise ValueError(ErrorMessages.model["Alert.alertTypes.invalid"].format(value=alert_types))
+            raise ValueError(ErrorMessages.model["Alert.alertTypes.invalid"])
 
         involved_variables = alert_data.get("involved_variables", [])
         if involved_variables and (not isinstance(involved_variables, list) or not all(isinstance(item, InvolvedVariables) for item in involved_variables)):
-            raise ValueError(ErrorMessages.model["Alert.involvedVariables.invalid"].format(value=involved_variables))
+            raise ValueError(ErrorMessages.model["Alert.involvedVariables.invalid"])
 
         stakeholders = alert_data.get("stakeholders", [])
         if stakeholders and (not isinstance(stakeholders, list) or not all(isinstance(item, Stakeholders) for item in stakeholders)):
-            raise ValueError(ErrorMessages.model["Alert.stakeholders.invalid"].format(value=stakeholders))
+            raise ValueError(ErrorMessages.model["Alert.stakeholders.invalid"])
 
     def validate_alert_data(self, alert_data: dict):
         urls = alert_data.get("urls")
