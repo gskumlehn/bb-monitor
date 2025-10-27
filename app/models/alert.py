@@ -4,11 +4,14 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.ext.declarative import declarative_base
 from zoneinfo import ZoneInfo
 from datetime import datetime, timezone
+import uuid
 
 from app.enums.alert_type import AlertType
 from app.enums.criticality_level import CriticalityLevel
 from app.enums.mailing_status import MailingStatus
 from app.custom_utils.date_utils import DateUtils
+from app.enums.involved_variables import InvolvedVariables
+from app.enums.stakeholders import Stakeholders
 
 Base = declarative_base()
 
@@ -16,21 +19,20 @@ class Alert(Base):
     __tablename__ = "alert"
     __table_args__ = {"schema": "bb_monitor"}
 
-    id = Column(String(64), primary_key=True)
-    brandwatch_id = Column(String(255), nullable=True, unique=True)
+    id = Column(String(64), primary_key=True, default=lambda: str(uuid.uuid4()))
     _delivery_datetime = Column("delivery_datetime", TIMESTAMP, nullable=False)
 
     _mailing_status = Column("mailing_status", String(255), nullable=False)
-    _criticality_level = Column("criticality_level", String(255), nullable=False)
     _alert_types = Column("alert_types", ARRAY(String), nullable=False)
-
-    profile_or_portal = Column(String(255), nullable=False)
-    _titles = Column("titles", ARRAY(Text), nullable=False)
-    alert_text = Column(Text, nullable=False)
-    _urls = Column("urls", ARRAY(Text), nullable=False)
-
     _involved_variables = Column("involved_variables", ARRAY(String), nullable=True)
     _stakeholders = Column("stakeholders", ARRAY(String), nullable=True)
+    _criticality_level = Column("criticality_level", String(255), nullable=False)
+
+    title = Column(Text, nullable=False)
+    alert_text = Column(Text, nullable=False)
+    _profiles_or_portals = Column("profiles_or_portals", ARRAY(String), nullable=False)
+    _urls = Column("urls", ARRAY(Text), nullable=False)
+
     history = Column(Text, nullable=True)
 
     SP_TZ = ZoneInfo(DateUtils.BRAZIL_TZ)
@@ -95,40 +97,40 @@ class Alert(Base):
         return cls._alert_types
 
     @hybrid_property
-    def involved_variables(self) -> list[str]:
-        return self._involved_variables or []
+    def involved_variables(self) -> list[InvolvedVariables]:
+        return [InvolvedVariables.from_name(name) for name in self._involved_variables or []]
 
     @involved_variables.setter
-    def involved_variables(self, variables: list[str]):
-        self._involved_variables = variables
+    def involved_variables(self, variables: list[InvolvedVariables]):
+        self._involved_variables = [variable.name for variable in variables]
 
     @involved_variables.expression
     def involved_variables(cls):
         return cls._involved_variables
 
     @hybrid_property
-    def stakeholders(self) -> list[str]:
-        return self._stakeholders or []
+    def stakeholders(self) -> list[Stakeholders]:
+        return [Stakeholders.from_name(name) for name in self._stakeholders or []]
 
     @stakeholders.setter
-    def stakeholders(self, stakeholders: list[str]):
-        self._stakeholders = stakeholders
+    def stakeholders(self, stakeholders: list[Stakeholders]):
+        self._stakeholders = [stakeholder.name for stakeholder in stakeholders]
 
     @stakeholders.expression
     def stakeholders(cls):
         return cls._stakeholders
 
     @hybrid_property
-    def titles(self) -> list[str]:
-        return self._titles or []
+    def profiles_or_portals(self) -> list[str]:
+        return self._profiles_or_portals or []
 
-    @titles.setter
-    def titles(self, titles: list[str]):
-        self._titles = titles
+    @profiles_or_portals.setter
+    def profiles_or_portals(self, profiles_or_portals: list[str]):
+        self._profiles_or_portals = profiles_or_portals
 
-    @titles.expression
-    def titles(cls):
-        return cls._titles
+    @profiles_or_portals.expression
+    def profiles_or_portals(cls):
+        return cls._profiles_or_portals
 
     @hybrid_property
     def urls(self) -> list[str]:
