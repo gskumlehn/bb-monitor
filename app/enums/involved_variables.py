@@ -1,6 +1,7 @@
 from app.interfaces.enum_interface import EnumInterface
 
 class InvolvedVariables(EnumInterface):
+
     ONE_RELEVANT_VEHICLE = ">= 1 veículo relevante"
     THREE_RELEVANT_VEHICLES = "+3 veículos relevantes"
     GROUP_B = "Grupo B"

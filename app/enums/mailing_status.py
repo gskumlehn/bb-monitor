@@ -1,6 +1,7 @@
 from app.interfaces.enum_interface import EnumInterface
 
 class MailingStatus(EnumInterface):
-    NOT_SENT = "Não Enviado"
-    SENT = "Enviado"
+
+    NOT_SENT = "NÃO"
+    SENT = "SIM"
     EMAIL_SENT = "Email Enviado"
