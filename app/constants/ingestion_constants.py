@@ -14,7 +14,7 @@ class IngestionConstants:
         "Link",
         "Título",
         "Alerta (Texto)",
-        "Variáveis Envolvidas",
+        "Variáveis Envolvidas em Consideração para o nível",
         "Stakeholders",
         "Historico"
     ]
