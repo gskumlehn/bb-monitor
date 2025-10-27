@@ -1,15 +1,10 @@
 import os
 import pytest
 from app.infra.email_manager import EmailManager
-from dotenv import load_dotenv
 
 def test_send_email_with_template():
-    load_dotenv()
-
     sender = os.getenv("EMAIL_USER")
     base_url = os.getenv("BASE_URL")
-    assert sender is not None, "EMAIL_USER não está definido no .env"
-    assert base_url is not None, "BASE_URL não está definido no .env"
 
     context = {
         "BASE_URL": base_url,
@@ -27,7 +22,7 @@ def test_send_email_with_template():
         "DIRECTORY": "BB"
     }
 
-    template_path = "../app/templates/email-template.html"
+    template_path = "app/templates/email-template.html"
     with open(template_path, "r", encoding="utf-8") as template_file:
         template = template_file.read()
 
