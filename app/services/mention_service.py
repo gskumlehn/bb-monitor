@@ -1,87 +1,63 @@
-import logging
-from datetime import datetime
-from typing import Optional, List, Dict
-
-from app.custom_utils.date_utils import DateUtils
+from datetime import datetime, timedelta
+from typing import Optional, Dict
 from app.infra.brandwatch_client import BrandwatchClient
-from urllib.parse import urlparse, urlunparse
-
-logger = logging.getLogger(__name__)
-
+from app.custom_utils.date_utils import DateUtils
 
 class MentionService:
     def __init__(self):
-        self._bw = BrandwatchClient()
-        self.PAGE_SIZE = 100
-        self.MAX_PAGES = 10
+        self._client = BrandwatchClient()
 
     def fetch_mention_by_url(
             self,
             url: str,
-            end_datetime: datetime,
-            days: int = 7,
-            limit: int = 1
+            start_date: datetime,
+            end_date: datetime
     ) -> Optional[Dict]:
-        if not url or not end_datetime:
-            logger.warning("URL ou end_datetime não fornecidos")
-            return None
-
         try:
-            mentions = self.fetch_mentions_with_params(
-                filters={"url": url},
-                end_datetime=end_datetime,
-                days=days,
-                limit=limit,
-                page=1
-            )
+            filters = {
+                'startDate': DateUtils.to_iso_format(start_date),
+                'endDate': DateUtils.to_iso_format(end_date)
+            }
 
-            if not mentions:
-                mentions = self.fetch_mentions_with_params(
-                    filters={"originalUrl": url},
-                    end_datetime=end_datetime,
-                    days=days,
-                    limit=limit,
-                    page=1
-                )
-
-            if mentions:
-                if len(mentions) == 1:
-                    return mentions[0]
+            for mention in self._client.queries.iter_mentions(name=self._client.queryName, **filters):
+                if self._is_match(mention, url):
+                    return mention
 
             return None
+
         except Exception:
-            logger.exception("Erro ao buscar mention no Brandwatch para url=%s", url)
             return None
 
-    def _fetch_mention_by_url_paginated(
+    def fetch_mention_by_url_with_retry(
             self,
             url: str,
-            url_id: str,
-            end_datetime: datetime,
-            days: int,
-            page_size: int = 100
+            end_date: datetime,
+            max_days_back: int = 30,
+            interval: int = 2
     ) -> Optional[Dict]:
+        for start_offset in range(0, max_days_back, interval):
+            start_date = end_date - timedelta(days=start_offset + interval)
+            current_end_date = end_date - timedelta(days=start_offset)
+
+            mention = self.fetch_mention_by_url(
+                url=url,
+                start_date=start_date,
+                end_date=current_end_date
+            )
+            if mention:
+                return mention
+
         return None
 
-    def fetch_mentions_with_params(
-            self,
-            filters: Dict[str, str],
-            end_datetime: datetime,
-            days: int = 7,
-            limit: int = 100,
-    ) -> List[Dict]:
-        try:
-            start_dt = DateUtils.subtract_days(end_datetime, days=days)
-            mentions = self._bw.get_filtered_mentions(
-                start_datetime=start_dt,
-                end_datetime=end_datetime,
-                filters=filters or {},
-                limit=limit
-            )
-            return mentions or []
-        except Exception:
-            logger.exception(
-                "Erro ao buscar mentions no Brandwatch com filtros=%s end=%s days=%s",
-                filters, end_datetime, days
-            )
-            return []
+    def _is_match(self, mention: Dict, original_url: str) -> bool:
+        mention_url = mention.get('url', '')
+        mention_original_url = mention.get('originalUrl', '')
+        mention_thread_url = mention.get('threadURL', '')
+
+        if original_url in {mention_url, mention_original_url, mention_thread_url}:
+            return True
+
+        mention_url_clean = mention_url.split('?')[0].split('#')[0].rstrip('/') if mention_url else ''
+        original_url_clean = original_url.split('?')[0].split('#')[0].rstrip('/') if original_url else ''
+
+        return mention_url_clean == original_url_clean
