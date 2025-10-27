@@ -6,14 +6,25 @@ from app.enums.mailing_status import MailingStatus
 from app.enums.involved_variables import InvolvedVariables
 from app.enums.stakeholders import Stakeholders
 from app.constants.error_messages import ErrorMessages
+import uuid
 
 class AlertService:
 
     def save(self, alert_data: dict) -> Alert | None:
         self.validate_alert_data(alert_data)
-        alert = self.create_alert(alert_data)
+        alert = self.create(alert_data)
 
         return AlertRepository.save(alert)
+
+    def validate_alert_data(self, alert_data: dict):
+        self._validate_required_fields(alert_data)
+        self._validate_enum_fields(alert_data)
+
+        urls = alert_data.get("urls")
+        existing_alert = AlertRepository.get_by_urls(urls)
+        if existing_alert:
+            raise ValueError(ErrorMessages.model["Alert.urls.duplicate"])
+
 
     def _validate_required_fields(self, alert_data: dict):
         required_fields = [
@@ -52,18 +63,10 @@ class AlertService:
         if stakeholders and (not isinstance(stakeholders, list) or not all(isinstance(item, Stakeholders) for item in stakeholders)):
             raise ValueError(ErrorMessages.model["Alert.stakeholders.invalid"])
 
-    def validate_alert_data(self, alert_data: dict):
-        urls = alert_data.get("urls")
-        existing_alert = AlertRepository.get_by_urls(urls)
-        if existing_alert:
-            raise ValueError(ErrorMessages.model["Alert.urls.duplicate"])
-        self._validate_required_fields(alert_data)
-        self._validate_enum_fields(alert_data)
-
-    def create_alert(self, alert_data: dict) -> Alert:
+    def create(self, alert_data: dict) -> Alert:
         alert = Alert()
 
-
+        alert.id = str(uuid.uuid4())
         alert.title = alert_data.get("title")
         alert.delivery_datetime = alert_data.get("delivery_datetime")
         alert.mailing_status = alert_data.get("mailing_status")
@@ -74,5 +77,12 @@ class AlertService:
         alert.involved_variables = alert_data.get("involved_variables")
         alert.stakeholders = alert_data.get("stakeholders")
         alert.history = alert_data.get("history")
+        alert.urls = alert_data.get("urls")
 
         return alert
+
+    def delete_by_id(self, alert_id: str) -> None:
+        AlertRepository.delete_by_id(alert_id)
+
+    def get_by_id(self, alert_id: str) -> Alert | None:
+        return AlertRepository.get_by_id(alert_id)

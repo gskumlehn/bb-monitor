@@ -1,4 +1,5 @@
-from sqlalchemy import select
+from sqlalchemy import select, func, literal_column
+from sqlalchemy.sql import exists
 from app.models.alert import Alert
 from app.infra.bq_sa import get_session
 
@@ -14,6 +15,27 @@ class AlertRepository:
     @staticmethod
     def get_by_urls(urls: list[str]) -> Alert | None:
         with get_session() as session:
-            query = select(Alert).where(Alert._urls.overlap(urls))
+            # Corrigir para usar o nome correto da coluna 'urls'
+            query = (
+                select(Alert)
+                .where(
+                    exists(
+                        select(literal_column("1"))
+                        .select_from(func.unnest(Alert._urls).alias("urls"))
+                        .where(literal_column("urls").in_(urls))
+                    )
+                )
+            )
             result = session.execute(query).scalars().first()
             return result
+
+    @staticmethod
+    def delete_by_id(alert_id: str) -> None:
+        with get_session() as session:
+            session.query(Alert).filter_by(id=alert_id).delete()
+            session.commit()
+
+    @staticmethod
+    def get_by_id(alert_id: str) -> Alert | None:
+        with get_session() as session:
+            return session.query(Alert).filter_by(id=alert_id).first()

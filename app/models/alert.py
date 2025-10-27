@@ -102,7 +102,7 @@ class Alert(Base):
 
     @involved_variables.setter
     def involved_variables(self, variables: list[InvolvedVariables]):
-        self._involved_variables = [variable.name for variable in variables]
+        self._involved_variables = [variable.name for variable in variables] if variables else []
 
     @involved_variables.expression
     def involved_variables(cls):
@@ -114,7 +114,7 @@ class Alert(Base):
 
     @stakeholders.setter
     def stakeholders(self, stakeholders: list[Stakeholders]):
-        self._stakeholders = [stakeholder.name for stakeholder in stakeholders]
+        self._stakeholders = [stakeholder.name for stakeholder in stakeholders] if stakeholders else []
 
     @stakeholders.expression
     def stakeholders(cls):
