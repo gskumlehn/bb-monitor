@@ -11,12 +11,12 @@ class ErrorMessages:
 
     model = {
         "Alert.missingFields": "Os seguintes campos obrigatórios estão ausentes ou vazios: {fields}",
-        "Alert.mailingStatusInvalid": "mailing_status deve ser um valor válido de MailingStatus, recebido: {value}",
-        "Alert.criticalityLevelInvalid": "criticality_level deve ser um valor válido de CriticalityLevel, recebido: {value}",
-        "Alert.alertTypesInvalid": "alert_types deve ser uma lista de valores válidos de AlertType, recebido: {value}",
-        "Alert.involvedVariablesInvalid": "involved_variables deve ser uma lista de valores válidos de InvolvedVariables, recebido: {value}",
-        "Alert.stakeholdersInvalid": "stakeholders deve ser uma lista de valores válidos de Stakeholders, recebido: {value}",
-        "Alert.urlsDuplicate": "O alerta com a mesma lista de URLs já foi ingerido.",
+        "Alert.mailingStatus.invalid": "Status de envio inválido",
+        "Alert.criticalityLevel.invalid": "Nível de criticidade inválido",
+        "Alert.alertTypes.invalid": "Tipo de alerta inválido",
+        "Alert.involvedVariables.invalid": "Variável envolvida inválida",
+        "Alert.stakeholders.invalid": "Stakeholder inválido",
+        "Alert.urls.duplicate": "O alerta com a mesma lista de URLs já foi ingerido.",
         "Mailing.email.empty": "Email não pode ser vazio.",
         "Mailing.email.invalid": "Formato do email é inválido.",
         "Mailing.email.domain.invalid": "Domínio do email não é permitido",
