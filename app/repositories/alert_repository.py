@@ -12,19 +12,8 @@ class AlertRepository:
             return alert
 
     @staticmethod
-    def get_by_hash(hash_id: str) -> Alert | None:
-        if not hash_id:
-            return None
+    def get_by_urls(urls: list[str]) -> Alert | None:
         with get_session() as session:
-            return session.execute(
-                select(Alert).where(Alert.id == hash_id)
-            ).scalar_one_or_none()
-
-    @staticmethod
-    def get_by_url(url: str) -> Alert | None:
-        if not url:
-            return None
-        with get_session() as session:
-            return session.execute(
-                select(Alert).where(Alert.url == url)
-            ).scalar_one_or_none()
+            query = select(Alert).where(Alert._urls.overlap(urls))
+            result = session.execute(query).scalars().first()
+            return result
