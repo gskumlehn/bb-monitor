@@ -12,7 +12,7 @@ EMAIL_USER = os.getenv("EMAIL_USER")
 EMAIL_PASS = os.getenv("EMAIL_PASS")
 EMAIL_USE_TLS = os.getenv("EMAIL_USE_TLS", "true").lower() == "true"
 
-class EmailService:
+class EmailManager:
     def __init__(self, smtp_server=EMAIL_HOST, smtp_port=EMAIL_PORT, sender_email=EMAIL_USER, sender_password=EMAIL_PASS):
         self.smtp_server = smtp_server
         self.smtp_port = smtp_port
@@ -46,3 +46,4 @@ class EmailService:
                     server.quit()
                 except smtplib.SMTPServerDisconnected:
                     print("Servidor já desconectado.")
+
