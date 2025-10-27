@@ -1,10 +1,6 @@
-from datetime import datetime
-from typing import Dict, Any, Optional, List
-import os
-
 from bcr_api.bwproject import BWProject
 from bcr_api.bwresources import BWQueries
-from app.custom_utils.date_utils import DateUtils
+import os
 
 class BrandwatchClient:
 
@@ -17,22 +13,3 @@ class BrandwatchClient:
 
         self.queries = BWQueries(project)
         self.queryName = os.getenv("BW_QUERY_NAME")
-
-    def get_filtered_mentions(
-        self,
-        start_datetime: datetime,
-        end_datetime: datetime,
-        filters: Optional[Dict[str, Any]] = None,
-        limit: int = 100
-    ) -> List[Dict[str, Any]]:
-        start_iso = DateUtils.to_iso_format(start_datetime)
-        end_iso = DateUtils.to_iso_format(end_datetime)
-
-        results = self.queries.get_mentions(
-            name=self.queryName,
-            startDate=start_iso,
-            endDate=end_iso,
-            limit=limit,
-            **(filters or {})
-        )
-        return results or []

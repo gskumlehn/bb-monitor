@@ -1,15 +1,15 @@
 import unittest
 from datetime import datetime
-from app.services.mention_service import MentionService
+from app.services.brandwatch_service import BrandwatchService
 
-class TestMentionService(unittest.TestCase):
+class TestBrandwatchService(unittest.TestCase):
     def test_fetch_mention_by_url_with_retry(self):
-        mention_service = MentionService()
+        brandwatch_service = BrandwatchService()
 
         url = "https://g1.globo.com/ma/maranhao/noticia/2025/10/08/auxilio-emergencial-governo-notifica-26-mil-familias-no-ma-para-devolver-r-65-milhoes-recebidos-indevidamente.ghtml"
         end_date = datetime(2025, 10, 23)
 
-        mention = mention_service.fetch_mention_by_url_with_retry(
+        mention = brandwatch_service.fetch_mention_by_url_with_retry(
             url=url,
             end_date=end_date,
             max_days_back=30,
