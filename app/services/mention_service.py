@@ -2,10 +2,8 @@ from typing import Dict, Any, List
 from app.models.mention import Mention
 
 class MentionService:
+
     def create_mention(self, data: Dict[str, Any]) -> Mention:
-        """
-        Cria uma instância do modelo Mention a partir dos dados fornecidos.
-        """
         return Mention(
             url=data.get("url"),
             original_url=data.get("originalUrl"),
@@ -18,8 +16,3 @@ class MentionService:
             tags=data.get("tags", []),
         )
 
-    def create_mentions(self, data_list: List[Dict[str, Any]]) -> List[Mention]:
-        """
-        Cria uma lista de instâncias do modelo Mention a partir de uma lista de dados.
-        """
-        return [self.create_mention(data) for data in data_list]
