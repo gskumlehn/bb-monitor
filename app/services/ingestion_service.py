@@ -10,6 +10,8 @@ from app.enums.stakeholders import Stakeholders
 import logging
 import pandas as pd
 from typing import List, Sequence, Any
+import asyncio
+from concurrent.futures import ThreadPoolExecutor
 
 from app.services.mention_service import MentionService
 
@@ -21,10 +23,14 @@ class IngestionService:
         alert_dicts = self.fetchParsedData(row)
         alerts = self.saveAlerts(alert_dicts)
 
-        mention_service = MentionService()
-        for alert in alerts:
-            mention_service.save(alert)
+        executor = ThreadPoolExecutor(max_workers=1)
+        executor.submit(asyncio.run, self._trigger_mentions_creation(alerts))
 
+        return {"message": "Ingestão iniciada com sucesso.", "alerts": [alert.id for alert in alerts]}
+
+    async def _trigger_mentions_creation(self, alerts: List[Any]):
+        mention_service = MentionService()
+        tasks = [mention_service.save(alert) for alert in alerts]
 
     def fetchParsedData(self, row: int) -> List[dict]:
         table_data = self.fetchTableData(row)
