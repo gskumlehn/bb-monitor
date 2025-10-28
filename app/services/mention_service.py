@@ -1,4 +1,4 @@
-from typing import Dict, Any, List, Optional
+from typing import Dict, Any, List
 from app.models.mention import Mention
 from app.repositories.mention_repository import MentionRepository
 from app.services.brandwatch_service import BrandwatchService
