@@ -26,8 +26,8 @@ class MentionService:
     def create(self, data: Dict[str, Any]) -> Mention:
         mention = Mention()
 
-        mention.id = data.get("brandwatch_id"),
-        mention.alert_id=data.get("alert_id"),
-        mention.url=data.get("url"),
+        mention.id = data.get("id")
+        mention.alert_id = data.get("alert_id")
+        mention.url = data.get("url")
 
         return mention
