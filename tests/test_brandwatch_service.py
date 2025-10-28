@@ -6,11 +6,11 @@ class TestBrandwatchService(unittest.TestCase):
     def test_fetch_mention_by_url_with_retry(self):
         brandwatch_service = BrandwatchService()
 
-        url = "https://g1.globo.com/ma/maranhao/noticia/2025/10/08/auxilio-emergencial-governo-notifica-26-mil-familias-no-ma-para-devolver-r-65-milhoes-recebidos-indevidamente.ghtml"
+        urls = ["https://g1.globo.com/ma/maranhao/noticia/2025/10/08/auxilio-emergencial-governo-notifica-26-mil-familias-no-ma-para-devolver-r-65-milhoes-recebidos-indevidamente.ghtml"]
         end_date = datetime(2025, 10, 23)
 
-        mention = brandwatch_service.fetch_mention_by_url_with_retry(
-            url=url,
+        mention = brandwatch_service.fetch_mentions_by_urls_with_retry(
+            urls=urls,
             end_date=end_date,
             max_days_back=30,
             interval=20
