@@ -14,6 +14,8 @@ def ingest():
         result = ingestion_service.ingest(row)
 
         return jsonify(result), 200
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 400
     except Exception as e:
         return jsonify({"error": "Erro ao executar a ingestão.", "details": str(e)}), 500
 
