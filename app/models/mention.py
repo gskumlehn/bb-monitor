@@ -1,0 +1,12 @@
+from sqlalchemy.orm import declarative_base
+from sqlalchemy import Column, String, Integer, ForeignKey, Text
+
+Base = declarative_base()
+
+class Mention(Base):
+    __tablename__ = "mention"
+    __table_args__ = {"schema": "bb_monitor"}
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    alert_id = Column(String(64), ForeignKey("bb_monitor.alert.id"), nullable=False)
+    url = Column(Text, nullable=False)
