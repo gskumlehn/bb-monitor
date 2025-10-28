@@ -17,8 +17,8 @@ def create_app():
     app.config["PREFERRED_URL_SCHEME"] = "https"
     app.config['JSON_AS_ASCII'] = False
 
-    app.register_blueprint(mailing_bp, url_prefix="/mailing")
     app.register_blueprint(root_bp, url_prefix="/")
+    app.register_blueprint(mailing_bp, url_prefix="/mailing")
     app.register_blueprint(ingestion_bp, url_prefix="/ingestion")
     app.register_blueprint(email_bp, url_prefix="/email")
 
