@@ -1,4 +1,5 @@
 import os
+import re
 from flask import render_template
 from app.enums.directorate_codes import DirectorateCode
 from app.infra.email_manager import EmailManager
@@ -6,10 +7,17 @@ from app.infra.email_manager import EmailManager
 class EmailService:
 
     def linkify(self, text: str) -> str:
+        if not text:
+            return ""
         parts = text.split(" ")
+        pattern = re.compile(r'(https?://[^\s\)\]\}\,;:]+)')
         for i, token in enumerate(parts):
-            if token.startswith("https://") or token.startswith("http://"):
-                parts[i] = f'<a href="{token}" style="display: inline-block;">{token}</a>'
+            if "http://" in token or "https://" in token:
+                m = pattern.search(token)
+                if not m:
+                    continue
+                url = m.group(1)
+                parts[i] = f'<a href="{url}" style="display: inline-block;">{token}</a>'
         return " ".join(parts)
 
     def render_alert_html(self, alert, base_url: str) -> str:
