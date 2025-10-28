@@ -18,22 +18,18 @@ class EmailService:
             return key
         protected = re.sub(r'<a\b[^>]*?>.*?</a>', _protect_a, text, flags=re.IGNORECASE | re.DOTALL)
 
-        url_re = re.compile(r'https?://[^\s<\)\]\}\>,;:]+')
+        url_re = re.compile(r'(?P<open>[\(\[\{])?(?P<url>https?://[^\s<\)\]\}\>,;:]+)(?P<mid>\s*)?(?P<close>[\)\]\}])?')
 
         def _replace(m):
-            start, end = m.start(), m.end()
-            s = protected
-
-            pre = s[start-1] if start-1 >= 0 else ""
-            post = s[end] if end < len(s) else ""
-            pairs = {'(':')','[':']','{':'}','<':'>'}
-            url = m.group(0)
-
-            if pre in pairs and post == pairs[pre]:
-                visible = f"{pre}{url}{post}"
+            open_ch = m.group('open') or ""
+            url = m.group('url')
+            mid = m.group('mid') or ""
+            close_ch = m.group('close') or ""
+            if open_ch or close_ch:
+                visible = f"{open_ch}{url}{close_ch}"
                 return f'<a href="{url}" style="display: inline-block;">{visible}</a>'
             else:
-                return f'<a href="{url}" style="display: inline-block;">{url}</a>'
+                return f'<a href="{url}" style="display: inline-block;">{url}</a>{mid}'
 
         linked = url_re.sub(_replace, protected)
 
