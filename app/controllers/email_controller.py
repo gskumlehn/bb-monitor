@@ -15,7 +15,7 @@ def render_alert_email(alert_id):
 
     base_url = request.host_url.rstrip('/')
     profile = alert.profiles_or_portals[0]
-    email = os.environ("EMAIL_USER")
+    email = os.getenv("EMAIL_USER")
 
     context = {
         "BASE_URL": base_url,
