@@ -44,8 +44,33 @@ async function handleSubmit(e) {
 
         if (response.ok) {
             const data = await response.json();
-            showToast(data.message || 'Ingestão concluída com sucesso!', 'success');
+            showToast(data.message || 'Ingestão iniciada com sucesso!', 'success');
             startRowInput.value = '';
+
+            if (data.alerts && data.alerts.length > 0) {
+                const alertId = data.alerts[0];
+                try {
+                    const tplResp = await fetch(`/email/render/${encodeURIComponent(alertId)}`);
+                    if (tplResp.ok) {
+                        const html = await tplResp.text();
+
+                        let container = document.getElementById('emailPreviewContainer');
+                        if (!container) {
+                            container = document.createElement('div');
+                            container.id = 'emailPreviewContainer';
+                            container.style.marginTop = '20px';
+                            ingestForm.parentNode.insertBefore(container, ingestForm.nextSibling);
+                        }
+                        container.innerHTML = html;
+                    } else {
+                        // servidor retornou não-OK ao tentar renderizar template
+                        // não bloqueara fluxo principal; mostrar mensagem curta
+                        showToast('Alerta salvo, mas falha ao gerar preview do e-mail.', 'error');
+                    }
+                } catch (err) {
+                    showToast('Alerta salvo, mas falha ao gerar preview do e-mail.', 'error');
+                }
+            }
         } else {
             const contentType = response.headers.get('Content-Type');
             if (contentType && contentType.includes('application/json')) {
