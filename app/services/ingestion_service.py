@@ -11,6 +11,8 @@ import logging
 import pandas as pd
 from typing import List, Sequence, Any
 
+from app.services.mention_service import MentionService
+
 logger = logging.getLogger(__name__)
 
 class IngestionService:
@@ -18,7 +20,11 @@ class IngestionService:
     def ingest(self, row: int):
         alert_dicts = self.fetchParsedData(row)
         alerts = self.saveAlerts(alert_dicts)
-        return alerts
+
+        mention_service = MentionService()
+        for alert in alerts:
+            mention_service.save(alert)
+
 
     def fetchParsedData(self, row: int) -> List[dict]:
         table_data = self.fetchTableData(row)

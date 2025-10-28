@@ -8,7 +8,6 @@ class MentionService:
 
     def save(self, alert: Alert) -> List[Mention]:
         brandwatch_service = BrandwatchService()
-
         mentions_data = brandwatch_service.fetch_mentions_by_urls_with_retry(
             urls=alert.urls,
             end_date=alert.delivery_datetime
@@ -25,8 +24,10 @@ class MentionService:
 
 
     def create(self, data: Dict[str, Any]) -> Mention:
-        return Mention(
-            alert_id=data.get("alert_id"),
-            url=data.get("url"),
-            created_at=data.get("created_at")
-        )
+        mention = Mention()
+
+        mention.id = data.get("brandwatch_id"),
+        mention.alert_id=data.get("alert_id"),
+        mention.url=data.get("url"),
+
+        return mention
