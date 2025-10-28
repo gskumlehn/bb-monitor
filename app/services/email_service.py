@@ -1,29 +1,51 @@
 import os
 import re
 from flask import render_template
+from markupsafe import Markup
 from app.enums.directorate_codes import DirectorateCode
 from app.infra.email_manager import EmailManager
 
 class EmailService:
 
-    def linkify(self, text: str) -> str:
+    def linkify(self, text: str) -> Markup:
         if not text:
-            return ""
-        parts = text.split(" ")
-        pattern = re.compile(r'(https?://[^\s\)\]\}\,;:]+)')
-        for i, token in enumerate(parts):
-            if "http://" in token or "https://" in token:
-                m = pattern.search(token)
-                if not m:
-                    continue
-                url = m.group(1)
-                parts[i] = f'<a href="{url}" style="display: inline-block;">{token}</a>'
-        return " ".join(parts)
+            return Markup("")
 
-    def render_alert_html(self, alert, base_url: str = None) -> str:
+        a_tags = {}
+        def _protect_a(m):
+            key = f"__A_TAG_{len(a_tags)}__"
+            a_tags[key] = m.group(0)
+            return key
+        protected = re.sub(r'<a\b[^>]*?>.*?</a>', _protect_a, text, flags=re.IGNORECASE | re.DOTALL)
+
+        url_re = re.compile(r'https?://[^\s<\)\]\}\>,;:]+')
+
+        def _replace(m):
+            start, end = m.start(), m.end()
+            s = protected
+
+            pre = s[start-1] if start-1 >= 0 else ""
+            post = s[end] if end < len(s) else ""
+            pairs = {'(':')','[':']','{':'}','<':'>'}
+            url = m.group(0)
+
+            if pre in pairs and post == pairs[pre]:
+                visible = f"{pre}{url}{post}"
+                return f'<a href="{url}" style="display: inline-block;">{visible}</a>'
+            else:
+                return f'<a href="{url}" style="display: inline-block;">{url}</a>'
+
+        linked = url_re.sub(_replace, protected)
+
+        for key, val in a_tags.items():
+            linked = linked.replace(key, val)
+
+        return Markup(linked)
+
+    def render_alert_html(self, alert) -> str:
         profile = alert.profiles_or_portals[0]
         email = os.getenv("EMAIL_USER")
-        base_url_env = os.getenv("BASE_URL", "")  # sempre usar BASE_URL do env
+        base_url_env = os.getenv("BASE_URL", "")
 
         context = {
             "BASE_URL": base_url_env,
@@ -37,11 +59,11 @@ class EmailService:
 
         return render_template("email-template.html", **context)
 
-    def send_alert_email(self, alert, base_url: str = None) -> dict:
+    def send_alert_email(self, alert) -> dict:
         to_address = os.getenv("EMAIL_USER")
 
         subject = f"[RISCO DE REPUTAÇÃO BB] – Alerta de Repercussão Nível {str(alert.criticality_level.number)} - {alert.title}"
-        rendered_html = self.render_alert_html(alert)  # render usa BASE_URL do env
+        rendered_html = self.render_alert_html(alert)
 
         email_manager = EmailManager()
         try:
