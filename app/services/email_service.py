@@ -31,7 +31,7 @@ class EmailService:
             "TITULO_POSTAGEM": alert.title,
             "PERFIL_USUARIO": profile,
             "DESCRICAO_COMPLETA": self.linkify(alert.alert_text),
-            "DIRECTORY": DirectorateCode.FB.name,
+            "DIRECTORY": DirectorateCode.FB.name
         }
 
         return render_template("email-template.html", **context)
