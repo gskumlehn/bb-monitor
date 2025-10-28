@@ -34,10 +34,10 @@ class TestAlertService(unittest.TestCase):
         self.assertIsNotNone(db_alert)
         self.assertEqual(db_alert.title, alert_data["title"])
 
-        # Tentar salvar o mesmo alerta novamente e verificar duplicidade
-        with self.assertRaises(ValueError) as context:
-            self.service.save(alert_data)
-        self.assertEqual(str(context.exception), ErrorMessages.model["Alert.urls.duplicate"])
+        # Salvar novamente deve retornar o mesmo alerta (early return)
+        second_saved = self.service.save(alert_data)
+        self.assertIsNotNone(second_saved)
+        self.assertEqual(second_saved.id, saved_alert.id)
 
         self.service.delete_by_id(saved_alert.id)
 
@@ -56,9 +56,10 @@ class TestAlertService(unittest.TestCase):
         # Salva o primeiro alerta
         saved_alert = self.service.save(alert_data)
 
-        with self.assertRaises(ValueError) as context:
-            self.service.save(alert_data)
-        self.assertEqual(str(context.exception), ErrorMessages.model["Alert.urls.duplicate"])
+        # Segunda inserção deve retornar o mesmo alerta (early return)
+        second_saved = self.service.save(alert_data)
+        self.assertIsNotNone(second_saved)
+        self.assertEqual(second_saved.id, saved_alert.id)
 
         self.service.delete_by_id(saved_alert.id)
 

@@ -11,6 +11,12 @@ import uuid
 class AlertService:
 
     def save(self, alert_data: dict) -> Alert | None:
+        urls = alert_data.get("urls")
+        if urls:
+            existing_alert = AlertRepository.get_by_urls(urls)
+            if existing_alert:
+                return existing_alert
+
         self.validate_alert_data(alert_data)
         alert = self.create(alert_data)
 
@@ -19,12 +25,6 @@ class AlertService:
     def validate_alert_data(self, alert_data: dict):
         self._validate_required_fields(alert_data)
         self._validate_enum_fields(alert_data)
-
-        urls = alert_data.get("urls")
-        existing_alert = AlertRepository.get_by_urls(urls)
-        if existing_alert:
-            raise ValueError(ErrorMessages.model["Alert.urls.duplicate"])
-
 
     def _validate_required_fields(self, alert_data: dict):
         required_fields = [
