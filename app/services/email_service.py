@@ -20,12 +20,13 @@ class EmailService:
                 parts[i] = f'<a href="{url}" style="display: inline-block;">{token}</a>'
         return " ".join(parts)
 
-    def render_alert_html(self, alert, base_url: str) -> str:
+    def render_alert_html(self, alert, base_url: str = None) -> str:
         profile = alert.profiles_or_portals[0]
         email = os.getenv("EMAIL_USER")
+        base_url_env = os.getenv("BASE_URL", "")  # sempre usar BASE_URL do env
 
         context = {
-            "BASE_URL": base_url,
+            "BASE_URL": base_url_env,
             "EMAIL": email,
             "NIVEL": str(alert.criticality_level.number),
             "TITULO_POSTAGEM": alert.title,
@@ -36,11 +37,11 @@ class EmailService:
 
         return render_template("email-template.html", **context)
 
-    def send_alert_email(self, alert, base_url: str) -> dict:
+    def send_alert_email(self, alert, base_url: str = None) -> dict:
         to_address = os.getenv("EMAIL_USER")
 
         subject = f"[RISCO DE REPUTAÇÃO BB] – Alerta de Repercussão Nível {str(alert.criticality_level.number)} - {alert.title}"
-        rendered_html = self.render_alert_html(alert, base_url)
+        rendered_html = self.render_alert_html(alert)  # render usa BASE_URL do env
 
         email_manager = EmailManager()
         try:

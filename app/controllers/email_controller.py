@@ -10,9 +10,7 @@ def render_alert_email(alert_id):
     if not alert:
         abort(404, description="Alerta não encontrado")
 
-    base_url = request.host_url.rstrip('/')
-
-    rendered = EmailService().render_alert_html(alert, base_url)
+    rendered = EmailService().render_alert_html(alert)
     return rendered
 
 @email_bp.route("/send/<alert_id>", methods=["POST"])
@@ -21,10 +19,8 @@ def send_alert_email(alert_id):
     if not alert:
         abort(404, description="Alerta não encontrado")
 
-    base_url = request.host_url.rstrip('/')
-
     try:
-        result = EmailService().send_alert_email(alert, base_url)
+        result = EmailService().send_alert_email(alert)
         return jsonify(result), 200
     except Exception as e:
         abort(500, description=f"Falha ao enviar email: {str(e)}")
