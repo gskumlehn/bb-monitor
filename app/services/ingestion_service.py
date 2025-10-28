@@ -88,12 +88,57 @@ class IngestionService:
         alert_data["profiles_or_portals"] = self.parseListField(table_row.get("@ do perfil ou Nome do Portal"))
         alert_data["urls"] = self.parseListField(table_row.get("Link"))
         alert_data["title"] = table_row.get("Título", "").strip()
-        alert_data["alert_text"] = table_row.get("Alerta (Texto)", "").strip()
+        alert_data["alert_text"] = self.clean_alert_text(table_row.get("Alerta (Texto)"))
         alert_data["involved_variables"] = InvolvedVariables.values_csv_to_type_list(table_row.get("Variáveis Envolvidas", "").strip())
         alert_data["stakeholders"] = Stakeholders.values_csv_to_type_list(table_row.get("Stakeholders", "").strip())
         alert_data["history"] = table_row.get("Historico", "").strip() if table_row.get("Historico") else None
 
         return alert_data
+
+    def clean_alert_text(self, value) -> str:
+        if value is None:
+            return ""
+        text = str(value).strip()
+        if not text:
+            return ""
+
+        lines = text.splitlines()
+
+        first_idx = None
+        for idx, line in enumerate(lines):
+            if line.strip():
+                first_idx = idx
+                break
+
+        if first_idx is not None and lines[first_idx].strip().startswith("[RISCO DE REPUTAÇÃO BB]"):
+            del lines[first_idx]
+
+        while lines and not lines[0].strip():
+            del lines[0]
+
+        if not lines:
+            return ""
+
+        found_line_idx = None
+        for idx, line in enumerate(lines):
+            if line.strip() == "FutureBrand":
+                found_line_idx = idx
+                break
+
+        if found_line_idx is not None:
+            if found_line_idx == len(lines) - 2:
+                lines = lines[:found_line_idx]
+            else:
+                lines = lines[:found_line_idx]
+            return "\n".join([l.rstrip() for l in lines]).strip()
+
+        joined = "\n".join(lines)
+        pos = joined.find("FutureBrand")
+        if pos != -1:
+            joined = joined[:pos].rstrip()
+            return joined
+
+        return joined.strip() if 'joined' in locals() else "\n".join(lines).strip()
 
     def parseListField(self, value) -> list[str]:
         if value is None:
