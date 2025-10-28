@@ -25,16 +25,13 @@ class TestAlertService(unittest.TestCase):
             "alert_text": "Test alert text",
         }
 
-        # Salvar o alerta com sucesso
         saved_alert = self.service.save(alert_data)
         self.assertIsNotNone(saved_alert)
 
-        # Verifica se o alerta foi salvo no banco de dados usando o método do serviço
         db_alert = self.service.get_by_id(saved_alert.id)
         self.assertIsNotNone(db_alert)
         self.assertEqual(db_alert.title, alert_data["title"])
 
-        # Salvar novamente deve retornar o mesmo alerta (early return)
         second_saved = self.service.save(alert_data)
         self.assertIsNotNone(second_saved)
         self.assertEqual(second_saved.id, saved_alert.id)
