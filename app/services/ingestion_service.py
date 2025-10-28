@@ -113,11 +113,4 @@ class IngestionService:
 
     def saveAlert(self, alert_dict: dict) -> Any:
         alert_service = AlertService()
-        try:
-            return alert_service.save(alert_dict)
-        except ValueError as e:
-            logger.error(f"Erro de validação ao salvar alerta: {e}")
-            return None
-        except Exception:
-            logger.exception("Erro inesperado ao salvar alerta durante ingest")
-            return None
+        return alert_service.save(alert_dict)
