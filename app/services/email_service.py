@@ -1,12 +1,17 @@
 import os
-from typing import Optional
-
 from flask import render_template
-
 from app.enums.directorate_codes import DirectorateCode
 from app.infra.email_manager import EmailManager
 
 class EmailService:
+
+    def linkify(self, text: str) -> str:
+        parts = text.split(" ")
+        for i, token in enumerate(parts):
+            if token.startswith("https://") or token.startswith("http://"):
+                parts[i] = f'<a href="{token}" style="display: inline-block;">{token}</a>'
+        return " ".join(parts)
+
     def render_alert_html(self, alert, base_url: str) -> str:
         profile = alert.profiles_or_portals[0]
         email = os.getenv("EMAIL_USER")
@@ -17,7 +22,7 @@ class EmailService:
             "NIVEL": str(alert.criticality_level.number),
             "TITULO_POSTAGEM": alert.title,
             "PERFIL_USUARIO": profile,
-            "DESCRICAO_COMPLETA": alert.alert_text,
+            "DESCRICAO_COMPLETA": self.linkify(alert.alert_text),
             "DIRECTORY": DirectorateCode.FB.name,
         }
 

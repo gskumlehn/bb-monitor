@@ -19,6 +19,6 @@ def ingest():
     except Exception as e:
         return jsonify({"error": "Erro ao executar a ingestão.", "details": str(e)}), 500
 
-@ingestion_bp.route("/ui", methods=["GET"])
+@ingestion_bp.get("/ui")
 def index():
     return render_template("ingestion.html")
