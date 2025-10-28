@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, ARRAY, Text
+from sqlalchemy import Column, String, ARRAY, Text
 from sqlalchemy_bigquery import TIMESTAMP
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.ext.declarative import declarative_base
