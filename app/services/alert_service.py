@@ -7,24 +7,45 @@ from app.enums.involved_variables import InvolvedVariables
 from app.enums.stakeholders import Stakeholders
 from app.constants.error_messages import ErrorMessages
 import uuid
+from typing import Optional
 
 class AlertService:
 
-    def save(self, alert_data: dict) -> Alert | None:
+    def save(self, alert_data: dict) -> Alert:
+        self.validate_alert_data(alert_data, check_duplicate=True)
+        alert = self.create(alert_data)
+        return AlertRepository.save(alert)
+
+    def update(self, alert_id: str, alert_data: dict) -> Optional[Alert]:
+        existing = AlertRepository.get_by_id(alert_id)
+        if not existing:
+            return None
+
+        self.validate_alert_data(alert_data, check_duplicate=False)
+        self._apply_alert_data(existing, alert_data)
+        return AlertRepository.save(existing)
+
+    def save_or_update(self, alert_data: dict) -> Alert:
         urls = alert_data.get("urls")
         if urls:
             existing_alert = AlertRepository.get_by_urls(urls)
             if existing_alert:
-                return existing_alert
+                updated = self.update(existing_alert.id, alert_data)
 
-        self.validate_alert_data(alert_data)
-        alert = self.create(alert_data)
+                return updated if updated is not None else existing_alert
 
-        return AlertRepository.save(alert)
+        return self.save(alert_data)
 
-    def validate_alert_data(self, alert_data: dict):
+    def validate_alert_data(self, alert_data: dict, check_duplicate: bool = True):
         self._validate_required_fields(alert_data)
         self._validate_enum_fields(alert_data)
+        if check_duplicate:
+            urls = alert_data.get("urls")
+            if urls:
+                existing = AlertRepository.get_by_urls(urls)
+                if existing:
+                    msg = ErrorMessages.model.get("Alert.duplicateUrls", "Alerta com mesmas URLs já existe.")
+                    raise ValueError(msg)
 
     def _validate_required_fields(self, alert_data: dict):
         required_fields = [
@@ -65,8 +86,11 @@ class AlertService:
 
     def create(self, alert_data: dict) -> Alert:
         alert = Alert()
-
         alert.id = str(uuid.uuid4())
+        self._apply_alert_data(alert, alert_data)
+        return alert
+
+    def _apply_alert_data(self, alert: Alert, alert_data: dict):
         alert.title = alert_data.get("title")
         alert.delivery_datetime = alert_data.get("delivery_datetime")
         alert.mailing_status = alert_data.get("mailing_status")
@@ -78,8 +102,6 @@ class AlertService:
         alert.stakeholders = alert_data.get("stakeholders")
         alert.history = alert_data.get("history")
         alert.urls = alert_data.get("urls")
-
-        return alert
 
     def delete_by_id(self, alert_id: str) -> None:
         AlertRepository.delete_by_id(alert_id)

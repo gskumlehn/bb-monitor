@@ -21,7 +21,7 @@ class IngestionService:
 
     def ingest(self, row: int):
         alert_dicts = self.fetchParsedData(row)
-        alerts = self.saveAlerts(alert_dicts)
+        alerts = self.saveOrUpdateAlerts(alert_dicts)
 
         executor = ThreadPoolExecutor(max_workers=1)
         executor.submit(asyncio.run, self._trigger_mentions_creation(alerts))
@@ -108,9 +108,9 @@ class IngestionService:
             return [p.strip() for p in value.split(",") if p.strip()]
         return []
 
-    def saveAlerts(self, alert_dicts: List[dict]) -> List[Any]:
-        return [saved_alert for alert_dict in alert_dicts if (saved_alert := self.saveAlert(alert_dict))]
+    def saveOrUpdateAlerts(self, alert_dicts: List[dict]) -> List[Any]:
+        return [saved_alert for alert_dict in alert_dicts if (saved_alert := self.saveOrUpdateAlert(alert_dict))]
 
-    def saveAlert(self, alert_dict: dict) -> Any:
+    def saveOrUpdateAlert(self, alert_dict: dict) -> Any:
         alert_service = AlertService()
-        return alert_service.save(alert_dict)
+        return alert_service.save_or_update(alert_dict)
