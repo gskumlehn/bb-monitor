@@ -3,15 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Alerta de Nível {{NIVEL}} - Monitoramento de Risco de Reputação</title>
+    <title>[RISCO DE REPUTAÇÃO BB] – Alerta de Repercussão Nível {{NIVEL}} - {{TITULO_POSTAGEM}}</title>
 </head>
 <body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f5f5f5;">
     <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background-color: #f5f5f5;">
         <tr>
             <td align="center" style="padding: 0;">
                 <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="600" style="max-width: 600px; background-color: #ffffff;">
-
-                    <!-- Cabeçalho Completo com Nível (variável) -->
                     <tr>
                         <td align="center" style="padding: 0;">
                             <img
@@ -31,17 +29,12 @@
                                 "{{TITULO_POSTAGEM}}"
                             </h2>
 
-                            <p style="margin: 0 0 15px; color: #666; font-size: 14px; line-height: 1.6; font-family: Arial, sans-serif;">
-                                <strong>Áreas gestoras:</strong> {{AREAS_GESTORAS}}<br>
-                                <strong>Áreas informadas:</strong> {{AREAS_INFORMADAS}}
-                            </p>
-
                             <p style="margin: 25px 0; color: #333; font-size: 15px; line-height: 1.7; text-align: justify; font-family: Arial, sans-serif;">
                                 {{DESCRICAO_COMPLETA}}
                             </p>
 
                             <div align="center" style="margin: 40px 0 30px;">
-                                <a href="{{LINK_DUVIDAS}}" style="display: inline-block;">
+                                <a href="{{BASE_URL}}/static/images/alerta-infografico.jpg" style="display: inline-block;">
                                     <img
                                         src="{{BASE_URL}}/static/images/botao-duvidas.png"
                                         alt="Tem dúvidas? Clique aqui!"
@@ -51,7 +44,7 @@
                             </div>
 
                             <p style="margin: 30px 0 0; color: #666; font-size: 13px; text-align: center; line-height: 1.6; font-family: Arial, sans-serif;">
-                                Envie e-mail para <a href="mailto:{{EMAIL_CONTATO}}" style="color: #4169E1; text-decoration: underline;">{{EMAIL_CONTATO}}</a> caso precise indicar outros colegas da sua Unidade para receber alertas de risco de reputação.
+                                Envie e-mail para <a href="mailto:dimac.riscoreputacao@bb.com.br" style="color: #4169E1; text-decoration: underline;">dimac.riscoreputacao@bb.com.br</a> caso precise indicar outros colegas da sua Unidade para receber alertas de risco de reputação.
                             </p>
                         </td>
                     </tr>
