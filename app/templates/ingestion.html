@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="{{ url_for('static', filename='favicon/favicon.png') }}" type="image/png">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/mailing.css') }}">
+    <title>Ingestão de Dados</title>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <h1>Ingestão de Dados</h1>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="container main-content">
+        <div class="content-wrapper">
+            <!-- Form Card -->
+            <div class="card form-card">
+                <div class="card-header">
+                    <h2>Iniciar Ingestão</h2>
+                </div>
+                <div class="card-content">
+                    <form id="ingestForm" class="form">
+                        <div class="form-group">
+                            <label for="start_row" class="label">Linha de Início</label>
+                            <input
+                                type="number"
+                                id="start_row"
+                                name="start_row"
+                                required
+                                class="input"
+                                min="1"
+                                placeholder="Digite a linha de início"
+                            >
+                        </div>
+                        <button type="submit" class="btn btn-primary" id="submitBtn">
+                            Iniciar Ingestão
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast"></div>
+
+    <script src="{{ url_for('static', filename='js/ingestion.js') }}"></script>
+</body>
+</html>
+

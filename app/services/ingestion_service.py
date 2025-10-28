@@ -15,17 +15,18 @@ logger = logging.getLogger(__name__)
 
 class IngestionService:
 
-    def ingest(self):
-        alert_dicts = self.fetchParsedData()
+    def ingest(self, row: int):
+        alert_dicts = self.fetchParsedData(row)
         alerts = self.saveAlerts(alert_dicts)
+        return alerts
 
-    def fetchParsedData(self) -> List[dict]:
-        table_data = self.fetchTableData()
+    def fetchParsedData(self, row: int) -> List[dict]:
+        table_data = self.fetchTableData(row)
         return [self.parseTableRowToAlertDict(row) for row in table_data]
 
-    def fetchTableData(self):
+    def fetchTableData(self, row: int):
         google_sheets = GoogleSheets()
-        dynamic_range = f"'{IngestionConstants.SHEET_NAME}'!{IngestionConstants.START_COL}33:{IngestionConstants.END_COL}"
+        dynamic_range = f"'{IngestionConstants.SHEET_NAME}'!{IngestionConstants.START_COL}{row}:{IngestionConstants.END_COL}{row}"
         raw_data = google_sheets.get_sheet_data_with_start_row(IngestionConstants.SPREADSHEET_ID, dynamic_range)
 
         if not raw_data:
@@ -68,17 +69,17 @@ class IngestionService:
             delivery_dt = None
 
         alert_data = {}
-        alert_data["mailing_status"] = MailingStatus(table_row.get("Enviado ao Cliente?").strip())
+        alert_data["mailing_status"] = MailingStatus(table_row.get("Enviado ao Cliente?", "").strip())
         alert_data["delivery_datetime"] = delivery_dt
-        alert_data["alert_types"] = AlertType.values_csv_to_type_list(table_row.get("Tipo").strip())
-        alert_data["criticality_level"] = CriticalityLevel(table_row.get("Nível de Criticidade").strip())
+        alert_data["alert_types"] = AlertType.values_csv_to_type_list(table_row.get("Tipo", "").strip())
+        alert_data["criticality_level"] = CriticalityLevel(table_row.get("Nível de Criticidade", "").strip())
         alert_data["profiles_or_portals"] = self.parseListField(table_row.get("@ do perfil ou Nome do Portal"))
         alert_data["urls"] = self.parseListField(table_row.get("Link"))
-        alert_data["title"] = table_row.get("Título").strip()
-        alert_data["alert_text"] = table_row.get("Alerta (Texto)").strip()
-        alert_data["involved_variables"] = InvolvedVariables.values_csv_to_type_list(table_row.get("Variáveis Envolvidas").strip())
-        alert_data["stakeholders"] = Stakeholders.values_csv_to_type_list(table_row.get("Stakeholders").strip())
-        alert_data["history"] = table_row.get("Historico").strip() if table_row.get("Historico") else None
+        alert_data["title"] = table_row.get("Título", "").strip()
+        alert_data["alert_text"] = table_row.get("Alerta (Texto)", "").strip()
+        alert_data["involved_variables"] = InvolvedVariables.values_csv_to_type_list(table_row.get("Variáveis Envolvidas", "").strip())
+        alert_data["stakeholders"] = Stakeholders.values_csv_to_type_list(table_row.get("Stakeholders", "").strip())
+        alert_data["history"] = table_row.get("Historico", "").strip() if table_row.get("Historico") else None
 
         return alert_data
 
