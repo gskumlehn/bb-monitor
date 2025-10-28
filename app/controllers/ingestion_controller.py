@@ -11,8 +11,9 @@ def ingest():
             return jsonify({"error": "O parâmetro 'row' é obrigatório."}), 400
 
         ingestion_service = IngestionService()
-        alerts = ingestion_service.ingest(row)
-        return jsonify({"message": "Ingestão concluída com sucesso.", "alerts": [alert.urls for alert in alerts]}), 200
+        result = ingestion_service.ingest(row)
+
+        return jsonify(result), 200
     except Exception as e:
         return jsonify({"error": "Erro ao executar a ingestão.", "details": str(e)}), 500
 
