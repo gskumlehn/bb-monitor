@@ -23,7 +23,7 @@ class AlertService:
 
         self.validate_alert_data(alert_data, check_duplicate=False)
         self._apply_alert_data(existing, alert_data)
-        return AlertRepository.save(existing)
+        return AlertRepository.update(existing)
 
     def save_or_update(self, alert_data: dict) -> Alert:
         urls = alert_data.get("urls")

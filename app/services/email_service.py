@@ -95,15 +95,5 @@ class EmailService:
 
     def validate_send(self, alert) -> dict:
         user = os.getenv("EMAIL_USER")
-        env_to = os.getenv("EMAIL_TO", "")
-        recipients = [r.strip() for r in env_to.split(",") if r.strip()] if env_to else []
-        if not recipients and user:
-            recipients = [user]
 
-        status = None
-        try:
-            status = alert.mailing_status.name
-        except Exception:
-            status = None
-
-        return {"status": status, "recipients": recipients}
+        return {"status": alert.mailing_status.name, "recipients": [user]}

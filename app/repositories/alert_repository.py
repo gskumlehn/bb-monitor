@@ -43,7 +43,7 @@ class AlertRepository:
     @staticmethod
     def update(alert: Alert) -> Alert | None:
         with get_session() as session:
-            session.add(alert)
+            merged = session.merge(alert)
             session.commit()
-            session.refresh(alert)
-            return alert
+            session.refresh(merged)
+            return merged

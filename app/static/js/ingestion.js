@@ -7,11 +7,6 @@ const toast = document.getElementById('toast');
 const previewContainer = document.getElementById('emailPreviewContainer');
 const sendBtnHeader = document.getElementById('sendEmailBtnHeader');
 
-const emailConfirmModal = document.getElementById('emailConfirmModal');
-const recipientsList = document.getElementById('recipientsList');
-const confirmSendBtn = document.getElementById('confirmSendBtn');
-const cancelSendBtn = document.getElementById('cancelSendBtn');
-
 let isLoading = false;
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -20,54 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (sendBtnHeader) {
         sendBtnHeader.addEventListener('click', handleSendClick);
     }
-    if (confirmSendBtn) {
-        confirmSendBtn.addEventListener('click', handleConfirmSend);
-    }
-    if (cancelSendBtn) {
-        cancelSendBtn.addEventListener('click', hideConfirmModal);
-    }
 });
-
-function showConfirmModal() {
-    if (emailConfirmModal) emailConfirmModal.style.display = 'flex';
-    if (sendBtnHeader) {
-        sendBtnHeader.disabled = true;
-    }
-}
-
-function hideConfirmModal() {
-    if (emailConfirmModal) emailConfirmModal.style.display = 'none';
-    if (recipientsList) recipientsList.innerHTML = '';
-    const existingCheckbox = document.getElementById('confirmSendCheckbox');
-    if (existingCheckbox) existingCheckbox.remove();
-    if (sendBtnHeader) {
-        sendBtnHeader.disabled = false;
-    }
-    if (confirmSendBtn) {
-        confirmSendBtn.disabled = false;
-        confirmSendBtn.textContent = 'Confirmar e enviar';
-    }
-}
-
-function cleanupAfterSend() {
-    const previewHeader = document.getElementById('emailPreviewHeader');
-    if (previewContainer) {
-        previewContainer.innerHTML = '';
-        delete previewContainer.dataset.startRow;
-        delete previewContainer.dataset.alertId;
-    }
-    if (previewHeader) {
-        previewHeader.style.display = 'none';
-        const previewStartRowEl = document.getElementById('previewStartRow');
-        const previewAlertIdEl = document.getElementById('previewAlertId');
-        if (previewStartRowEl) previewStartRowEl.textContent = '';
-        if (previewAlertIdEl) previewAlertIdEl.textContent = '';
-    }
-    if (sendBtnHeader) {
-        sendBtnHeader.style.display = 'none';
-        sendBtnHeader.disabled = true;
-    }
-}
 
 async function handleSendClick() {
     const alertId = previewContainer ? previewContainer.dataset.alertId : null;
@@ -78,112 +26,29 @@ async function handleSendClick() {
     try {
         sendBtnHeader.disabled = true;
         sendBtnHeader.textContent = 'Carregando...';
-        const resp = await fetch(`/email/recipients/${encodeURIComponent(alertId)}`);
+        const resp = await fetch(`/email/validate/${encodeURIComponent(alertId)}`);
         sendBtnHeader.textContent = 'Enviar email';
         if (!resp.ok) {
             sendBtnHeader.disabled = false;
-            showToast('Falha ao obter destinatários para confirmação.', 'error');
+            showToast('Falha ao obter dados de validação para confirmação.', 'error');
             return;
         }
         const data = await resp.json();
         const status = data && data.status ? data.status : null;
         const dests = Array.isArray(data.recipients) ? data.recipients : [];
-        if (recipientsList) {
-            let statusHtml = '';
-            if (dests.length === 0) {
-                recipientsList.innerHTML = statusHtml + '<li style="color:var(--muted-foreground);">Nenhum destinatário encontrado.</li>';
-            } else {
-                recipientsList.innerHTML = statusHtml + dests.map(d => `<li style="padding:6px 0; border-bottom:1px solid rgba(0,0,0,0.04);">${d}</li>`).join('');
-            }
-            const existingCheckbox = document.getElementById('confirmSendCheckbox');
-            if (existingCheckbox) existingCheckbox.remove();
 
-            if (status !== 'SENT') {
-                const msgMap = {
-                    'NOT_SENT': 'O alerta não foi enviado por Whatsapp, realmente deve enviar por email?',
-                    'EMAIL_SENT': 'O alerta já foi enviado por email, realmente deve enviar novamente?'
-                };
-                const message = msgMap[status] || 'Deseja realmente enviar este alerta por email?';
-                const checkboxHtml = `<div id="confirmSendCheckbox" style="margin:8px 0;"><label style="display:flex;align-items:center;gap:8px;"><input type="checkbox" id="confirmSendCheckboxInput"> <span>${message}</span></label></div>`;
-                recipientsList.insertAdjacentHTML('beforebegin', checkboxHtml);
-                const checkboxInput = document.getElementById('confirmSendCheckboxInput');
-                if (confirmSendBtn) {
-                    confirmSendBtn.disabled = true;
-                    confirmSendBtn.textContent = 'Confirmar e enviar';
-                }
-                if (checkboxInput) {
-                    checkboxInput.addEventListener('change', function () {
-                        if (confirmSendBtn) confirmSendBtn.disabled = !this.checked;
-                    });
-                }
-            } else {
-                if (confirmSendBtn) confirmSendBtn.disabled = false;
-            }
-        }
-        showConfirmModal();
-    } catch (err) {
-        if (sendBtnHeader) {
-            sendBtnHeader.disabled = false;
-            sendBtnHeader.textContent = 'Enviar email';
-        }
-        showToast('Erro ao consultar destinatários.', 'error');
-        console.error(err);
-    }
-}
-
-async function handleConfirmSend() {
-    const alertId = previewContainer ? previewContainer.dataset.alertId : null;
-    if (!alertId) {
-        showToast('Nenhum alerta selecionado para envio.', 'error');
-        hideConfirmModal();
-        return;
-    }
-    if (confirmSendBtn.disabled) return;
-
-    const prevText = confirmSendBtn.textContent;
-    confirmSendBtn.disabled = true;
-    confirmSendBtn.textContent = 'Enviando...';
-    if (sendBtnHeader) {
-        sendBtnHeader.disabled = true;
-        sendBtnHeader.textContent = 'Enviando...';
-    }
-
-    try {
-        const resp = await fetch(`/email/send/${encodeURIComponent(alertId)}`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({})
-        });
-        if (resp.ok) {
-            const resJson = await resp.json();
-            showToast(resJson.message || 'Email enviado com sucesso', 'success');
-            hideConfirmModal();
-            cleanupAfterSend();
+        if (typeof openConfirmModal === 'function') {
+            openConfirmModal({ status, recipients: dests }, alertId);
         } else {
-            const ct = resp.headers.get('Content-Type') || '';
-            if (ct.includes('application/json')) {
-                const err = await resp.json();
-                showToast(err.description || err.error || 'Falha ao enviar email', 'error');
-            } else {
-                const txt = await resp.text();
-                showToast('Falha ao enviar email', 'error');
-                console.error('Erro envio email:', txt);
-            }
-            if (sendBtnHeader) {
-                sendBtnHeader.disabled = false;
-                sendBtnHeader.textContent = 'Enviar email';
-            }
+            console.warn('openConfirmModal não encontrado: verifique se email_confirm.js foi carregado.');
         }
     } catch (err) {
-        showToast('Erro ao enviar email.', 'error');
-        console.error(err);
         if (sendBtnHeader) {
             sendBtnHeader.disabled = false;
             sendBtnHeader.textContent = 'Enviar email';
         }
-    } finally {
-        confirmSendBtn.disabled = false;
-        confirmSendBtn.textContent = prevText;
+        showToast('Erro ao consultar dados de validação.', 'error');
+        console.error(err);
     }
 }
 

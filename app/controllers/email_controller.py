@@ -25,10 +25,11 @@ def send_alert_email(alert_id):
     except Exception as e:
         abort(500, description=f"Falha ao enviar email: {str(e)}")
 
-@email_bp.route("/recipients/<alert_id>", methods=["GET"])
-def get_recipients_for_alert(alert_id):
+@email_bp.route("/validate/<alert_id>", methods=["GET"])
+def validate_recipients_for_alert(alert_id):
     alert = AlertService().get_by_id(alert_id)
     if not alert:
         abort(404, description="Alerta não encontrado")
+
     result = EmailService().validate_send(alert)
     return jsonify(result), 200

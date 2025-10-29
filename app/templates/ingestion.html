@@ -7,79 +7,67 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
     <title>Ingestão de Dados</title>
 </head>
-<body>
-    <header class="header">
-        <div class="container">
-            <div class="header-content">
-                <div class="header-left">
-                    <h1>Ingestão de Alertas - Geração de emails</h1>
+    <body>
+        <header class="header">
+            <div class="container">
+                <div class="header-content">
+                    <div class="header-left">
+                        <h1>Ingestão de Alertas - Geração de emails</h1>
+                    </div>
                 </div>
             </div>
-        </div>
-    </header>
+        </header>
 
-    <div class="container main-content">
-        <div class="content-wrapper">
-            <div class="card form-card">
-                <div class="card-header">
-                    <h2>Gerar email</h2>
+        <div class="container main-content">
+            <div class="content-wrapper">
+                <div class="card form-card">
+                    <div class="card-header">
+                        <h2>Gerar email</h2>
+                    </div>
+                    <div class="card-content">
+                        <form id="ingestForm" class="form">
+                            <div class="form-group">
+                                <label for="start_row" class="label">Número da linha da<a href="https://docs.google.com/spreadsheets/d/1yOD6bD_Syyv-zo5CtYXlCGMaWHIR12gUNzW1Zb7klbs/">Planilha</a></label>
+                                <input
+                                    type="number"
+                                    id="start_row"
+                                    name="start_row"
+                                    required
+                                    class="input"
+                                    min="2"
+                                    placeholder="Digite a linha de início"
+                                >
+                            </div>
+                            <button type="submit" class="btn btn-primary" id="submitBtn">
+                                Gerar email
+                            </button>
+                        </form>
+                    </div>
                 </div>
-                <div class="card-content">
-                    <form id="ingestForm" class="form">
-                        <div class="form-group">
-                            <label for="start_row" class="label">Número da linha da<a href="https://docs.google.com/spreadsheets/d/1yOD6bD_Syyv-zo5CtYXlCGMaWHIR12gUNzW1Zb7klbs/">Planilha</a></label>
-                            <input
-                                type="number"
-                                id="start_row"
-                                name="start_row"
-                                required
-                                class="input"
-                                min="1"
-                                placeholder="Digite a linha de início"
-                            >
+
+                <div id="emailPreviewArea" style="margin-top:20px;">
+                    <div id="emailPreviewHeader" class="email-preview-header" style="display:none;">
+                        <div class="preview-meta">
+                            Preview de email gerado pela linha: <strong id="previewStartRow"></strong>
+                            <span class="meta-sep">•</span>
+                            Alerta ID: <span id="previewAlertId"></span>
                         </div>
-                        <button type="submit" class="btn btn-primary" id="submitBtn">
-                            Iniciar Ingestão
-                        </button>
-                    </form>
-                </div>
-            </div>
+                        <div class="preview-actions">
+                            <button id="sendEmailBtnHeader" type="button" class="btn btn-primary" style="display:none;" disabled>
+                                Enviar email
+                            </button>
+                        </div>
+                    </div>
 
-            <div id="emailPreviewArea" style="margin-top:20px;">
-                <div id="emailPreviewHeader" class="email-preview-header" style="display:none;">
-                    <div class="preview-meta">
-                        Preview de email gerado pela linha: <strong id="previewStartRow"></strong>
-                        <span class="meta-sep">•</span>
-                        Alerta ID: <span id="previewAlertId"></span>
-                    </div>
-                    <div class="preview-actions">
-                        <button id="sendEmailBtnHeader" type="button" class="btn btn-primary" style="display:none;" disabled>
-                            Enviar email
-                        </button>
-                    </div>
+                    <div id="emailPreviewContainer"></div>
                 </div>
 
-                <div id="emailPreviewContainer"></div>
-            </div>
+        <!-- modal de confirmação -->
+        {% include '_email_confirm_modal.html' %}
 
-    <!-- modal de confirmação -->
-    <div id="emailConfirmModal" class="modal" style="display:none; position:fixed; inset:0; z-index:2000; align-items:center; justify-content:center;">
-        <div class="modal-overlay" style="position:absolute; inset:0; background:rgba(0,0,0,0.4);"></div>
-        <div class="modal-content" style="position:relative; background:var(--card-bg); padding:16px; border-radius:8px; width:90%; max-width:520px; box-shadow:0 8px 24px rgba(0,0,0,0.16);">
-            <h3 style="margin:0 0 8px 0; font-size:1.1rem;">Confirmar envio</h3>
-            <p style="margin:0 0 12px 0; color:var(--muted-foreground);">Os seguintes destinatários receberão este email:</p>
-            <div id="recipientsListContainer" style="max-height:220px; overflow:auto; margin-bottom:12px;">
-                <ul id="recipientsList" style="list-style:none; padding-left:0; margin:0;"></ul>
-            </div>
-            <div style="display:flex; gap:10px; justify-content:flex-end;">
-                <button id="cancelSendBtn" type="button" class="btn" style="background:transparent; border:1px solid var(--border);">Cancelar</button>
-                <button id="confirmSendBtn" type="button" class="btn btn-primary">Confirmar e enviar</button>
-            </div>
-        </div>
-    </div>
+        <div id="toast" class="toast"></div>
 
-    <div id="toast" class="toast"></div>
-
-    <script src="{{ url_for('static', filename='js/ingestion.js') }}"></script>
-</body>
+        <script src="{{ url_for('static', filename='js/ingestion.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/email_confirm.js') }}"></script>
+    </body>
 </html>
