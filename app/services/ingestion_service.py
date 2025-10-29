@@ -26,7 +26,7 @@ class IngestionService:
         # executor = ThreadPoolExecutor(max_workers=1)
         # executor.submit(asyncio.run, self._trigger_mentions_creation(alerts))
 
-        return {"message": "Ingestão iniciada com sucesso.", "alerts": [alert.id for alert in alerts]}
+        return {"message": "Alerta ingerido com sucesso.", "alerts": [alert.id for alert in alerts]}
 
     async def _trigger_mentions_creation(self, alerts: List[Any]):
         mention_service = MentionService()
