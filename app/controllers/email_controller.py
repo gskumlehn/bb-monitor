@@ -1,12 +1,13 @@
 from flask import Blueprint, request, abort, jsonify
 from app.services.alert_service import AlertService
 from app.services.email_service import EmailService
+from app.repositories.alert_repository import AlertRepository
 
 email_bp = Blueprint("email", __name__)
 
 @email_bp.route("/render/<alert_id>", methods=["GET"])
 def render_alert_email(alert_id):
-    alert = AlertService().get_by_id(alert_id)
+    alert = AlertRepository.get_by_id(alert_id)
     if not alert:
         abort(404, description="Alerta não encontrado")
 
@@ -15,7 +16,7 @@ def render_alert_email(alert_id):
 
 @email_bp.route("/send/<alert_id>", methods=["POST"])
 def send_alert_email(alert_id):
-    alert = AlertService().get_by_id(alert_id)
+    alert = AlertRepository.get_by_id(alert_id)
     if not alert:
         abort(404, description="Alerta não encontrado")
 
@@ -27,7 +28,7 @@ def send_alert_email(alert_id):
 
 @email_bp.route("/validate/<alert_id>", methods=["GET"])
 def validate_recipients_for_alert(alert_id):
-    alert = AlertService().get_by_id(alert_id)
+    alert = AlertRepository.get_by_id(alert_id)
     if not alert:
         abort(404, description="Alerta não encontrado")
 

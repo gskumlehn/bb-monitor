@@ -8,13 +8,20 @@ function showConfirmModal() {
 function hideConfirmModal() {
     const emailConfirmModal = document.getElementById('emailConfirmModal');
     const recipientsList = document.getElementById('recipientsList');
-    const existingCheckbox = document.getElementById('confirmSendCheckbox');
+    const wrapper = document.getElementById('confirmSendCheckbox');
+    const checkboxInput = document.getElementById('confirmSendCheckboxInput');
     const sendBtnHeader = document.getElementById('sendEmailBtnHeader');
     const confirmSendBtn = document.getElementById('confirmSendBtn');
 
-    if (emailConfirmModal) emailConfirmModal.style.display = 'none';
+    if (emailConfirmModal) {
+        emailConfirmModal.style.display = 'none';
+        delete emailConfirmModal.dataset.alertId;
+    }
     if (recipientsList) recipientsList.innerHTML = '';
-    if (existingCheckbox) existingCheckbox.remove();
+    if (wrapper) wrapper.style.display = 'none';
+    if (checkboxInput) {
+        checkboxInput.checked = false;
+    }
     if (sendBtnHeader) sendBtnHeader.disabled = false;
     if (confirmSendBtn) {
         confirmSendBtn.disabled = false;
@@ -24,56 +31,77 @@ function hideConfirmModal() {
 
 function openConfirmModal(data, alertId) {
     const recipientsList = document.getElementById('recipientsList');
+    const recipientsContainer = document.getElementById('recipientsListContainer');
     const confirmSendBtn = document.getElementById('confirmSendBtn');
+    const emailConfirmModal = document.getElementById('emailConfirmModal');
+    const wrapper = document.getElementById('confirmSendCheckbox');
+    const checkboxInput = document.getElementById('confirmSendCheckboxInput');
+    const messageSpan = document.getElementById('confirmSendCheckboxMessage');
 
-    if (!recipientsList) {
-        console.warn('recipientsList não encontrado no DOM.');
+    if (!recipientsList || !recipientsContainer || !emailConfirmModal || !wrapper || !checkboxInput || !messageSpan) {
+        console.warn('Elemento de modal/recipients/checkbox não encontrado no DOM.');
         showConfirmModal();
         return;
     }
 
-    const status = data && data.status ? data.status : null;
-    const dests = Array.isArray(data.recipients) ? data.recipients : [];
-
-    let statusHtml = '';
-    if (dests.length === 0) {
-        recipientsList.innerHTML = statusHtml + '<li style="color:var(--muted-foreground);">Nenhum destinatário encontrado.</li>';
-    } else {
-        recipientsList.innerHTML = statusHtml + dests.map(d => `<li style="padding:6px 0; border-bottom:1px solid rgba(0,0,0,0.04);">${d}</li>`).join('');
+    if (alertId) {
+        emailConfirmModal.dataset.alertId = alertId;
     }
 
-    const existingCheckbox = document.getElementById('confirmSendCheckbox');
-    if (existingCheckbox) existingCheckbox.remove();
+    const rawStatus = data && data.status ? data.status : null;
+    const status = rawStatus !== null && rawStatus !== undefined ? String(rawStatus).toUpperCase().trim() : null;
+    const dests = Array.isArray(data.recipients) ? data.recipients : [];
 
-    if (status !== 'SENT') {
+    if (dests.length === 0) {
+        recipientsList.innerHTML = '<li style="color:var(--muted-foreground);">Nenhum destinatário encontrado.</li>';
+    } else {
+        recipientsList.innerHTML = dests.map(d => `<li style="padding:6px 0; border-bottom:1px solid rgba(0,0,0,0.04);">${d}</li>`).join('');
+    }
+
+    checkboxInput.checked = false;
+    wrapper.style.display = 'none';
+
+    const needsConfirmation = (status === 'NOT_SENT' || status === 'EMAIL_SENT');
+
+    if (needsConfirmation) {
         const msgMap = {
             'NOT_SENT': 'O alerta não foi enviado por Whatsapp, realmente deve enviar por email?',
             'EMAIL_SENT': 'O alerta já foi enviado por email, realmente deve enviar novamente?'
         };
         const message = msgMap[status] || 'Deseja realmente enviar este alerta por email?';
-        const checkboxHtml = `<div id="confirmSendCheckbox" style="margin:8px 0;"><label style="display:flex;align-items:center;gap:8px;"><input type="checkbox" id="confirmSendCheckboxInput"> <span>${message}</span></label></div>`;
-        recipientsList.insertAdjacentHTML('beforebegin', checkboxHtml);
+        messageSpan.textContent = message;
 
+        wrapper.style.display = 'block';
         if (confirmSendBtn) {
             confirmSendBtn.disabled = true;
             confirmSendBtn.textContent = 'Confirmar e enviar';
         }
     } else {
+        wrapper.style.display = 'none';
         if (confirmSendBtn) confirmSendBtn.disabled = false;
     }
 
     showConfirmModal();
 }
 
-async function handleConfirmSend(alertId) {
+async function handleConfirmSend(passedAlertId) {
     const confirmSendBtn = document.getElementById('confirmSendBtn');
     const sendBtnHeader = document.getElementById('sendEmailBtnHeader');
+    const emailConfirmModal = document.getElementById('emailConfirmModal');
 
+    const alertId = passedAlertId || (emailConfirmModal && emailConfirmModal.dataset ? emailConfirmModal.dataset.alertId : null);
     if (!alertId) {
         showToast('Nenhum alerta selecionado para envio.', 'error');
         hideConfirmModal();
         return;
     }
+
+    const checkboxInput = document.getElementById('confirmSendCheckboxInput');
+    const wrapper = document.getElementById('confirmSendCheckbox');
+    if (wrapper && wrapper.style.display !== 'none' && checkboxInput && !checkboxInput.checked) {
+        return;
+    }
+
     if (confirmSendBtn && confirmSendBtn.disabled) return;
 
     const prevText = confirmSendBtn ? confirmSendBtn.textContent : 'Confirmar e enviar';
@@ -152,6 +180,7 @@ function cleanupAfterSend() {
 document.addEventListener('DOMContentLoaded', () => {
     const cancelBtn = document.getElementById('cancelSendBtn');
     const confirmBtn = document.getElementById('confirmSendBtn');
+    const checkboxInput = document.getElementById('confirmSendCheckboxInput');
 
     if (cancelBtn) {
         cancelBtn.addEventListener('click', (e) => {
@@ -169,11 +198,10 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    document.addEventListener('change', (ev) => {
-        const target = ev.target;
-        if (target && target.id === 'confirmSendCheckboxInput') {
-            const confirmBtn = document.getElementById('confirmSendBtn');
-            if (confirmBtn) confirmBtn.disabled = !target.checked;
-        }
-    });
+    if (checkboxInput) {
+        checkboxInput.addEventListener('change', function () {
+            const confirmBtnLocal = document.getElementById('confirmSendBtn');
+            if (confirmBtnLocal) confirmBtnLocal.disabled = !this.checked;
+        });
+    }
 });

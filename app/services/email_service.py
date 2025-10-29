@@ -95,5 +95,5 @@ class EmailService:
 
     def validate_send(self, alert) -> dict:
         user = os.getenv("EMAIL_USER")
-
+        print(alert.mailing_status.name)
         return {"status": alert.mailing_status.name, "recipients": [user]}

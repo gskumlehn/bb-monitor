@@ -34,7 +34,9 @@ async function handleSendClick() {
             return;
         }
         const data = await resp.json();
-        const status = data && data.status ? data.status : null;
+        const status = data && data.status !== undefined && data.status !== null
+            ? String(data.status).toUpperCase().trim()
+            : null;
         const dests = Array.isArray(data.recipients) ? data.recipients : [];
 
         if (typeof openConfirmModal === 'function') {
