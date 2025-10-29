@@ -3,7 +3,9 @@ import re
 from flask import render_template
 from markupsafe import Markup
 from app.enums.directorate_codes import DirectorateCode
+from app.enums.mailing_status import MailingStatus
 from app.infra.email_manager import EmailManager
+from app.services.alert_service import AlertService
 
 class EmailService:
 
@@ -11,7 +13,6 @@ class EmailService:
         if not text:
             return Markup("")
 
-        # normaliza sequências literais "\r\n", "\n", "\r" em quebras reais
         s = text.replace('\\r\\n', '\n').replace('\\n', '\n').replace('\\r', '\n')
 
         a_tags = {}
@@ -88,4 +89,21 @@ class EmailService:
         except Exception:
             raise
 
+        AlertService().update_mailing_status(alert, MailingStatus.EMAIL_SENT)
+
         return {"message": "Email enviado com sucesso", "to": to_address}
+
+    def validate_send(self, alert) -> dict:
+        user = os.getenv("EMAIL_USER")
+        env_to = os.getenv("EMAIL_TO", "")
+        recipients = [r.strip() for r in env_to.split(",") if r.strip()] if env_to else []
+        if not recipients and user:
+            recipients = [user]
+
+        status = None
+        try:
+            status = alert.mailing_status.name
+        except Exception:
+            status = None
+
+        return {"status": status, "recipients": recipients}

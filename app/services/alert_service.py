@@ -108,3 +108,7 @@ class AlertService:
 
     def get_by_id(self, alert_id: str) -> Alert | None:
         return AlertRepository.get_by_id(alert_id)
+
+    def update_mailing_status(self, alert: Alert, mailing_status: MailingStatus) -> Optional[Alert]:
+        alert.mailing_status = mailing_status
+        return AlertRepository.update(alert)

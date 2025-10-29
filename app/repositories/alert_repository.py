@@ -2,6 +2,7 @@ from sqlalchemy import select, func, literal_column
 from sqlalchemy.sql import exists
 from app.models.alert import Alert
 from app.infra.bq_sa import get_session
+from app.enums.mailing_status import MailingStatus
 
 class AlertRepository:
 
@@ -15,7 +16,6 @@ class AlertRepository:
     @staticmethod
     def get_by_urls(urls: list[str]) -> Alert | None:
         with get_session() as session:
-            # Corrigir para usar o nome correto da coluna 'urls'
             query = (
                 select(Alert)
                 .where(
@@ -39,3 +39,11 @@ class AlertRepository:
     def get_by_id(alert_id: str) -> Alert | None:
         with get_session() as session:
             return session.query(Alert).filter_by(id=alert_id).first()
+
+    @staticmethod
+    def update(alert: Alert) -> Alert | None:
+        with get_session() as session:
+            session.add(alert)
+            session.commit()
+            session.refresh(alert)
+            return alert

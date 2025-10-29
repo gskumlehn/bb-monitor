@@ -158,7 +158,6 @@ body {
     gap: 0.5rem;
 }
 
-/* garantindo que âncoras dentro do label herdem a cor do texto e fiquem apenas sublinhadas */
 .label a,
 .label a:link,
 .label a:visited,
@@ -166,6 +165,24 @@ body {
 .label a:active,
 .label a:focus {
     color: inherit;
+    text-decoration-line: underline;
+    text-decoration-color: currentColor;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 2px;
+    outline: none;
+}
+
+.card.form-card .label {
+    color: #000000;
+}
+
+.card.form-card .label a,
+.card.form-card .label a:link,
+.card.form-card .label a:visited,
+.card.form-card .label a:hover,
+.card.form-card .label a:active,
+.card.form-card .label a:focus {
+    color: #000000 !important;
     text-decoration-line: underline;
     text-decoration-color: currentColor;
     text-decoration-thickness: 1px;
@@ -366,12 +383,13 @@ body {
 }
 
 .email-preview-header {
-    background: #ffffff;
-    border: 1px solid var(--border);
+    background: var(--card-bg);
+    color: var(--foreground);
+    border: 2px solid rgba(72, 94, 253, 0.1);
     padding: 10px 14px;
     border-radius: 8px;
     margin-bottom: 12px;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     display: flex;
     align-items: center;
     justify-content: space-between;
