@@ -11,32 +11,53 @@ class EmailService:
         if not text:
             return Markup("")
 
+        # normaliza sequências literais "\r\n", "\n", "\r" em quebras reais
+        s = text.replace('\\r\\n', '\n').replace('\\n', '\n').replace('\\r', '\n')
+
         a_tags = {}
         def _protect_a(m):
             key = f"__A_TAG_{len(a_tags)}__"
             a_tags[key] = m.group(0)
             return key
-        protected = re.sub(r'<a\b[^>]*?>.*?</a>', _protect_a, text, flags=re.IGNORECASE | re.DOTALL)
+        protected = re.sub(r'<a\b[^>]*?>.*?</a>', _protect_a, s, flags=re.IGNORECASE | re.DOTALL)
 
-        url_re = re.compile(r'(?P<open>[\(\[\{])?(?P<url>https?://[^\s<\)\]\}\>,;:]+)(?P<mid>\s*)?(?P<close>[\)\]\}])?')
+        url_pattern = re.compile(r'https?://[^\s<>()\[\]{}]+', flags=re.IGNORECASE)
 
-        def _replace(m):
-            open_ch = m.group('open') or ""
-            url = m.group('url')
-            mid = m.group('mid') or ""
-            close_ch = m.group('close') or ""
-            if open_ch or close_ch:
-                visible = f"{open_ch}{url}{close_ch}"
-                return f'<a href="{url}" style="display: inline-block;">{visible}</a>'
-            else:
-                return f'<a href="{url}" style="display: inline-block;">{url}</a>{mid}'
+        result_parts = []
+        last_idx = 0
+        for m in url_pattern.finditer(protected):
+            start, end = m.start(), m.end()
 
-        linked = url_re.sub(_replace, protected)
+            consume_start = start
+            consume_end = end
+
+            open_ch = ""
+            if start - 1 >= 0 and protected[start - 1] in "([{":
+                open_ch = protected[start - 1]
+                consume_start = start - 1
+
+            close_ch = ""
+            if end < len(protected) and protected[end] in ")]}":
+                close_ch = protected[end]
+                consume_end = end + 1
+
+            result_parts.append(protected[last_idx:consume_start])
+
+            url = m.group(0)
+            visible = f"{open_ch}{url}{close_ch}"
+            anchor = f'<a href="{url}" style="display: inline-block;">{visible}</a>'
+            result_parts.append(anchor)
+
+            last_idx = consume_end
+
+        result_parts.append(protected[last_idx:])
+        linked = "".join(result_parts)
 
         for key, val in a_tags.items():
             linked = linked.replace(key, val)
 
-        return Markup(linked)
+        wrapped = f'<div style="white-space: pre-wrap;">{linked}</div>'
+        return Markup(wrapped)
 
     def render_alert_html(self, alert) -> str:
         profile = alert.profiles_or_portals[0]

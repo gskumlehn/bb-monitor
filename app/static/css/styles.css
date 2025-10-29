@@ -5,6 +5,13 @@
 }
 
 :root {
+    --font-family-base: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    --font-size-base: 16px;
+    --font-size-sm: 13px;
+    --font-size-md: 15px;
+    --font-weight-regular: 400;
+    --font-weight-semibold: 600;
+    --line-height-base: 1.4;
     --bb-yellow: #faf54d;
     --bb-blue: #485efd;
     --bb-cream: #fffef5;
@@ -17,10 +24,11 @@
 }
 
 body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-    background-color: var(--bb-cream);
+    font-family: var(--font-family-base);
+    font-size: var(--font-size-base);
+    line-height: var(--line-height-base);
     color: var(--foreground);
-    line-height: 1.5;
+    background-color: var(--bb-cream);
 }
 
 .container {
@@ -29,27 +37,26 @@ body {
     padding: 0 1rem;
 }
 
-/* Header */
 .header {
     background-color: var(--bb-yellow);
     border-bottom: 4px solid var(--bb-blue);
-    padding: 1rem 0; /* Reduzido para ajustar o tamanho do header */
+    padding: 1rem 0;
 }
 
 .header-content {
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: space-between;
     gap: 1rem;
 }
 
 .header-logo {
-    height: 40px; /* Ajustado para ficar proporcional ao header */
+    height: 40px;
     width: auto;
 }
 
 .header h1 {
-    font-size: 1.5rem; /* Ajustado para combinar com o tamanho do header */
+    font-size: 1.5rem;
     font-weight: bold;
     color: var(--bb-blue);
     margin: 0;
@@ -59,7 +66,29 @@ body {
     color: var(--bb-blue);
 }
 
-/* Main Content */
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+#sendEmailBtnHeader {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.95rem;
+    border-radius: 0.5rem;
+}
+
+#sendEmailBtn {
+    padding: 10px 18px;
+    border-radius: 4px;
+}
+
 .main-content {
     padding: 3rem 1rem;
 }
@@ -77,7 +106,6 @@ body {
     }
 }
 
-/* Cards */
 .card {
     background: var(--card-bg);
     border-radius: 0.75rem;
@@ -110,7 +138,6 @@ body {
     padding: 1.5rem;
 }
 
-/* Form */
 .form {
     display: flex;
     flex-direction: column;
@@ -131,6 +158,21 @@ body {
     gap: 0.5rem;
 }
 
+/* garantindo que âncoras dentro do label herdem a cor do texto e fiquem apenas sublinhadas */
+.label a,
+.label a:link,
+.label a:visited,
+.label a:hover,
+.label a:active,
+.label a:focus {
+    color: inherit;
+    text-decoration-line: underline;
+    text-decoration-color: currentColor;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 2px;
+    outline: none;
+}
+
 .input {
     width: 100%;
     padding: 0.75rem;
@@ -145,7 +187,6 @@ body {
     border-color: var(--bb-blue);
 }
 
-/* Buttons */
 .btn {
     padding: 1rem 1.5rem;
     border: none;
@@ -194,7 +235,6 @@ body {
     background-color: rgba(239, 68, 68, 0.1);
 }
 
-/* List */
 .list-container {
     max-height: 500px;
     overflow-y: auto;
@@ -251,7 +291,6 @@ body {
     gap: 0.5rem;
 }
 
-/* Info Card */
 .info-card {
     border-color: rgba(72, 94, 253, 0.2);
     background-color: rgba(255, 255, 255, 0.5);
@@ -276,7 +315,6 @@ body {
     color: var(--foreground);
 }
 
-/* Toast */
 .toast {
     position: fixed;
     bottom: 2rem;
@@ -305,12 +343,10 @@ body {
     color: white;
 }
 
-/* Icons */
 .icon {
     flex-shrink: 0;
 }
 
-/* Scrollbar */
 .list-container::-webkit-scrollbar {
     width: 8px;
 }
@@ -327,4 +363,80 @@ body {
 
 .list-container::-webkit-scrollbar-thumb:hover {
     background: var(--muted-foreground);
+}
+
+.email-preview-header {
+    background: #ffffff;
+    border: 1px solid var(--border);
+    padding: 10px 14px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    font-family: var(--font-family-base);
+    font-size: var(--font-size-md);
+    line-height: 1.25;
+}
+
+.email-preview-header .preview-meta {
+    font-size: var(--font-size-sm);
+    color: var(--foreground);
+    font-weight: var(--font-weight-regular);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.email-preview-header .preview-meta strong {
+    color: var(--bb-blue);
+    font-weight: var(--font-weight-semibold);
+    margin: 0 6px;
+}
+
+.email-preview-header .meta-sep {
+    margin: 0 8px;
+    color: var(--muted-foreground);
+}
+
+.preview-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.preview-actions .btn,
+#sendEmailBtnHeader {
+    font-family: var(--font-family-base);
+    font-size: var(--font-size-sm);
+    line-height: 1;
+    font-weight: var(--font-weight-semibold);
+    padding: 8px 12px;
+    border-radius: 8px;
+    min-height: 36px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    box-shadow: none;
+    transition: box-shadow 0.15s ease, transform 0.08s ease;
+}
+
+.preview-actions .btn:enabled,
+#sendEmailBtnHeader:enabled {
+    box-shadow: 0 4px 12px rgba(72, 94, 253, 0.12);
+}
+
+.preview-actions .btn:active,
+#sendEmailBtnHeader:active {
+    transform: translateY(1px);
+}
+
+.preview-actions .btn:disabled,
+#sendEmailBtnHeader:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    box-shadow: none;
 }

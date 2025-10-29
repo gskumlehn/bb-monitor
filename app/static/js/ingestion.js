@@ -1,70 +1,86 @@
-// API Base URL
 const API_BASE = '/ingestion';
 
-// DOM Elements
 const ingestForm = document.getElementById('ingestForm');
 const startRowInput = document.getElementById('start_row');
 const submitBtn = document.getElementById('submitBtn');
 const toast = document.getElementById('toast');
 const previewContainer = document.getElementById('emailPreviewContainer');
-const sendBtn = document.getElementById('sendEmailBtn');
+const sendBtnHeader = document.getElementById('sendEmailBtnHeader');
 
-// State
 let isLoading = false;
 
-// Initialize
 document.addEventListener('DOMContentLoaded', () => {
     ingestForm.addEventListener('submit', handleSubmit);
 
-    if (sendBtn) {
-        sendBtn.addEventListener('click', async () => {
-            const alertId = previewContainer ? previewContainer.dataset.alertId : null;
-            if (!alertId) {
-                showToast('Nenhum alerta selecionado para envio.', 'error');
-                return;
-            }
-            if (sendBtn.disabled) return;
-            sendBtn.disabled = true;
-            const prevText = sendBtn.textContent;
-            sendBtn.textContent = 'Enviando...';
-            try {
-                const resp = await fetch(`/email/send/${encodeURIComponent(alertId)}`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({})
-                });
-                if (resp.ok) {
-                    const resJson = await resp.json();
-                    showToast(resJson.message || 'Email enviado com sucesso', 'success');
-                } else {
-                    const ct = resp.headers.get('Content-Type') || '';
-                    if (ct.includes('application/json')) {
-                        const err = await resp.json();
-                        showToast(err.description || err.error || 'Falha ao enviar email', 'error');
-                    } else {
-                        const txt = await resp.text();
-                        showToast('Falha ao enviar email', 'error');
-                        console.error('Erro envio email:', txt);
-                    }
-                }
-            } catch (err) {
-                showToast('Erro ao enviar email.', 'error');
-                console.error(err);
-            } finally {
-                sendBtn.disabled = false;
-                sendBtn.textContent = prevText;
-            }
-        });
+    if (sendBtnHeader) {
+        sendBtnHeader.addEventListener('click', handleSendClick);
     }
 });
 
-// Handle form submission
+async function handleSendClick() {
+    const alertId = previewContainer ? previewContainer.dataset.alertId : null;
+    if (!alertId) {
+        showToast('Nenhum alerta selecionado para envio.', 'error');
+        return;
+    }
+    if (sendBtnHeader.disabled) return;
+
+    const prevText = sendBtnHeader.textContent;
+    sendBtnHeader.disabled = true;
+    sendBtnHeader.textContent = 'Enviando...';
+
+    try {
+        const resp = await fetch(`/email/send/${encodeURIComponent(alertId)}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({})
+        });
+        if (resp.ok) {
+            const resJson = await resp.json();
+            showToast(resJson.message || 'Email enviado com sucesso', 'success');
+        } else {
+            const ct = resp.headers.get('Content-Type') || '';
+            if (ct.includes('application/json')) {
+                const err = await resp.json();
+                showToast(err.description || err.error || 'Falha ao enviar email', 'error');
+            } else {
+                const txt = await resp.text();
+                showToast('Falha ao enviar email', 'error');
+                console.error('Erro envio email:', txt);
+            }
+        }
+    } catch (err) {
+        showToast('Erro ao enviar email.', 'error');
+        console.error(err);
+    } finally {
+        sendBtnHeader.disabled = false;
+        sendBtnHeader.textContent = prevText;
+    }
+}
+
 async function handleSubmit(e) {
     e.preventDefault();
 
     const startRow = startRowInput.value.trim();
 
-    // Validation
+    if (previewContainer) {
+        previewContainer.innerHTML = '';
+        delete previewContainer.dataset.startRow;
+        delete previewContainer.dataset.alertId;
+    }
+    const previewHeader = document.getElementById('emailPreviewHeader');
+    const previewStartRowEl = document.getElementById('previewStartRow');
+    const previewAlertIdEl = document.getElementById('previewAlertId');
+    if (previewHeader) {
+        previewHeader.style.display = 'none';
+    }
+    if (previewStartRowEl) previewStartRowEl.textContent = '';
+    if (previewAlertIdEl) previewAlertIdEl.textContent = '';
+    if (sendBtnHeader) {
+        sendBtnHeader.style.display = 'none';
+        sendBtnHeader.disabled = true;
+    }
+
     if (!startRow || isNaN(startRow) || startRow < 1) {
         showToast('Por favor, insira uma linha de início válida.', 'error');
         return;
@@ -96,36 +112,50 @@ async function handleSubmit(e) {
                     if (tplResp.ok) {
                         const html = await tplResp.text();
 
-                        const headerHtml = `<div style="margin-bottom:8px;font-size:14px;color:#333;">Preview de email gerado pela linha: <strong>${startRow}</strong></div>`;
-
                         if (!previewContainer) {
                             showToast('Preview container não encontrado.', 'error');
                             return;
                         }
 
+                        if (previewHeader && previewStartRowEl && previewAlertIdEl) {
+                            previewStartRowEl.textContent = startRow;
+                            previewAlertIdEl.textContent = alertId;
+                            previewHeader.style.display = '';
+                        }
+
                         previewContainer.dataset.startRow = startRow;
                         previewContainer.dataset.alertId = alertId;
-                        previewContainer.innerHTML = headerHtml + html;
+                        previewContainer.innerHTML = html;
 
-                        if (sendBtn) {
-                            sendBtn.style.display = ''; // mostrar
-                            sendBtn.disabled = false;
-                            sendBtn.textContent = 'Enviar email';
+                        const btnInPreview = previewContainer.querySelector('#sendEmailBtn');
+                        if (btnInPreview) btnInPreview.remove();
+
+                        if (sendBtnHeader) {
+                            sendBtnHeader.style.display = '';
+                            sendBtnHeader.disabled = false;
+                            sendBtnHeader.textContent = 'Enviar email';
                         }
                     } else {
                         showToast('Alerta salvo, mas falha ao gerar preview do e-mail.', 'error');
-                        if (sendBtn) {
-                            sendBtn.style.display = 'none';
+                        if (sendBtnHeader) {
+                            sendBtnHeader.style.display = 'none';
+                            sendBtnHeader.disabled = true;
                         }
+                        if (previewHeader) previewHeader.style.display = 'none';
                     }
                 } catch (err) {
                     showToast('Alerta salvo, mas falha ao gerar preview do e-mail.', 'error');
-                    if (sendBtn) {
-                        sendBtn.style.display = 'none';
+                    if (sendBtnHeader) {
+                        sendBtnHeader.style.display = 'none';
+                        sendBtnHeader.disabled = true;
                     }
+                    if (previewHeader) previewHeader.style.display = 'none';
                 }
             } else {
-                if (sendBtn) sendBtn.style.display = 'none';
+                if (sendBtnHeader) {
+                    sendBtnHeader.style.display = 'none';
+                    sendBtnHeader.disabled = true;
+                }
             }
         } else {
             const contentType = response.headers.get('Content-Type');
@@ -140,6 +170,12 @@ async function handleSubmit(e) {
     } catch (error) {
         showToast('Erro ao realizar a ingestão.', 'error');
         console.error('Erro:', error);
+        const previewHeader = document.getElementById('emailPreviewHeader');
+        if (previewHeader) previewHeader.style.display = 'none';
+        if (sendBtnHeader) {
+            sendBtnHeader.style.display = 'none';
+            sendBtnHeader.disabled = true;
+        }
     } finally {
         isLoading = false;
         submitBtn.disabled = false;
@@ -147,7 +183,6 @@ async function handleSubmit(e) {
     }
 }
 
-// Show toast notification
 function showToast(message, type = 'success') {
     toast.textContent = message;
     toast.className = `toast ${type} show`;
