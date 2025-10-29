@@ -9,6 +9,43 @@ from app.services.alert_service import AlertService
 
 class EmailService:
 
+    def render_alert_html(self, alert) -> str:
+        profile = alert.profiles_or_portals[0]
+        email = os.getenv("EMAIL_USER")
+        base_url_env = os.getenv("BASE_URL", "")
+
+        context = {
+            "BASE_URL": base_url_env,
+            "EMAIL": email,
+            "NIVEL": str(alert.criticality_level.number),
+            "TITULO_POSTAGEM": alert.title,
+            "PERFIL_USUARIO": profile,
+            "DESCRICAO_COMPLETA": self.linkify(alert.alert_text),
+            "DIRECTORY": DirectorateCode.FB.name
+        }
+
+        return render_template("email-template.html", **context)
+
+    def send_alert_email(self, alert) -> dict:
+        to_address = os.getenv("EMAIL_USER")
+
+        subject = f"[RISCO DE REPUTAÇÃO BB] – Alerta de Repercussão Nível {str(alert.criticality_level.number)} - {alert.title}"
+        rendered_html = self.render_alert_html(alert)
+
+        email_manager = EmailManager()
+        try:
+            email_manager.send_email(to_address, subject, rendered_html)
+        except Exception:
+            raise
+
+        AlertService().update_mailing_status(alert, MailingStatus.EMAIL_SENT)
+
+        return {"message": "Email enviado com sucesso", "to": to_address}
+
+    def validate_send(self, alert) -> dict:
+        user = os.getenv("EMAIL_USER")
+        return {"status": alert.mailing_status.name, "recipients": [user]}
+
     def linkify(self, text: str) -> Markup:
         if not text:
             return Markup("")
@@ -59,41 +96,3 @@ class EmailService:
 
         wrapped = f'<div style="white-space: pre-wrap;">{linked}</div>'
         return Markup(wrapped)
-
-    def render_alert_html(self, alert) -> str:
-        profile = alert.profiles_or_portals[0]
-        email = os.getenv("EMAIL_USER")
-        base_url_env = os.getenv("BASE_URL", "")
-
-        context = {
-            "BASE_URL": base_url_env,
-            "EMAIL": email,
-            "NIVEL": str(alert.criticality_level.number),
-            "TITULO_POSTAGEM": alert.title,
-            "PERFIL_USUARIO": profile,
-            "DESCRICAO_COMPLETA": self.linkify(alert.alert_text),
-            "DIRECTORY": DirectorateCode.FB.name
-        }
-
-        return render_template("email-template.html", **context)
-
-    def send_alert_email(self, alert) -> dict:
-        to_address = os.getenv("EMAIL_USER")
-
-        subject = f"[RISCO DE REPUTAÇÃO BB] – Alerta de Repercussão Nível {str(alert.criticality_level.number)} - {alert.title}"
-        rendered_html = self.render_alert_html(alert)
-
-        email_manager = EmailManager()
-        try:
-            email_manager.send_email(to_address, subject, rendered_html)
-        except Exception:
-            raise
-
-        AlertService().update_mailing_status(alert, MailingStatus.EMAIL_SENT)
-
-        return {"message": "Email enviado com sucesso", "to": to_address}
-
-    def validate_send(self, alert) -> dict:
-        user = os.getenv("EMAIL_USER")
-        print(alert.mailing_status.name)
-        return {"status": alert.mailing_status.name, "recipients": [user]}

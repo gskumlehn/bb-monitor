@@ -3,16 +3,14 @@
     <div class="modal-content" style="position:relative; background:var(--card-bg); padding:16px; border-radius:8px; width:90%; max-width:520px; box-shadow:0 8px 24px rgba(0,0,0,0.16);">
         <h3 style="margin:0 0 8px 0; font-size:1.1rem;">Confirmar envio</h3>
         <p style="margin:0 0 12px 0; color:var(--muted-foreground);">Os seguintes destinatários receberão este email:</p>
-
+        <div id="recipientsListContainer" style="max-height:220px; overflow:auto; margin-bottom:12px;">
+            <ul id="recipientsList" style="list-style:none; padding-left:0; margin:0;"></ul>
+        </div>
         <div id="confirmSendCheckbox" style="display:none; margin:8px 0;">
             <label style="display:flex;align-items:center;gap:8px;">
                 <input type="checkbox" id="confirmSendCheckboxInput">
                 <span id="confirmSendCheckboxMessage">Deseja realmente enviar este alerta por email?</span>
             </label>
-        </div>
-
-        <div id="recipientsListContainer" style="max-height:220px; overflow:auto; margin-bottom:12px;">
-            <ul id="recipientsList" style="list-style:none; padding-left:0; margin:0;"></ul>
         </div>
         <div style="display:flex; gap:10px; justify-content:flex-end;">
             <button id="cancelSendBtn" type="button" class="btn" style="background:transparent; border:1px solid var(--border);">Cancelar</button>
