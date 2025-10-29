@@ -89,8 +89,8 @@ class IngestionService:
         alert_data["urls"] = self.parseListField(table_row.get("Link"))
         alert_data["title"] = table_row.get("Título", "").strip()
         alert_data["alert_text"] = self.clean_alert_text(table_row.get("Alerta (Texto)"))
-        alert_data["involved_variables"] = InvolvedVariables.values_csv_to_type_list(table_row.get("Variáveis Envolvidas", "").strip())
-        alert_data["stakeholders"] = Stakeholders.values_csv_to_type_list(table_row.get("Stakeholders", "").strip())
+        alert_data["involved_variables"] = InvolvedVariables.values_csv_to_type_list(table_row.get("Variáveis Envolvidas", "").strip()) if table_row.get("Variáveis Envolvidas") else []
+        alert_data["stakeholders"] = Stakeholders.values_csv_to_type_list(table_row.get("Stakeholders", "").strip()) if table_row.get("Stakeholders") else []
         alert_data["history"] = table_row.get("Historico", "").strip() if table_row.get("Historico") else None
 
         return alert_data
