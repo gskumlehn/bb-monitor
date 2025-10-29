@@ -23,8 +23,8 @@ class IngestionService:
         alert_dicts = self.fetchParsedData(row)
         alerts = self.saveOrUpdateAlerts(alert_dicts)
 
-        executor = ThreadPoolExecutor(max_workers=1)
-        executor.submit(asyncio.run, self._trigger_mentions_creation(alerts))
+        # executor = ThreadPoolExecutor(max_workers=1)
+        # executor.submit(asyncio.run, self._trigger_mentions_creation(alerts))
 
         return {"message": "Ingestão iniciada com sucesso.", "alerts": [alert.id for alert in alerts]}
 
