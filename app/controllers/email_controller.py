@@ -10,8 +10,7 @@ def render_alert_email(alert_id):
     if not alert:
         abort(404, description="Alerta não encontrado")
 
-    rendered = EmailService().render_alert_html(alert)
-    return rendered
+    return EmailService().render_alert_html(alert)
 
 @email_bp.route("/send/<alert_id>", methods=["POST"])
 def send_alert_email(alert_id):

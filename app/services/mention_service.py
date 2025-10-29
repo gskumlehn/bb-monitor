@@ -20,11 +20,10 @@ class MentionService:
             end_date=alert.delivery_datetime
         ) or []
 
-        for url in missing_mention_urls:
+        for mention_data in mentions_data:
             mention = self.create({
                 "alert_id": alert.id,
-                "id": next((m["brandwatch_id"] for m in mentions_data if m["url"] == url), None),
-                "url": url,
+                "url": mention_data.url,
             })
             saved = MentionRepository.save(mention)
             mentions.append(saved)
@@ -33,7 +32,6 @@ class MentionService:
 
     def create(self, data: Dict[str, Any]) -> Mention:
         mention = Mention()
-        mention.id = data.get("id")
         mention.alert_id = data.get("alert_id")
         mention.url = data.get("url")
 
