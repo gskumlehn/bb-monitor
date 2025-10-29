@@ -22,7 +22,6 @@ class AlertService:
             return None
 
         self.validate_alert_data(alert_data, check_duplicate=False)
-        # Não permitir que mailing_status seja atualizado via fluxo de update normal
         self._apply_alert_data(existing, alert_data, skip_mailing_status=True)
         return AlertRepository.update(existing)
 

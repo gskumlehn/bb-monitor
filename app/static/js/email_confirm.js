@@ -65,8 +65,8 @@ function openConfirmModal(data, alertId) {
 
     if (needsConfirmation) {
         const msgMap = {
-            'NOT_SENT': 'O alerta não foi enviado por Whatsapp, realmente deve enviar por email?',
-            'EMAIL_SENT': 'O alerta já foi enviado por email, realmente deve enviar novamente?'
+            'NOT_SENT': 'O alerta não foi enviado por Whatsapp, enviar por email?',
+            'EMAIL_SENT': 'O alerta já foi enviado por email, enviar novamente?'
         };
         const message = msgMap[status] || 'Deseja realmente enviar este alerta por email?';
         messageSpan.textContent = message;
