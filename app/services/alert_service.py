@@ -22,7 +22,8 @@ class AlertService:
             return None
 
         self.validate_alert_data(alert_data, check_duplicate=False)
-        self._apply_alert_data(existing, alert_data)
+        # Não permitir que mailing_status seja atualizado via fluxo de update normal
+        self._apply_alert_data(existing, alert_data, skip_mailing_status=True)
         return AlertRepository.update(existing)
 
     def save_or_update(self, alert_data: dict) -> Alert:
@@ -90,10 +91,11 @@ class AlertService:
         self._apply_alert_data(alert, alert_data)
         return alert
 
-    def _apply_alert_data(self, alert: Alert, alert_data: dict):
+    def _apply_alert_data(self, alert: Alert, alert_data: dict, skip_mailing_status: bool = False):
         alert.title = alert_data.get("title")
         alert.delivery_datetime = alert_data.get("delivery_datetime")
-        alert.mailing_status = alert_data.get("mailing_status")
+        if not skip_mailing_status:
+            alert.mailing_status = alert_data.get("mailing_status")
         alert.criticality_level = alert_data.get("criticality_level")
         alert.alert_types = alert_data.get("alert_types")
         alert.profiles_or_portals = alert_data.get("profiles_or_portals")
