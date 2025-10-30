@@ -1,0 +1,95 @@
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.label {
+    font-weight: 600;
+    color: var(--foreground);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.label a,
+.label a:link,
+.label a:visited,
+.label a:hover,
+.label a:active,
+.label a:focus {
+    color: inherit;
+    text-decoration-line: underline;
+    text-decoration-color: currentColor;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 2px;
+    outline: none;
+}
+
+.card.form-card .label {
+    color: #000000;
+}
+
+.card.form-card .label a,
+.card.form-card .label a:link,
+.card.form-card .label a:visited,
+.card.form-card .label a:hover,
+.card.form-card .label a:active,
+.card.form-card .label a:focus {
+    color: #000000 !important;
+    text-decoration-line: underline;
+    text-decoration-color: currentColor;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 2px;
+    outline: none;
+}
+
+.input {
+    width: 100%;
+    padding: 0.75rem;
+    border: 2px solid var(--border);
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    transition: border-color 0.3s;
+}
+
+.input:focus {
+    outline: none;
+    border-color: var(--bb-blue);
+}
+
+.btn {
+    padding: 1rem 1.5rem;
+    border: none;
+    border-radius: 0.5rem;
+    font-size: 1.125rem;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    transition: all 0.3s;
+}
+
+.btn-primary {
+    background-color: var(--bb-blue);
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: var(--bb-blue-dark);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.btn-primary:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+

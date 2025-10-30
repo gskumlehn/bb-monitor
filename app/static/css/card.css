@@ -1,0 +1,32 @@
+.card {
+    background: var(--card-bg);
+    border-radius: 0.75rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border: 2px solid rgba(72, 94, 253, 0.1);
+    overflow: hidden;
+}
+
+.card-header {
+    background-color: var(--bb-blue);
+    color: white;
+    padding: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.card-header-yellow {
+    background-color: var(--bb-yellow);
+    color: var(--bb-blue);
+}
+
+.card-header h2 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+.card-content {
+    padding: 1.5rem;
+}
+

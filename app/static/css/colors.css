@@ -1,0 +1,12 @@
+:root {
+    --bb-yellow: #faf54d;
+    --bb-blue: #485efd;
+    --bb-cream: #fffef5;
+    --bb-blue-dark: #3a4cd6;
+    --foreground: #333;
+    --muted-foreground: #666;
+    --border: #e5e5e5;
+    --card-bg: #ffffff;
+    --destructive: #ef4444;
+}
+
