@@ -71,15 +71,5 @@
 {% endblock %}
 
 {% block scripts %}
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const now = new Date();
-            const currentMonth = now.getMonth() + 1; // Janeiro é 0
-            const currentYear = now.getFullYear();
-
-            document.getElementById('month').value = currentMonth;
-            document.getElementById('year').value = currentYear;
-        });
-    </script>
     <script src="{{ url_for('static', filename='js/alert_list.js') }}"></script>
 {% endblock %}

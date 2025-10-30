@@ -3,6 +3,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const alertTableContainer = document.getElementById('alertTableContainer');
     const alertTableBody = document.querySelector('#alertTable tbody');
 
+    const now = new Date();
+    const currentMonth = now.getMonth() + 1;
+    const currentYear = now.getFullYear();
+    document.getElementById('month').value = currentMonth;
+    document.getElementById('year').value = currentYear;
+
     filterForm.addEventListener('submit', async (e) => {
         e.preventDefault();
 
@@ -13,6 +19,10 @@ document.addEventListener('DOMContentLoaded', () => {
             alert('Por favor, preencha o mês e o ano.');
             return;
         }
+
+        // Limpa o conteúdo da tabela antes de fazer o request
+        alertTableBody.innerHTML = '';
+        alertTableContainer.style.display = 'none';
 
         try {
             const response = await fetch(`/alert/list?month=${month}&year=${year}`);
