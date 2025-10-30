@@ -5,7 +5,6 @@ from app.services.alert_service import AlertService
 from app.enums.alert_type import AlertType
 from app.enums.criticality_level import CriticalityLevel
 from app.enums.mailing_status import MailingStatus
-from app.enums.involved_variables import InvolvedVariables
 from app.enums.stakeholders import Stakeholders
 from app.enums.critical_topic import CriticalTopic
 from app.enums.press_source import PressSource

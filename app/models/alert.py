@@ -10,8 +10,12 @@ from app.enums.alert_type import AlertType
 from app.enums.criticality_level import CriticalityLevel
 from app.enums.mailing_status import MailingStatus
 from app.custom_utils.date_utils import DateUtils
-from app.enums.involved_variables import InvolvedVariables
 from app.enums.stakeholders import Stakeholders
+from app.enums.press_source import PressSource
+from app.enums.social_media_source import SocialMediaSource
+from app.enums.critical_topic import CriticalTopic
+from app.enums.social_media_engagement import SocialMediaEngagement
+from app.enums.repercussion import Repercussion
 
 Base = declarative_base()
 
@@ -20,19 +24,21 @@ class Alert(Base):
     __table_args__ = {"schema": "bb_monitor"}
 
     id = Column(String(64), primary_key=True, default=lambda: str(uuid.uuid4()))
-    _delivery_datetime = Column("delivery_datetime", TIMESTAMP, nullable=False)
-
     _mailing_status = Column("mailing_status", String(255), nullable=False)
+    _delivery_datetime = Column("delivery_datetime", TIMESTAMP, nullable=False)
     _alert_types = Column("alert_types", ARRAY(String), nullable=False)
-    _involved_variables = Column("involved_variables", ARRAY(String), nullable=True)
-    _stakeholders = Column("stakeholders", ARRAY(String), nullable=True)
-    _criticality_level = Column("criticality_level", String(255), nullable=False)
-
-    title = Column(Text, nullable=False)
-    alert_text = Column(Text, nullable=False)
     _profiles_or_portals = Column("profiles_or_portals", ARRAY(String), nullable=False)
     _urls = Column("urls", ARRAY(Text), nullable=False)
+    title = Column(Text, nullable=False)
+    alert_text = Column(Text, nullable=False)
 
+    _criticality_level = Column("criticality_level", String(255), nullable=False)
+    _critical_topic = Column("critical_topic", ARRAY(String), nullable=False)
+    _press_sources = Column("press_sources", ARRAY(String), nullable=True)
+    _social_media_sources = Column("social_media_sources", ARRAY(String), nullable=True)
+    _stakeholders = Column("stakeholders", ARRAY(String), nullable=True)
+    _social_media_engagements = Column("social_media_engagements", ARRAY(String), nullable=True)
+    _repercussions = Column("repercussions", ARRAY(String), nullable=True)
     history = Column(Text, nullable=True)
 
     SP_TZ = ZoneInfo(DateUtils.BRAZIL_TZ)
@@ -51,10 +57,7 @@ class Alert(Base):
             return
         if not isinstance(value, datetime):
             raise TypeError("delivery_datetime must be a datetime instance")
-        utc_dt = DateUtils.to_utc(value, assume_tz=DateUtils.BRAZIL_TZ)
-        if utc_dt is not None:
-            utc_dt = utc_dt.astimezone(timezone.utc)
-        self._delivery_datetime = utc_dt
+        self._delivery_datetime = value
 
     @delivery_datetime.expression
     def delivery_datetime(cls):
@@ -97,18 +100,6 @@ class Alert(Base):
         return cls._alert_types
 
     @hybrid_property
-    def involved_variables(self) -> list[InvolvedVariables]:
-        return [InvolvedVariables.from_name(name) for name in self._involved_variables or []]
-
-    @involved_variables.setter
-    def involved_variables(self, variables: list[InvolvedVariables]):
-        self._involved_variables = [variable.name for variable in variables] if variables else []
-
-    @involved_variables.expression
-    def involved_variables(cls):
-        return cls._involved_variables
-
-    @hybrid_property
     def stakeholders(self) -> list[Stakeholders]:
         return [Stakeholders.from_name(name) for name in self._stakeholders or []]
 
@@ -143,3 +134,63 @@ class Alert(Base):
     @urls.expression
     def urls(cls):
         return cls._urls
+
+    @hybrid_property
+    def critical_topic(self) -> list[CriticalTopic]:
+        return [CriticalTopic.from_name(name) for name in self._critical_topic or []]
+
+    @critical_topic.setter
+    def critical_topic(self, topics: list[CriticalTopic]):
+        self._critical_topic = [topic.name for topic in topics] if topics else []
+
+    @critical_topic.expression
+    def critical_topic(cls):
+        return cls._critical_topic
+
+    @hybrid_property
+    def press_sources(self) -> list[PressSource]:
+        return [PressSource.from_name(name) for name in self._press_sources or []]
+
+    @press_sources.setter
+    def press_sources(self, sources: list[PressSource]):
+        self._press_sources = [source.name for source in sources] if sources else []
+
+    @press_sources.expression
+    def press_sources(cls):
+        return cls._press_sources
+
+    @hybrid_property
+    def social_media_sources(self) -> list[SocialMediaSource]:
+        return [SocialMediaSource.from_name(name) for name in self._social_media_sources or []]
+
+    @social_media_sources.setter
+    def social_media_sources(self, sources: list[SocialMediaSource]):
+        self._social_media_sources = [source.name for source in sources] if sources else []
+
+    @social_media_sources.expression
+    def social_media_sources(cls):
+        return cls._social_media_sources
+
+    @hybrid_property
+    def social_media_engagements(self) -> list[SocialMediaEngagement]:
+        return [SocialMediaEngagement.from_name(name) for name in self._social_media_engagements or []]
+
+    @social_media_engagements.setter
+    def social_media_engagements(self, engagements: list[SocialMediaEngagement]):
+        self._social_media_engagements = [engagement.name for engagement in engagements] if engagements else []
+
+    @social_media_engagements.expression
+    def social_media_engagements(cls):
+        return cls._social_media_engagements
+
+    @hybrid_property
+    def repercussions(self) -> list[Repercussion]:
+        return [Repercussion.from_name(name) for name in self._repercussions or []]
+
+    @repercussions.setter
+    def repercussions(self, repercussions: list[Repercussion]):
+        self._repercussions = [repercussion.name for repercussion in repercussions] if repercussions else []
+
+    @repercussions.expression
+    def repercussions(cls):
+        return cls._repercussions

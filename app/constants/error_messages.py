@@ -5,7 +5,6 @@ class ErrorMessages:
         "MailingStatus.invalid": "Status de envio inválido",
         "CriticalityLevel.invalid": "Nível de criticidade inválido",
         "AlertType.invalid": "Tipo de alerta inválido",
-        "InvolvedVariables.invalid": "Variável envolvida inválida",
         "Stakeholders.invalid": "Stakeholder inválido",
     }
 
@@ -14,7 +13,6 @@ class ErrorMessages:
         "Alert.mailingStatus.invalid": "Status de envio inválido",
         "Alert.criticalityLevel.invalid": "Nível de criticidade inválido",
         "Alert.alertTypes.invalid": "Tipo de alerta inválido",
-        "Alert.involvedVariables.invalid": "Variável envolvida inválida",
         "Alert.stakeholders.invalid": "Stakeholder inválido",
         "Alert.urls.duplicate": "O alerta com a mesma lista de URLs já foi ingerido.",
         "Mailing.email.empty": "Email não pode ser vazio.",

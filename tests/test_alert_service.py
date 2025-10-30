@@ -1,11 +1,9 @@
 import unittest
 from datetime import datetime
 from app.services.alert_service import AlertService
-from app.models.alert import Alert
 from app.enums.alert_type import AlertType
 from app.enums.criticality_level import CriticalityLevel
 from app.enums.mailing_status import MailingStatus
-from app.enums.involved_variables import InvolvedVariables
 from app.enums.stakeholders import Stakeholders
 from app.constants.error_messages import ErrorMessages
 

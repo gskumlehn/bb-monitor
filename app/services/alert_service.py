@@ -3,7 +3,6 @@ from app.repositories.alert_repository import AlertRepository
 from app.enums.alert_type import AlertType
 from app.enums.criticality_level import CriticalityLevel
 from app.enums.mailing_status import MailingStatus
-from app.enums.involved_variables import InvolvedVariables
 from app.enums.stakeholders import Stakeholders
 from app.constants.error_messages import ErrorMessages
 import uuid
@@ -76,10 +75,6 @@ class AlertService:
         if not isinstance(alert_types, list) or not all(isinstance(item, AlertType) for item in alert_types):
             raise ValueError(ErrorMessages.model["Alert.alertTypes.invalid"])
 
-        involved_variables = alert_data.get("involved_variables", [])
-        if involved_variables and (not isinstance(involved_variables, list) or not all(isinstance(item, InvolvedVariables) for item in involved_variables)):
-            raise ValueError(ErrorMessages.model["Alert.involvedVariables.invalid"])
-
         stakeholders = alert_data.get("stakeholders", [])
         if stakeholders and (not isinstance(stakeholders, list) or not all(isinstance(item, Stakeholders) for item in stakeholders)):
             raise ValueError(ErrorMessages.model["Alert.stakeholders.invalid"])
@@ -91,18 +86,22 @@ class AlertService:
         return alert
 
     def _apply_alert_data(self, alert: Alert, alert_data: dict, skip_mailing_status: bool = False):
-        alert.title = alert_data.get("title")
-        alert.delivery_datetime = alert_data.get("delivery_datetime")
         if not skip_mailing_status:
             alert.mailing_status = alert_data.get("mailing_status")
-        alert.criticality_level = alert_data.get("criticality_level")
+        alert.delivery_datetime = alert_data.get("delivery_datetime")
         alert.alert_types = alert_data.get("alert_types")
         alert.profiles_or_portals = alert_data.get("profiles_or_portals")
-        alert.alert_text = alert_data.get("alert_text")
-        alert.involved_variables = alert_data.get("involved_variables")
-        alert.stakeholders = alert_data.get("stakeholders")
-        alert.history = alert_data.get("history")
         alert.urls = alert_data.get("urls")
+        alert.title = alert_data.get("title")
+        alert.alert_text = alert_data.get("alert_text")
+        alert.criticality_level = alert_data.get("criticality_level")
+        alert.critical_topic = alert_data.get("critical_topic")
+        alert.press_sources = alert_data.get("press_sources")
+        alert.social_media_sources = alert_data.get("social_media_sources")
+        alert.stakeholders = alert_data.get("stakeholders")
+        alert.social_media_engagements = alert_data.get("social_media_engagements")
+        alert.repercussions = alert_data.get("repercussions")
+        alert.history = alert_data.get("history")
 
     def delete_by_id(self, alert_id: str) -> None:
         AlertRepository.delete_by_id(alert_id)
