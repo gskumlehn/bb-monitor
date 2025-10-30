@@ -14,11 +14,24 @@
                 <form id="filterForm" class="form">
                     <div class="form-group">
                         <label for="month" class="label">Mês</label>
-                        <input type="number" id="month" name="month" class="input" min="1" max="12" required>
+                        <select id="month" name="month" class="input" required>
+                            <option value="1">Janeiro</option>
+                            <option value="2">Fevereiro</option>
+                            <option value="3">Março</option>
+                            <option value="4">Abril</option>
+                            <option value="5">Maio</option>
+                            <option value="6">Junho</option>
+                            <option value="7">Julho</option>
+                            <option value="8">Agosto</option>
+                            <option value="9">Setembro</option>
+                            <option value="10">Outubro</option>
+                            <option value="11">Novembro</option>
+                            <option value="12">Dezembro</option>
+                        </select>
                     </div>
                     <div class="form-group">
                         <label for="year" class="label">Ano</label>
-                        <input type="number" id="year" name="year" class="input" min="2000" required>
+                        <input type="number" id="year" name="year" class="input" min="2025" required>
                     </div>
                     <button type="submit" class="btn btn-primary">Filtrar</button>
                 </form>
@@ -40,7 +53,17 @@
                             <th>Id</th>
                         </tr>
                     </thead>
-                    <tbody></tbody>
+                    <tbody>
+                        {% for alerta in alertas %}
+                        <tr onclick="window.location.href='{{ url_for('alert_detail', id=alerta.id) }}'">
+                            <td>{{ alerta.data_entrega }}</td>
+                            <td>{{ alerta.titulo }}</td>
+                            <td>{{ alerta.status }}</td>
+                            <td>{{ alerta.nivel_criticidade }}</td>
+                            <td>{{ alerta.id }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
                 </table>
             </div>
         </div>
@@ -48,5 +71,15 @@
 {% endblock %}
 
 {% block scripts %}
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const now = new Date();
+            const currentMonth = now.getMonth() + 1; // Janeiro é 0
+            const currentYear = now.getFullYear();
+
+            document.getElementById('month').value = currentMonth;
+            document.getElementById('year').value = currentYear;
+        });
+    </script>
     <script src="{{ url_for('static', filename='js/alert_list.js') }}"></script>
 {% endblock %}
