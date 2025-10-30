@@ -202,3 +202,7 @@ class Alert(Base):
             "mailing_status": self.mailing_status.value,
             "criticality_level": self.criticality_level.value
         }
+
+    def normalize_urls(self):
+        if self._urls:
+            self._urls = sorted(self._urls)

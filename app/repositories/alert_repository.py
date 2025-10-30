@@ -1,13 +1,12 @@
-from sqlalchemy import select, func, literal_column
-from sqlalchemy.sql import exists
+from sqlalchemy import select, func
 from app.models.alert import Alert
 from app.infra.bq_sa import get_session
-from app.enums.mailing_status import MailingStatus
 
 class AlertRepository:
 
     @staticmethod
     def save(alert: Alert) -> Alert:
+        alert.normalize_urls()
         with get_session() as session:
             session.add(alert)
             session.commit()
@@ -15,19 +14,19 @@ class AlertRepository:
 
     @staticmethod
     def get_by_urls(urls: list[str]) -> Alert | None:
+        if not urls:
+            return None
+
+        sorted_urls_str = ",".join(sorted(urls))
         with get_session() as session:
             query = (
                 select(Alert)
                 .where(
-                    exists(
-                        select(literal_column("1"))
-                        .select_from(func.unnest(Alert._urls).alias("urls"))
-                        .where(literal_column("urls").in_(urls))
-                    )
+                    func.array_to_string(Alert._urls, ",") == sorted_urls_str
                 )
             )
-            result = session.execute(query).scalars().first()
-            return result
+            return session.execute(query).scalars().first()
+
 
     @staticmethod
     def delete_by_id(alert_id: str) -> None:
