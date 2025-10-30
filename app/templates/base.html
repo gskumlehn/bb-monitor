@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="{{ url_for('static', filename='favicon/favicon.png') }}" type="image/png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <title>{% block title %}Aplicação{% endblock %}</title>
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <img src="{{ url_for('static', filename='images/logo-horizontal.png') }}" alt="Banco do Brasil" class="header-logo" style="width: 200px; height: auto;">
+                <h1>{% block header_title %}Aplicação{% endblock %}</h1>
+            </div>
+        </div>
+    </header>
+    <div class="container main-content">
+        {% block content %}{% endblock %}
+    </div>
+    <div id="toast" class="toast"></div>
+    {% block scripts %}{% endblock %}
+</body>
+</html>
+

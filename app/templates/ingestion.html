@@ -1,72 +1,58 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" href="{{ url_for('static', filename='favicon/favicon.png') }}" type="image/png">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
-    <title>Ingestão de Dados</title>
-</head>
-    <body>
-        <header class="header">
-            <div class="container">
-                <div class="header-content">
-                    <div class="header-left">
-                        <h1>Ingestão de Alertas - Geração de emails</h1>
+{% extends "base.html" %}
+
+{% block title %}Ingestão de Dados{% endblock %}
+
+{% block header_title %}Ingestão de Alertas - Geração de emails{% endblock %}
+
+{% block content %}
+    <div class="content-wrapper">
+        <div class="card form-card">
+            <div class="card-header">
+                <h2>Gerar email</h2>
+            </div>
+            <div class="card-content">
+                <form id="ingestForm" class="form">
+                    <div class="form-group">
+                        <label for="start_row" class="label">Número da linha da<a href="https://docs.google.com/spreadsheets/d/1yOD6bD_Syyv-zo5CtYXlCGMaWHIR12gUNzW1Zb7klbs/">Planilha</a></label>
+                        <input
+                            type="number"
+                            id="start_row"
+                            name="start_row"
+                            required
+                            class="input"
+                            min="2"
+                            placeholder="Digite a linha de início"
+                        >
                     </div>
+                    <button type="submit" class="btn btn-primary" id="submitBtn">
+                        Gerar email
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <div id="emailPreviewArea" style="margin-top:20px;">
+            <div id="emailPreviewHeader" class="email-preview-header" style="display:none;">
+                <div class="preview-meta">
+                    Preview de email gerado pela linha: <strong id="previewStartRow"></strong>
+                    <span class="meta-sep">•</span>
+                    Alerta ID: <span id="previewAlertId"></span>
+                </div>
+                <div class="preview-actions">
+                    <button id="sendEmailBtnHeader" type="button" class="btn btn-primary" style="display:none;" disabled>
+                        Enviar email
+                    </button>
                 </div>
             </div>
-        </header>
 
-        <div class="container main-content">
-            <div class="content-wrapper">
-                <div class="card form-card">
-                    <div class="card-header">
-                        <h2>Gerar email</h2>
-                    </div>
-                    <div class="card-content">
-                        <form id="ingestForm" class="form">
-                            <div class="form-group">
-                                <label for="start_row" class="label">Número da linha da<a href="https://docs.google.com/spreadsheets/d/1yOD6bD_Syyv-zo5CtYXlCGMaWHIR12gUNzW1Zb7klbs/">Planilha</a></label>
-                                <input
-                                    type="number"
-                                    id="start_row"
-                                    name="start_row"
-                                    required
-                                    class="input"
-                                    min="2"
-                                    placeholder="Digite a linha de início"
-                                >
-                            </div>
-                            <button type="submit" class="btn btn-primary" id="submitBtn">
-                                Gerar email
-                            </button>
-                        </form>
-                    </div>
-                </div>
-
-                <div id="emailPreviewArea" style="margin-top:20px;">
-                    <div id="emailPreviewHeader" class="email-preview-header" style="display:none;">
-                        <div class="preview-meta">
-                            Preview de email gerado pela linha: <strong id="previewStartRow"></strong>
-                            <span class="meta-sep">•</span>
-                            Alerta ID: <span id="previewAlertId"></span>
-                        </div>
-                        <div class="preview-actions">
-                            <button id="sendEmailBtnHeader" type="button" class="btn btn-primary" style="display:none;" disabled>
-                                Enviar email
-                            </button>
-                        </div>
-                    </div>
-
-                    <div id="emailPreviewContainer"></div>
-                </div>
+            <div id="emailPreviewContainer"></div>
+        </div>
 
         {% include '_email_confirm_modal.html' %}
+    </div>
+{% endblock %}
 
-        <div id="toast" class="toast"></div>
-
-        <script src="{{ url_for('static', filename='js/ingestion.js') }}"></script>
-        <script src="{{ url_for('static', filename='js/email_confirm.js') }}"></script>
-    </body>
-</html>
+{% block scripts %}
+    <script src="{{ url_for('static', filename='js/ingestion.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/email_confirm.js') }}"></script>
+{% endblock %}
