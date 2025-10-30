@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block title %}Variáveis Envolvidas{% endblock %}
+
+{% block header_title %}Variáveis Envolvidas do Alerta{% endblock %}
+
+{% block content %}
+    <div class="content-wrapper">
+        <div class="card form-card">
+            <div class="card-header">
+                <h2>Variáveis Envolvidas</h2>
+            </div>
+            <div class="card-content">
+                <div class="variable-section">
+                    {% if alert.critical_topic %}
+                        <div class="variable-group">
+                            <strong>Tema Crítico:</strong>
+                            <div>{{ alert.critical_topic | map(attribute='value') | join(", ") }}</div>
+                        </div>
+                        <br>
+                    {% endif %}
+                    {% if alert.press_sources %}
+                        <div class="variable-group">
+                            <strong>Emissor Imprensa:</strong>
+                            <div>{{ alert.press_sources | map(attribute='value') | join(", ") }}</div>
+                        </div>
+                        <br>
+                    {% endif %}
+                    {% if alert.social_media_sources %}
+                        <div class="variable-group">
+                            <strong>Emissor Redes Sociais:</strong>
+                            <div>{{ alert.social_media_sources | map(attribute='value') | join(", ") }}</div>
+                        </div>
+                        <br>
+                    {% endif %}
+                    {% if alert.stakeholders %}
+                        <div class="variable-group">
+                            <strong>Stakeholders:</strong>
+                            <div>{{ alert.stakeholders | map(attribute='value') | join(", ") }}</div>
+                        </div>
+                        <br>
+                    {% endif %}
+                    {% if alert.social_media_engagements %}
+                        <div class="variable-group">
+                            <strong>Engajamento de redes sociais:</strong>
+                            <div>{{ alert.social_media_engagements | map(attribute='value') | join(", ") }}</div>
+                        </div>
+                        <br>
+                    {% endif %}
+                    {% if alert.repercussions %}
+                        <div class="variable-group">
+                            <strong>Repercussão:</strong>
+                            <div>{{ alert.repercussions | map(attribute='value') | join(", ") }}</div>
+                        </div>
+                        <br>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

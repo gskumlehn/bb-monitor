@@ -16,6 +16,7 @@ class EmailService:
 
         context = {
             "BASE_URL": base_url_env,
+            "ALERT_ID": alert.id,
             "EMAIL": email,
             "NIVEL": str(alert.criticality_level.number),
             "TITULO_POSTAGEM": alert.title,
