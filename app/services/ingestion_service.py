@@ -23,26 +23,29 @@ logger = logging.getLogger(__name__)
 
 class IngestionService:
 
-    def ingest(self, row: int):
-        alert_dicts = self.fetchParsedData(row)
+    def ingest(self, start_row: int, end_row: int = None):
+        if end_row is None:
+            end_row = start_row
+
+        alert_dicts = self.fetchParsedData(start_row, end_row)
         alerts = self.saveOrUpdateAlerts(alert_dicts)
 
         # executor = ThreadPoolExecutor(max_workers=1)
         # executor.submit(asyncio.run, self._trigger_mentions_creation(alerts))
 
-        return {"message": "Alerta ingerido com sucesso.", "alerts": [alert.id for alert in alerts]}
+        return {"message": "Alerta(s) ingerido(s) com sucesso.", "alerts": [alert.id for alert in alerts]}
 
     async def _trigger_mentions_creation(self, alerts: List[Any]):
         mention_service = MentionService()
         tasks = [mention_service.save(alert) for alert in alerts]
 
-    def fetchParsedData(self, row: int) -> List[dict]:
-        table_data = self.fetchTableData(row)
+    def fetchParsedData(self, start_row: int, end_row: int) -> List[dict]:
+        table_data = self.fetchTableData(start_row, end_row)
         return [self.parseTableRowToAlertDict(row) for row in table_data]
 
-    def fetchTableData(self, row: int):
+    def fetchTableData(self, start_row: int, end_row: int):
         google_sheets = GoogleSheets()
-        dynamic_range = f"'{IngestionConstants.SHEET_NAME}'!{IngestionConstants.START_COL}{row}:{IngestionConstants.END_COL}{row}"
+        dynamic_range = f"'{IngestionConstants.SHEET_NAME}'!{IngestionConstants.START_COL}{start_row}:{IngestionConstants.END_COL}{end_row}"
         raw_data = google_sheets.get_sheet_data_with_start_row(IngestionConstants.SPREADSHEET_ID, dynamic_range)
 
         if not raw_data:

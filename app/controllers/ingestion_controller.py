@@ -7,11 +7,16 @@ ingestion_bp = Blueprint("ingestion", __name__)
 def ingest():
     try:
         row = request.json.get("row")
-        if row is None:
-            return jsonify({"error": "O parâmetro 'row' é obrigatório."}), 400
+        start_row = request.json.get("start_row")
+        end_row = request.json.get("end_row")
+
+        if row is not None:
+            start_row = end_row = row
+        elif start_row is None or end_row is None:
+            return jsonify({"error": "Os parâmetros 'start_row' e 'end_row' são obrigatórios se 'row' não for fornecido."}), 400
 
         ingestion_service = IngestionService()
-        result = ingestion_service.ingest(row)
+        result = ingestion_service.ingest(start_row, end_row)
 
         return jsonify(result), 200
     except ValueError as e:
