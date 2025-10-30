@@ -112,6 +112,8 @@ class IngestionService:
 
         lines = text.splitlines()
 
+        lines = [line.strip('*') if line.startswith('*') and line.endswith('*') else line for line in lines]
+
         first_idx = None
         for idx, line in enumerate(lines):
             if line.strip():
