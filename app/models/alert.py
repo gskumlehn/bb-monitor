@@ -31,7 +31,6 @@ class Alert(Base):
     _urls = Column("urls", ARRAY(Text), nullable=False)
     title = Column(Text, nullable=False)
     alert_text = Column(Text, nullable=False)
-
     _criticality_level = Column("criticality_level", String(255), nullable=False)
     _critical_topic = Column("critical_topic", ARRAY(String), nullable=False)
     _press_sources = Column("press_sources", ARRAY(String), nullable=True)

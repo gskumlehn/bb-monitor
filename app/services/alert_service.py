@@ -5,11 +5,15 @@ from app.enums.criticality_level import CriticalityLevel
 from app.enums.mailing_status import MailingStatus
 from app.enums.stakeholders import Stakeholders
 from app.constants.error_messages import ErrorMessages
+from app.enums.critical_topic import CriticalTopic
+from app.enums.press_source import PressSource
+from app.enums.social_media_source import SocialMediaSource
+from app.enums.social_media_engagement import SocialMediaEngagement
+from app.enums.repercussion import Repercussion
 import uuid
 from typing import Optional
 
 class AlertService:
-
     def save(self, alert_data: dict) -> Alert:
         self.validate_alert_data(alert_data, check_duplicate=True)
         alert = self.create(alert_data)
@@ -30,7 +34,6 @@ class AlertService:
             existing_alert = AlertRepository.get_by_urls(urls)
             if existing_alert:
                 updated = self.update(existing_alert.id, alert_data)
-
                 return updated if updated is not None else existing_alert
 
         return self.save(alert_data)
@@ -75,9 +78,37 @@ class AlertService:
         if not isinstance(alert_types, list) or not all(isinstance(item, AlertType) for item in alert_types):
             raise ValueError(ErrorMessages.model["Alert.alertTypes.invalid"])
 
+        profiles_or_portals = alert_data.get("profiles_or_portals", [])
+        if not isinstance(profiles_or_portals, list):
+            raise ValueError(ErrorMessages.model["Alert.profilesOrPortals.invalid"])
+
+        urls = alert_data.get("urls", [])
+        if not isinstance(urls, list):
+            raise ValueError(ErrorMessages.model["Alert.urls.invalid"])
+
+        critical_topic = alert_data.get("critical_topic", [])
+        if critical_topic and (not isinstance(critical_topic, list) or not all(isinstance(item, CriticalTopic) for item in critical_topic)):
+            raise ValueError(ErrorMessages.model["Alert.criticalTopic.invalid"])
+
+        press_sources = alert_data.get("press_sources", [])
+        if press_sources and (not isinstance(press_sources, list) or not all(isinstance(item, PressSource) for item in press_sources)):
+            raise ValueError(ErrorMessages.model["Alert.pressSources.invalid"])
+
+        social_media_sources = alert_data.get("social_media_sources", [])
+        if social_media_sources and (not isinstance(social_media_sources, list) or not all(isinstance(item, SocialMediaSource) for item in social_media_sources)):
+            raise ValueError(ErrorMessages.model["Alert.socialMediaSources.invalid"])
+
         stakeholders = alert_data.get("stakeholders", [])
         if stakeholders and (not isinstance(stakeholders, list) or not all(isinstance(item, Stakeholders) for item in stakeholders)):
             raise ValueError(ErrorMessages.model["Alert.stakeholders.invalid"])
+
+        social_media_engagements = alert_data.get("social_media_engagements", [])
+        if social_media_engagements and (not isinstance(social_media_engagements, list) or not all(isinstance(item, SocialMediaEngagement) for item in social_media_engagements)):
+            raise ValueError(ErrorMessages.model["Alert.socialMediaEngagements.invalid"])
+
+        repercussions = alert_data.get("repercussions", [])
+        if repercussions and (not isinstance(repercussions, list) or not all(isinstance(item, Repercussion) for item in repercussions)):
+            raise ValueError(ErrorMessages.model["Alert.repercussions.invalid"])
 
     def create(self, alert_data: dict) -> Alert:
         alert = Alert()
