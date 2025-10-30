@@ -7,6 +7,11 @@ from app.enums.criticality_level import CriticalityLevel
 from app.enums.mailing_status import MailingStatus
 from app.enums.involved_variables import InvolvedVariables
 from app.enums.stakeholders import Stakeholders
+from app.enums.critical_topic import CriticalTopic
+from app.enums.press_source import PressSource
+from app.enums.social_media_source import SocialMediaSource
+from app.enums.social_media_engagement import SocialMediaEngagement
+from app.enums.repercussion import Repercussion
 import logging
 import pandas as pd
 from typing import List, Sequence, Any
@@ -81,17 +86,21 @@ class IngestionService:
             delivery_dt = None
 
         alert_data = {}
-        alert_data["mailing_status"] = MailingStatus(table_row.get("Enviado ao Cliente?", "").strip())
+        alert_data["mailing_status"] = MailingStatus(table_row.get("Enviado ao Cliente?").strip())
         alert_data["delivery_datetime"] = delivery_dt
-        alert_data["alert_types"] = AlertType.values_csv_to_type_list(table_row.get("Tipo", "").strip())
-        alert_data["criticality_level"] = CriticalityLevel(table_row.get("Nível de Criticidade", "").strip())
+        alert_data["alert_types"] = AlertType.values_csv_to_type_list(table_row.get("Tipo").strip())
         alert_data["profiles_or_portals"] = self.parseListField(table_row.get("@ do perfil ou Nome do Portal"))
         alert_data["urls"] = self.parseListField(table_row.get("Link"))
-        alert_data["title"] = table_row.get("Título", "").strip()
+        alert_data["title"] = table_row.get("Título").strip()
         alert_data["alert_text"] = self.clean_alert_text(table_row.get("Alerta (Texto)"))
-        alert_data["involved_variables"] = InvolvedVariables.values_csv_to_type_list(table_row.get("Variáveis Envolvidas", "").strip()) if table_row.get("Variáveis Envolvidas") else []
-        alert_data["stakeholders"] = Stakeholders.values_csv_to_type_list(table_row.get("Stakeholders", "").strip()) if table_row.get("Stakeholders") else []
-        alert_data["history"] = table_row.get("Historico", "").strip() if table_row.get("Historico") else None
+        alert_data["criticality_level"] = CriticalityLevel(table_row.get("Nível de Criticidade").strip())
+        alert_data["critical_topic"] = CriticalTopic.values_csv_to_type_list(table_row.get("Tema Crítico").strip()) if table_row.get("Tema Crítico") else []
+        alert_data["press_sources"] = PressSource.values_csv_to_type_list(table_row.get("Emissor Imprensa").strip()) if table_row.get("Emissor Imprensa") else []
+        alert_data["social_media_sources"] = SocialMediaSource.values_csv_to_type_list(table_row.get("Emissor Redes Sociais").strip()) if table_row.get("Emissor Redes Sociais") else []
+        alert_data["stakeholders"] = Stakeholders.values_csv_to_type_list(table_row.get("Stakeholders").strip()) if table_row.get("Stakeholders") else []
+        alert_data["social_media_engagements"] = SocialMediaEngagement.values_csv_to_type_list(table_row.get("Engajamento de redes sociais").strip()) if table_row.get("Engajamento de redes sociais") else []
+        alert_data["repercussions"] = Repercussion.values_csv_to_type_list(table_row.get("Repercussão").strip()) if table_row.get("Repercussão") else []
+        alert_data["history"] = table_row.get("Historico").strip() if table_row.get("Historico") else None
 
         return alert_data
 

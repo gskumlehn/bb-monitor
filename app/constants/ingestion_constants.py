@@ -14,7 +14,11 @@ class IngestionConstants:
         "Título",
         "Alerta (Texto)",
         "Nível de Criticidade",
-        "Variáveis Envolvidas em Consideração para o nível",
+        "Tema Crítico",
+        "Emissor Imprensa",
+        "Emissor Redes Sociais",
         "Stakeholders",
+        "Engajamento de redes sociais",
+        "Repercussão",
         "Historico"
     ]
