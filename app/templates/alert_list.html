@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block title %}Listagem de Alertas{% endblock %}
+
+{% block header_title %}Listagem de Alertas{% endblock %}
+
+{% block content %}
+    <div class="content-wrapper">
+        <div class="card form-card">
+            <div class="card-header">
+                <h2>Filtrar Alertas</h2>
+            </div>
+            <div class="card-content">
+                <form id="filterForm" class="form">
+                    <div class="form-group">
+                        <label for="month" class="label">Mês</label>
+                        <input type="number" id="month" name="month" class="input" min="1" max="12" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="year" class="label">Ano</label>
+                        <input type="number" id="year" name="year" class="input" min="2000" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Filtrar</button>
+                </form>
+            </div>
+        </div>
+
+        <div id="alertTableContainer" class="card" style="margin-top: 20px; display: none;">
+            <div class="card-header">
+                <h2>Alertas</h2>
+            </div>
+            <div class="card-content">
+                <table id="alertTable" class="table">
+                    <thead>
+                        <tr>
+                            <th>Data de Entrega</th>
+                            <th>Título</th>
+                            <th>Status</th>
+                            <th>Nível de Criticidade</th>
+                            <th>Id</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    <script src="{{ url_for('static', filename='js/alert_list.js') }}"></script>
+{% endblock %}

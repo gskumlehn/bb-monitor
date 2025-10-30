@@ -47,3 +47,16 @@ class AlertRepository:
             session.commit()
             session.refresh(merged)
             return merged
+
+    @staticmethod
+    def list_by_month_year(month: int, year: int) -> list[Alert]:
+        with get_session() as session:
+            query = (
+                select(Alert)
+                .where(
+                    func.extract("month", Alert._delivery_datetime) == month,
+                    func.extract("year", Alert._delivery_datetime) == year
+                )
+                .order_by(Alert._delivery_datetime.asc())
+            )
+            return session.execute(query).scalars().all()

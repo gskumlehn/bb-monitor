@@ -143,3 +143,6 @@ class AlertService:
     def update_mailing_status(self, alert: Alert, mailing_status: MailingStatus) -> Optional[Alert]:
         alert.mailing_status = mailing_status
         return AlertRepository.update(alert)
+
+    def list_by_month_year(self, month: int, year: int) -> list[Alert]:
+        return AlertRepository.list_by_month_year(month, year)

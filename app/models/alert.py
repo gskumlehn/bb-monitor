@@ -193,3 +193,12 @@ class Alert(Base):
     @repercussions.expression
     def repercussions(cls):
         return cls._repercussions
+
+    def to_dict_list(self):
+        return {
+            "id": self.id,
+            "title": self.title,
+            "delivery_datetime": self.delivery_datetime.isoformat() if self.delivery_datetime else None,
+            "mailing_status": self.mailing_status.value,
+            "criticality_level": self.criticality_level.value
+        }
