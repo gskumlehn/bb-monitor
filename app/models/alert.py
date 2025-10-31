@@ -128,7 +128,7 @@ class Alert(Base):
 
     @urls.setter
     def urls(self, urls: list[str]):
-        self._urls = urls
+        self._urls = sorted(urls)
 
     @urls.expression
     def urls(cls):
@@ -203,6 +203,3 @@ class Alert(Base):
             "criticality_level": self.criticality_level.value
         }
 
-    def normalize_urls(self):
-        if self._urls:
-            self._urls = sorted(self._urls)

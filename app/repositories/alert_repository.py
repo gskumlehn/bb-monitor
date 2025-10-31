@@ -1,4 +1,5 @@
-from sqlalchemy import select, func
+from sqlalchemy import select, func, literal_column
+from sqlalchemy.sql import exists
 from app.models.alert import Alert
 from app.infra.bq_sa import get_session
 
@@ -6,7 +7,6 @@ class AlertRepository:
 
     @staticmethod
     def save(alert: Alert) -> Alert:
-        alert.normalize_urls()
         with get_session() as session:
             session.add(alert)
             session.commit()
@@ -17,15 +17,20 @@ class AlertRepository:
         if not urls:
             return None
 
-        sorted_urls_str = ",".join(sorted(urls))
+        sep = "\u001F"
+        normalized = sorted(urls)
+        joined = sep.join(normalized)
+
         with get_session() as session:
             query = (
                 select(Alert)
                 .where(
-                    func.array_to_string(Alert._urls, ",") == sorted_urls_str
+                    func.array_length(Alert._urls) == len(normalized),
+                    func.array_to_string(Alert._urls, sep) == joined
                 )
             )
-            return session.execute(query).scalars().first()
+            result = session.execute(query).scalars().first()
+            return result
 
 
     @staticmethod

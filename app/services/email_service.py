@@ -45,7 +45,6 @@ class EmailService:
         return render_template("email-template.html", **context)
 
     def send_alert_email(self, alert) -> dict:
-        # reuse new method to build recipients
         recipients = self.get_recipients_for_alert(alert)
         to_list = recipients["to"]
         cc_list = recipients["cc"]
