@@ -29,7 +29,7 @@ class EmailService:
     def render_alert_html(self, alert) -> str:
         profile = alert.profiles_or_portals[0]
         email = os.getenv("EMAIL_USER")
-        base_url_env = os.getenv("BASE_URL")
+        base_url_env = os.getenv("BASE_URL", "")
 
         context = {
             "BASE_URL": base_url_env,
@@ -39,8 +39,7 @@ class EmailService:
             "TITULO_POSTAGEM": alert.title,
             "PERFIL_USUARIO": profile,
             "DESCRICAO_COMPLETA": self.linkify(alert.alert_text),
-            "DIRECTORY": DirectorateCode.FB.name,
-            "should_render_mailing_cancelation": False
+            "DIRECTORY": DirectorateCode.FB.name
         }
 
         return render_template("email-template.html", **context)
