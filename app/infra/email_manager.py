@@ -19,12 +19,32 @@ class EmailManager:
         self.sender_email = sender_email
         self.sender_password = sender_password
 
-    def send_email(self, recipient, subject, body):
+    def send_email(self, recipients, subject, body, cc=None):
+        """
+        recipients: str or list[str] - primary recipients
+        cc: None or str or list[str] - cc recipients
+        """
+        # normalize recipients
+        if isinstance(recipients, str):
+            to_list = [r.strip() for r in recipients.split(",") if r.strip()]
+        else:
+            to_list = list(recipients or [])
+
+        if isinstance(cc, str):
+            cc_list = [r.strip() for r in cc.split(",") if r.strip()]
+        else:
+            cc_list = list(cc or [])
+
+        # build message
         message = MIMEMultipart("alternative")
         message['From'] = self.sender_email
-        message['To'] = recipient
+        message['To'] = ", ".join(to_list)
+        if cc_list:
+            message['Cc'] = ", ".join(cc_list)
         message['Subject'] = subject
         message.attach(MIMEText(body, 'html'))
+
+        all_recipients = to_list + cc_list
 
         server = None
         try:
@@ -32,7 +52,8 @@ class EmailManager:
             if EMAIL_USE_TLS:
                 server.starttls()
             server.login(self.sender_email, self.sender_password)
-            server.send_message(message)
+            # send_message allows explicit recipient list to avoid relying on headers
+            server.send_message(message, from_addr=self.sender_email, to_addrs=all_recipients)
             print("E-mail enviado com sucesso!")
         except smtplib.SMTPServerDisconnected as e:
             print(f"Erro: Conexão com o servidor SMTP foi desconectada. Detalhes: {e}")
@@ -46,4 +67,3 @@ class EmailManager:
                     server.quit()
                 except smtplib.SMTPServerDisconnected:
                     print("Servidor já desconectado.")
-

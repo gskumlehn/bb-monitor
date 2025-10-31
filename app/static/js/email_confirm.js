@@ -8,6 +8,7 @@ function showConfirmModal() {
 function hideConfirmModal() {
     const emailConfirmModal = document.getElementById('emailConfirmModal');
     const recipientsList = document.getElementById('recipientsList');
+    const ccList = document.getElementById('ccList');
     const wrapper = document.getElementById('confirmSendCheckbox');
     const checkboxInput = document.getElementById('confirmSendCheckboxInput');
     const sendBtnHeader = document.getElementById('sendEmailBtnHeader');
@@ -18,6 +19,7 @@ function hideConfirmModal() {
         delete emailConfirmModal.dataset.alertId;
     }
     if (recipientsList) recipientsList.innerHTML = '';
+    if (ccList) ccList.innerHTML = '';
     if (wrapper) wrapper.style.display = 'none';
     if (checkboxInput) {
         checkboxInput.checked = false;
@@ -31,7 +33,9 @@ function hideConfirmModal() {
 
 function openConfirmModal(data, alertId) {
     const recipientsList = document.getElementById('recipientsList');
+    const ccList = document.getElementById('ccList');
     const recipientsContainer = document.getElementById('recipientsListContainer');
+    const ccContainer = document.getElementById('ccListContainer');
     const confirmSendBtn = document.getElementById('confirmSendBtn');
     const emailConfirmModal = document.getElementById('emailConfirmModal');
     const wrapper = document.getElementById('confirmSendCheckbox');
@@ -50,12 +54,21 @@ function openConfirmModal(data, alertId) {
 
     const rawStatus = data && data.status ? data.status : null;
     const status = rawStatus !== null && rawStatus !== undefined ? String(rawStatus).toUpperCase().trim() : null;
-    const dests = Array.isArray(data.recipients) ? data.recipients : [];
 
-    if (dests.length === 0) {
+    // support both "recipients" (primary) and "cc" arrays
+    const toList = Array.isArray(data.recipients) ? data.recipients : [];
+    const ccListArr = Array.isArray(data.cc) ? data.cc : [];
+
+    if (toList.length === 0) {
         recipientsList.innerHTML = '<li style="color:var(--muted-foreground);">Nenhum destinatário encontrado.</li>';
     } else {
-        recipientsList.innerHTML = dests.map(d => `<li style="padding:6px 0; border-bottom:1px solid rgba(0,0,0,0.04);">${d}</li>`).join('');
+        recipientsList.innerHTML = toList.map(d => `<li style="padding:6px 0; border-bottom:1px solid rgba(0,0,0,0.04);">${d}</li>`).join('');
+    }
+
+    if (ccListArr.length === 0) {
+        ccList.innerHTML = '<li style="color:var(--muted-foreground);">Nenhum e-mail em cópia.</li>';
+    } else {
+        ccList.innerHTML = ccListArr.map(d => `<li style="padding:6px 0; border-bottom:1px solid rgba(0,0,0,0.04);">${d}</li>`).join('');
     }
 
     checkboxInput.checked = false;

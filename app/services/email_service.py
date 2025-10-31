@@ -6,8 +6,25 @@ from app.enums.directorate_codes import DirectorateCode
 from app.enums.mailing_status import MailingStatus
 from app.infra.email_manager import EmailManager
 from app.services.alert_service import AlertService
+from app.services.mailing_service import MailingService
 
 class EmailService:
+
+    def get_recipients_for_alert(self, alert) -> dict:
+        env = os.getenv("ENV", "").strip().upper()
+
+        if env == "DEV":
+            email_user = os.getenv("EMAIL_USER")
+            bw_email = os.getenv("BW_EMAIL")
+            to_list = [email_user] if email_user else []
+            cc_list = [bw_email] if bw_email else []
+            return {"to": to_list, "cc": cc_list}
+
+        mailing_service = MailingService()
+        to_list = mailing_service.get_emails_by_directorates([DirectorateCode.DIMAC_MARKETING_COM]) or []
+        cc_list = mailing_service.get_emails_by_directorates([DirectorateCode.FB]) or []
+
+        return {"to": to_list, "cc": cc_list}
 
     def render_alert_html(self, alert) -> str:
         profile = alert.profiles_or_portals[0]
@@ -28,24 +45,27 @@ class EmailService:
         return render_template("email-template.html", **context)
 
     def send_alert_email(self, alert) -> dict:
-        to_address = os.getenv("EMAIL_USER")
+        # reuse new method to build recipients
+        recipients = self.get_recipients_for_alert(alert)
+        to_list = recipients["to"]
+        cc_list = recipients["cc"]
 
         subject = f"[RISCO DE REPUTAÇÃO BB] – Alerta de Repercussão Nível {str(alert.criticality_level.number)} - {alert.title}"
         rendered_html = self.render_alert_html(alert)
 
         email_manager = EmailManager()
         try:
-            email_manager.send_email(to_address, subject, rendered_html)
+            email_manager.send_email(to_list, subject, rendered_html, cc=cc_list)
         except Exception:
             raise
 
         AlertService().update_mailing_status(alert, MailingStatus.EMAIL_SENT)
 
-        return {"message": "Email enviado com sucesso", "to": to_address}
+        return {"message": "Email enviado com sucesso", "to": to_list, "cc": cc_list}
 
     def validate_send(self, alert) -> dict:
-        user = os.getenv("EMAIL_USER")
-        return {"status": alert.mailing_status.name, "recipients": [user]}
+        recipients = self.get_recipients_for_alert(alert)
+        return {"status": alert.mailing_status.name, "recipients": recipients["to"], "cc": recipients["cc"]}
 
     def linkify(self, text: str) -> Markup:
         if not text:

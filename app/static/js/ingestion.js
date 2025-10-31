@@ -37,10 +37,13 @@ async function handleSendClick() {
         const status = data && data.status !== undefined && data.status !== null
             ? String(data.status).toUpperCase().trim()
             : null;
-        const dests = Array.isArray(data.recipients) ? data.recipients : [];
+
+        // collect both primary recipients and cc (backend returns "recipients" and "cc")
+        const toList = Array.isArray(data.recipients) ? data.recipients : [];
+        const ccList = Array.isArray(data.cc) ? data.cc : [];
 
         if (typeof openConfirmModal === 'function') {
-            openConfirmModal({ status, recipients: dests }, alertId);
+            openConfirmModal({ status, recipients: toList, cc: ccList }, alertId);
         } else {
             console.warn('openConfirmModal não encontrado: verifique se email_confirm.js foi carregado.');
         }
