@@ -26,6 +26,11 @@ class EmailService:
 
         return {"to": to_list, "cc": cc_list}
 
+    def format_description(self, text: str) -> Markup:
+        linked_text = self.linkify(text)
+        boldified_text = self.boldify(linked_text)
+        return boldified_text
+
     def render_alert_html(self, alert) -> str:
         profile = alert.profiles_or_portals[0]
         email = os.getenv("EMAIL_USER")
@@ -38,7 +43,7 @@ class EmailService:
             "NIVEL": str(alert.criticality_level.number),
             "TITULO_POSTAGEM": alert.title,
             "PERFIL_USUARIO": profile,
-            "DESCRICAO_COMPLETA": self.linkify(alert.alert_text),
+            "DESCRICAO_COMPLETA": self.format_description(alert.alert_text),  # Updated to use format_description
             "DIRECTORY": DirectorateCode.FB.name,
             "should_render_mailing_cancelation": False,
             "is_repercussion": False
@@ -119,3 +124,13 @@ class EmailService:
 
         wrapped = f'<div style="white-space: pre-wrap;">{linked}</div>'
         return Markup(wrapped)
+
+    def boldify(self, text: str) -> Markup:
+        pattern = re.compile(r'(\*{1,2})(.+?)\1', flags=re.DOTALL)
+
+        def replace_bold(match):
+            content = match.group(2)
+            return f"<b>{content}</b>"
+
+        result = re.sub(pattern, replace_bold, text)
+        return Markup(result)
