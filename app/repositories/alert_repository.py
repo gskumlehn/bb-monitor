@@ -67,13 +67,6 @@ class AlertRepository:
 
     @staticmethod
     def exists_by_any_url_within(urls: list[str], since: datetime) -> bool:
-        """
-        Return True if there is any alert that overlaps with `urls` and
-        has delivery_datetime >= since.
-        """
-        if not urls:
-            return False
-
         with get_session() as session:
             query = (
                 select(func.count())
