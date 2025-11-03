@@ -40,7 +40,8 @@ class EmailService:
             "PERFIL_USUARIO": profile,
             "DESCRICAO_COMPLETA": self.linkify(alert.alert_text),
             "DIRECTORY": DirectorateCode.FB.name,
-            "should_render_mailing_cancelation": False
+            "should_render_mailing_cancelation": False,
+            "is_repercussion": False
         }
 
         return render_template("email-template.html", **context)
@@ -50,7 +51,8 @@ class EmailService:
         to_list = recipients["to"]
         cc_list = recipients["cc"]
 
-        subject = f"[RISCO DE REPUTAÇÃO BB] – Alerta de Repercussão Nível {str(alert.criticality_level.number)} - {alert.title}"
+        is_repercussion = False
+        subject = f"[RISCO DE REPUTAÇÃO BB] – Alerta{' de Repercussão' if is_repercussion else ''} Nível {str(alert.criticality_level.number)} - {alert.title}"
         rendered_html = self.render_alert_html(alert)
 
         email_manager = EmailManager()
