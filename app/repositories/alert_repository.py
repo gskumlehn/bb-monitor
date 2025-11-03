@@ -1,7 +1,7 @@
 from sqlalchemy import select, func, literal_column
-from sqlalchemy.sql import exists
 from app.models.alert import Alert
 from app.infra.bq_sa import get_session
+import datetime
 
 class AlertRepository:
 
@@ -64,3 +64,28 @@ class AlertRepository:
                 .order_by(Alert._delivery_datetime.asc())
             )
             return session.execute(query).scalars().all()
+
+    @staticmethod
+    def exists_by_any_url_within(urls: list[str], since: datetime) -> bool:
+        """
+        Return True if there is any alert that overlaps with `urls` and
+        has delivery_datetime >= since.
+        """
+        if not urls:
+            return False
+
+        with get_session() as session:
+            query = (
+                select(func.count())
+                .select_from(Alert)
+                .where(
+                    Alert._delivery_datetime >= since,
+                    func.exists(
+                        select(literal_column("1"))
+                        .select_from(func.unnest(Alert._urls).alias("url"))
+                        .where(literal_column("url").in_(urls))
+                    )
+                )
+            )
+            result = session.execute(query).scalar()
+            return result > 0

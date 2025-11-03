@@ -1,5 +1,5 @@
 import unittest
-from datetime import datetime
+from datetime import datetime, timedelta
 from app.services.alert_service import AlertService
 from app.enums.alert_type import AlertType
 from app.enums.criticality_level import CriticalityLevel
@@ -12,6 +12,7 @@ from app.enums.social_media_source import SocialMediaSource
 from app.enums.social_media_engagement import SocialMediaEngagement
 from app.enums.repercussion import Repercussion
 from zoneinfo import ZoneInfo
+from app.models.alert import Alert
 
 class TestAlertService(unittest.TestCase):
     def setUp(self):
@@ -20,7 +21,7 @@ class TestAlertService(unittest.TestCase):
     def test_save_alert_success(self):
         alert_data = {
             "urls": ["http://example.com"],
-            "title": "Test Alert",
+            "title": "[[TESTE]] Test Alert",
             "delivery_datetime": datetime(2023, 10, 10, 10, 0, 0, tzinfo=ZoneInfo("America/Sao_Paulo")),
             "mailing_status": MailingStatus.NOT_SENT,
             "criticality_level": CriticalityLevel.LEVEL_1,
@@ -62,7 +63,7 @@ class TestAlertService(unittest.TestCase):
     def test_duplicate_urls(self):
         alert_data = {
             "urls": ["http://example.com"],
-            "title": "Test Alert",
+            "title": "[[TESTE]] Test Alert",
             "delivery_datetime": datetime(2023, 10, 10, 10, 0, 0),
             "mailing_status": MailingStatus.NOT_SENT,
             "criticality_level": CriticalityLevel.LEVEL_1,
@@ -84,7 +85,7 @@ class TestAlertService(unittest.TestCase):
 
     def test_missing_required_fields(self):
         alert_data = {
-            "title": "Test Alert",
+            "title": "[[TESTE]] Test Alert",
         }
         with self.assertRaises(ValueError) as context:
             self.service.save(alert_data)
@@ -94,7 +95,7 @@ class TestAlertService(unittest.TestCase):
     def test_invalid_mailing_status(self):
         alert_data = {
             "urls": ["http://example.com"],
-            "title": "Test Alert",
+            "title": "[[TESTE]] Test Alert",
             "delivery_datetime": datetime(2023, 10, 10, 10, 0, 0),
             "mailing_status": "INVALID_STATUS",  # Invalid mailing status
             "criticality_level": CriticalityLevel.LEVEL_1,
@@ -109,7 +110,7 @@ class TestAlertService(unittest.TestCase):
     def test_invalid_criticality_level(self):
         alert_data = {
             "urls": ["http://example.com"],
-            "title": "Test Alert",
+            "title": "[[TESTE]] Test Alert",
             "delivery_datetime": datetime(2023, 10, 10, 10, 0, 0),
             "mailing_status": MailingStatus.NOT_SENT,
             "criticality_level": "INVALID_LEVEL",  # Invalid criticality level
@@ -124,7 +125,7 @@ class TestAlertService(unittest.TestCase):
     def test_invalid_alert_types(self):
         alert_data = {
             "urls": ["http://example.com"],
-            "title": "Test Alert",
+            "title": "[[TESTE]] Test Alert",
             "delivery_datetime": datetime(2023, 10, 10, 10, 0, 0),
             "mailing_status": MailingStatus.NOT_SENT,
             "criticality_level": CriticalityLevel.LEVEL_1,
@@ -139,7 +140,7 @@ class TestAlertService(unittest.TestCase):
     def test_invalid_critical_topic(self):
         alert_data = {
             "urls": ["http://example.com"],
-            "title": "Test Alert",
+            "title": "[[TESTE]] Test Alert",
             "delivery_datetime": datetime(2023, 10, 10, 10, 0, 0),
             "mailing_status": MailingStatus.NOT_SENT,
             "criticality_level": CriticalityLevel.LEVEL_1,
@@ -155,7 +156,7 @@ class TestAlertService(unittest.TestCase):
     def test_invalid_press_sources(self):
         alert_data = {
             "urls": ["http://example.com"],
-            "title": "Test Alert",
+            "title": "[[TESTE]] Test Alert",
             "delivery_datetime": datetime(2023, 10, 10, 10, 0, 0),
             "mailing_status": MailingStatus.NOT_SENT,
             "criticality_level": CriticalityLevel.LEVEL_1,
@@ -171,7 +172,7 @@ class TestAlertService(unittest.TestCase):
     def test_invalid_social_media_sources(self):
         alert_data = {
             "urls": ["http://example.com"],
-            "title": "Test Alert",
+            "title": "[[TESTE]] Test Alert",
             "delivery_datetime": datetime(2023, 10, 10, 10, 0, 0),
             "mailing_status": MailingStatus.NOT_SENT,
             "criticality_level": CriticalityLevel.LEVEL_1,
@@ -187,7 +188,7 @@ class TestAlertService(unittest.TestCase):
     def test_invalid_social_media_engagements(self):
         alert_data = {
             "urls": ["http://example.com"],
-            "title": "Test Alert",
+            "title": "[[TESTE]] Test Alert",
             "delivery_datetime": datetime(2023, 10, 10, 10, 0, 0),
             "mailing_status": MailingStatus.NOT_SENT,
             "criticality_level": CriticalityLevel.LEVEL_1,
@@ -203,7 +204,7 @@ class TestAlertService(unittest.TestCase):
     def test_invalid_repercussions(self):
         alert_data = {
             "urls": ["http://example.com"],
-            "title": "Test Alert",
+            "title": "[[TESTE]] Test Alert",
             "delivery_datetime": datetime(2023, 10, 10, 10, 0, 0),
             "mailing_status": MailingStatus.NOT_SENT,
             "criticality_level": CriticalityLevel.LEVEL_1,
@@ -219,7 +220,7 @@ class TestAlertService(unittest.TestCase):
     def test_update_alert_success(self):
         alert_data = {
             "urls": ["http://example.com"],
-            "title": "Original Title",
+            "title": "[[TESTE]] Original Title",
             "delivery_datetime": datetime(2023, 10, 10, 10, 0, 0, tzinfo=ZoneInfo("America/Sao_Paulo")),
             "mailing_status": MailingStatus.NOT_SENT,
             "criticality_level": CriticalityLevel.LEVEL_1,
@@ -242,7 +243,7 @@ class TestAlertService(unittest.TestCase):
         # Update data (all fields except `urls` and `mailing_status`)
         update_data = {
             "urls": ["http://example.com"],
-            "title": "Updated Title",
+            "title": "[[TESTE]] Updated Title",
             "delivery_datetime": datetime(2023, 11, 11, 11, 0, 0, tzinfo=ZoneInfo("America/Sao_Paulo")),
             "mailing_status": MailingStatus.NOT_SENT,
             "criticality_level": CriticalityLevel.LEVEL_2,
@@ -291,7 +292,7 @@ class TestAlertService(unittest.TestCase):
     def test_save_or_update_new_alert(self):
         alert_data = {
             "urls": ["http://example.com"],
-            "title": "New Alert",
+            "title": "[[TESTE]] New Alert",
             "delivery_datetime": datetime(2023, 10, 10, 10, 0, 0, tzinfo=ZoneInfo("America/Sao_Paulo")),
             "mailing_status": MailingStatus.NOT_SENT,
             "criticality_level": CriticalityLevel.LEVEL_1,
@@ -320,7 +321,7 @@ class TestAlertService(unittest.TestCase):
     def test_save_or_update_existing_alert(self):
         alert_data = {
             "urls": ["http://example.com"],
-            "title": "Original Alert",
+            "title": "[[TESTE]] Original Alert",
             "delivery_datetime": datetime(2023, 10, 10, 10, 0, 0, tzinfo=ZoneInfo("America/Sao_Paulo")),
             "mailing_status": MailingStatus.NOT_SENT,
             "criticality_level": CriticalityLevel.LEVEL_1,
@@ -341,7 +342,7 @@ class TestAlertService(unittest.TestCase):
 
         update_data = {
             "urls": ["http://example.com"],  # Same URL to trigger update
-            "title": "Updated Alert",
+            "title": "[[TESTE]] Updated Alert",
             "delivery_datetime": datetime(2023, 11, 11, 11, 0, 0, tzinfo=ZoneInfo("America/Sao_Paulo")),
             "mailing_status": MailingStatus.NOT_SENT,  # Should not change
             "criticality_level": CriticalityLevel.LEVEL_2,
@@ -385,7 +386,7 @@ class TestAlertService(unittest.TestCase):
 
     def test_save_or_update_no_urls(self):
         alert_data = {
-            "title": "Alert Without URLs",
+            "title": "[[TESTE]] Alert Without URLs",
             "delivery_datetime": datetime(2023, 10, 10, 10, 0, 0, tzinfo=ZoneInfo("America/Sao_Paulo")),
             "mailing_status": MailingStatus.NOT_SENT,
             "criticality_level": CriticalityLevel.LEVEL_1,
@@ -397,6 +398,150 @@ class TestAlertService(unittest.TestCase):
         with self.assertRaises(ValueError) as context:
             self.service.save_or_update(alert_data)
         self.assertIn("urls", str(context.exception))
+
+    def test_is_repercussion_within_24_hours(self):
+        now = datetime.now(tz=ZoneInfo("UTC"))
+        alert_data_1 = {
+            "urls": ["http://example.com"],
+            "title": "[[TESTE]] First Alert",
+            "delivery_datetime": now - timedelta(hours=23),
+            "mailing_status": MailingStatus.NOT_SENT,
+            "criticality_level": CriticalityLevel.LEVEL_1,
+            "alert_types": [AlertType.PRESS],
+            "profiles_or_portals": ["Profile1"],
+            "alert_text": "First alert text",
+        }
+        alert_data_2 = {
+            "urls": ["http://example.com", "http://example2.com"],
+            "title": "[[TESTE]] Second Alert",
+            "delivery_datetime": now,
+            "mailing_status": MailingStatus.NOT_SENT,
+            "criticality_level": CriticalityLevel.LEVEL_1,
+            "alert_types": [AlertType.PRESS],
+            "profiles_or_portals": ["Profile2"],
+            "alert_text": "Second alert text",
+        }
+
+        # Save the first alert
+        alert_1 = self.service.save(alert_data_1)
+        self.assertIsNotNone(alert_1)
+
+        # Save the second alert and check if it is marked as a repercussion
+        alert_2 = self.service.save(alert_data_2)
+        self.assertIsNotNone(alert_2)
+        self.assertTrue(alert_2.is_repercussion)
+
+        # Clean up
+        self.service.delete_by_id(alert_1.id)
+        self.service.delete_by_id(alert_2.id)
+
+    def test_is_not_repercussion_outside_24_hours(self):
+        now = datetime.now(tz=ZoneInfo("UTC"))
+        alert_data_1 = {
+            "urls": ["http://example.com"],
+            "title": "[[TESTE]] First Alert",
+            "delivery_datetime": now - timedelta(hours=25),
+            "mailing_status": MailingStatus.NOT_SENT,
+            "criticality_level": CriticalityLevel.LEVEL_1,
+            "alert_types": [AlertType.PRESS],
+            "profiles_or_portals": ["Profile1"],
+            "alert_text": "First alert text",
+        }
+        alert_data_2 = {
+            "urls": ["http://example.com", "http://example2.com"],
+            "title": "[[TESTE]] Second Alert",
+            "delivery_datetime": now,
+            "mailing_status": MailingStatus.NOT_SENT,
+            "criticality_level": CriticalityLevel.LEVEL_1,
+            "alert_types": [AlertType.PRESS],
+            "profiles_or_portals": ["Profile2"],
+            "alert_text": "Second alert text",
+        }
+
+        # Save the first alert
+        alert_1 = self.service.save(alert_data_1)
+        self.assertIsNotNone(alert_1)
+
+        # Save the second alert and check if it is not marked as a repercussion
+        alert_2 = self.service.save(alert_data_2)
+        self.assertIsNotNone(alert_2)
+        self.assertFalse(alert_2.is_repercussion)
+
+        # Clean up
+        self.service.delete_by_id(alert_1.id)
+        self.service.delete_by_id(alert_2.id)
+
+    def test_is_not_repercussion_outside_7_days(self):
+        now = datetime.now(tz=ZoneInfo("UTC"))
+        alert_data_1 = {
+            "urls": ["http://example.com"],
+            "title": "[[TESTE]] First Alert",
+            "delivery_datetime": now - timedelta(days=8),
+            "mailing_status": MailingStatus.NOT_SENT,
+            "criticality_level": CriticalityLevel.LEVEL_1,
+            "alert_types": [AlertType.PRESS],
+            "profiles_or_portals": ["Profile1"],
+            "alert_text": "First alert text",
+        }
+        alert_data_2 = {
+            "urls": ["http://example.com", "http://example2.com"],
+            "title": "[[TESTE]] Second Alert",
+            "delivery_datetime": now,
+            "mailing_status": MailingStatus.NOT_SENT,
+            "criticality_level": CriticalityLevel.LEVEL_1,
+            "alert_types": [AlertType.PRESS],
+            "profiles_or_portals": ["Profile2"],
+            "alert_text": "Second alert text",
+        }
+
+        # Save the first alert
+        alert_1 = self.service.save(alert_data_1)
+        self.assertIsNotNone(alert_1)
+
+        # Save the second alert and check if it is not marked as a repercussion
+        alert_2 = self.service.save(alert_data_2)
+        self.assertIsNotNone(alert_2)
+        self.assertFalse(alert_2.is_repercussion)
+
+        # Clean up
+        self.service.delete_by_id(alert_1.id)
+        self.service.delete_by_id(alert_2.id)
+
+    def test_is_repercussion_with_smaller_urls(self):
+        now = datetime.now(tz=ZoneInfo("UTC"))
+        alert_data_1 = {
+            "urls": ["http://example.com"],
+            "title": "[[TESTE]] First Alert",
+            "delivery_datetime": now - timedelta(hours=23),
+            "mailing_status": MailingStatus.NOT_SENT,
+            "criticality_level": CriticalityLevel.LEVEL_1,
+            "alert_types": [AlertType.PRESS],
+            "profiles_or_portals": ["Profile1"],
+            "alert_text": "First alert text",
+        }
+        alert_data_2 = {
+            "urls": ["http://example.com", "http://example2.com"],
+            "title": "[[TESTE]] Second Alert",
+            "delivery_datetime": now,
+            "mailing_status": MailingStatus.NOT_SENT,
+            "criticality_level": CriticalityLevel.LEVEL_1,
+            "alert_types": [AlertType.PRESS],
+            "profiles_or_portals": ["Profile2"],
+            "alert_text": "Second alert text",
+        }
+
+        # Save the first alert
+        alert_1 = self.service.save(alert_data_1)
+        self.assertIsNotNone(alert_1)
+
+        # Save the second alert and check if it is marked as a repercussion
+        alert_2 = self.service.save(alert_data_2)
+        self.assertIsNotNone(alert_2)
+        self.assertTrue(alert_2.is_repercussion)
+
+        # Clean up
+        self.service.delete_by_id(alert_1.id)
+        self.service.delete_by_id(alert_2.id)
 
 if __name__ == "__main__":
     unittest.main()

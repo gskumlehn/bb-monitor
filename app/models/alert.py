@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, ARRAY, Text
+from sqlalchemy import Column, String, ARRAY, Text, Boolean
 from sqlalchemy_bigquery import TIMESTAMP
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.ext.declarative import declarative_base
@@ -39,6 +39,7 @@ class Alert(Base):
     _social_media_engagements = Column("social_media_engagements", ARRAY(String), nullable=True)
     _repercussions = Column("repercussions", ARRAY(String), nullable=True)
     history = Column(Text, nullable=True)
+    is_repercussion = Column(Boolean, nullable=False, default=False)
 
     SP_TZ = ZoneInfo(DateUtils.BRAZIL_TZ)
     UTC_TZ = ZoneInfo(DateUtils.UTC_TZ)
@@ -202,4 +203,3 @@ class Alert(Base):
             "mailing_status": self.mailing_status.value,
             "criticality_level": self.criticality_level.value
         }
-

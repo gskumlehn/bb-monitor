@@ -46,7 +46,7 @@ class EmailService:
             "DESCRICAO_COMPLETA": self.format_description(alert.alert_text),  # Updated to use format_description
             "DIRECTORY": DirectorateCode.FB.name,
             "should_render_mailing_cancelation": False,
-            "is_repercussion": False
+            "is_repercussion": alert.is_repercussion
         }
 
         return render_template("email-template.html", **context)
@@ -56,8 +56,7 @@ class EmailService:
         to_list = recipients["to"]
         cc_list = recipients["cc"]
 
-        is_repercussion = False
-        subject = f"[RISCO DE REPUTAÇÃO BB] – Alerta{' de Repercussão' if is_repercussion else ''} Nível {str(alert.criticality_level.number)} - {alert.title}"
+        subject = f"[RISCO DE REPUTAÇÃO BB] – Alerta{' de Repercussão' if alert.is_repercussion else ''} Nível {str(alert.criticality_level.number)} - {alert.title}"
         rendered_html = self.render_alert_html(alert)
 
         email_manager = EmailManager()

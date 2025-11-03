@@ -12,11 +12,15 @@ from app.enums.social_media_engagement import SocialMediaEngagement
 from app.enums.repercussion import Repercussion
 import uuid
 from typing import Optional
+from datetime import datetime, timedelta
 
 class AlertService:
     def save(self, alert_data: dict) -> Alert:
         self.validate_alert_data(alert_data, check_duplicate=True)
         alert = self.create(alert_data)
+
+        alert.is_repercussion = self.determine_is_repercussion(alert)
+
         return AlertRepository.save(alert)
 
     def update(self, alert_id: str, alert_data: dict) -> Optional[Alert]:
@@ -146,3 +150,7 @@ class AlertService:
 
     def list_by_month_year(self, month: int, year: int) -> list[Alert]:
         return AlertRepository.list_by_month_year(month, year)
+
+    def determine_is_repercussion(self, alert: Alert) -> bool:
+        since = datetime.utcnow() - timedelta(hours=24)
+        return AlertRepository.exists_by_any_url_within(alert.urls, since)
