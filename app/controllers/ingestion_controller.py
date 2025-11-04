@@ -1,7 +1,13 @@
-from flask import Blueprint, jsonify, request, render_template
+from flask import Blueprint, jsonify, render_template, request
 from app.services.ingestion_service import IngestionService
 
 ingestion_bp = Blueprint("ingestion", __name__)
+
+ingestion_service = IngestionService()
+
+@ingestion_bp.get("/ui")
+def index():
+    return render_template("ingestion.html")
 
 @ingestion_bp.route("/ingest", methods=["POST"])
 def ingest():
@@ -15,7 +21,6 @@ def ingest():
         elif start_row is None or end_row is None:
             return jsonify({"error": "Os parâmetros 'start_row' e 'end_row' são obrigatórios se 'row' não for fornecido."}), 400
 
-        ingestion_service = IngestionService()
         result = ingestion_service.ingest(start_row, end_row)
 
         return jsonify(result), 200
@@ -23,7 +28,3 @@ def ingest():
         return jsonify({"error": str(e)}), 400
     except Exception as e:
         return jsonify({"error": "Erro ao executar a ingestão.", "details": str(e)}), 500
-
-@ingestion_bp.get("/ui")
-def index():
-    return render_template("ingestion.html")

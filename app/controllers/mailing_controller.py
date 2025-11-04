@@ -1,9 +1,8 @@
-from flask import Blueprint, jsonify, request, render_template
-from app.services.mailing_service import MailingService
+from flask import Blueprint, jsonify, render_template, request
 from app.enums.directorate_codes import DirectorateCode
+from app.services.mailing_service import MailingService
 
 mailing_bp = Blueprint("mailing", __name__)
-mailing_bp.strict_slashes = False
 
 mailing_service = MailingService()
 

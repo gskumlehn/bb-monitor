@@ -1,11 +1,7 @@
-from flask import Blueprint, redirect, url_for, jsonify
+from flask import Blueprint, redirect, url_for
 
 root_bp = Blueprint("root", __name__)
 
-@root_bp.get("/")
+@root_bp.route("/")
 def index():
     return redirect(url_for("ingestion.index"))
-
-@root_bp.get("/healthz")
-def healthz():
-    return jsonify(ok=True), 200
