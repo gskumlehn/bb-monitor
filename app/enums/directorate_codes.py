@@ -22,6 +22,7 @@ class DirectorateCode(EnumInterface):
     DIGOV_GOVERNO = "DIGOV-Governo"
     DIJUR_JURIDICA = "DIJUR-Jurídica"
     DIMAC_MARKETING_COM = "DIMAC-Marketing Com."
+    DIMAC_MARKETING_COM_PRIORITARIO = "DIMAC-Marketing Com. Prioritário"
     DIMEP_MEIOS_PAGAMEN = "DIMEP-Meios Pagamen."
     DINED_NEG_DIGITAIS = "DINED-Neg. Digitais"
     DIOPE_OPERACOES = "DIOPE-Operações"

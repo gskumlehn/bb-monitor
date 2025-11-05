@@ -21,7 +21,7 @@ class EmailService:
             return {"to": to_list, "cc": cc_list}
 
         mailing_service = MailingService()
-        to_list = mailing_service.get_emails_by_directorates([DirectorateCode.DIMAC_MARKETING_COM]) or []
+        to_list = mailing_service.get_emails_by_directorates([DirectorateCode.DIMAC_MARKETING_COM_PRIORITARIO]) or []
         cc_list = mailing_service.get_emails_by_directorates([DirectorateCode.FB]) or []
 
         return {"to": to_list, "cc": cc_list}
