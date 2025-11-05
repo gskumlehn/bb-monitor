@@ -123,7 +123,7 @@ class IngestionService:
                 first_idx = idx
                 break
 
-        if first_idx is not None and lines[first_idx].strip().startswith("[RISCO DE REPUTAÇÃO BB]"):
+        if first_idx is not None and lines[first_idx].strip().startswith(("[RISCO DE REPUTAÇÃO BB]", "[RISCO DE REPUTAÇÃO]")):
             del lines[first_idx]
 
         while lines and not lines[0].strip():
