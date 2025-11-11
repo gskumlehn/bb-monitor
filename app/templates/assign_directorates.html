@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block title %}Enviar alerta às Diretorias{% endblock %}
+{% block header_title %}Enviar alerta às Diretorias{% endblock %}
+
+{% block content %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/assign_directorates.css') }}">
+
+    <div class="content-wrapper">
+        <div class="card form-card">
+            <div class="card-header">
+                <h2>Selecione Diretorias para envio do mailing</h2>
+            </div>
+            <div class="card-content">
+                <div class="alert-title">
+                    <h3><strong>Título do Alerta:</strong> {{ alert.title }} - {{ alert.criticality_level.value }}</h3>
+                </div>
+                <br>
+                <form id="assignForm" method="post" class="form">
+                    <div class="form-group">
+                        <label class="label">Diretorias</label>
+                        <small class="assign-note">
+                            Clique nos botões para selecionar
+                        </small>
+                        <div class="checkbox-grid">
+                            {% for directorate in directorate_codes %}
+                                <div class="checkbox-item">
+                                    <input
+                                        type="checkbox"
+                                        id="cb_{{ directorate.name }}"
+                                        name="{{ directorate.name }}"
+                                        value="false"
+                                        class="checkbox-input"
+                                    >
+                                    <label for="cb_{{ directorate.name }}" class="checkbox-btn checkbox-button" title="{{ directorate.value }}">{{ directorate.value }}</label>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <div class="form-actions align-right">
+                        <button type="submit" class="btn btn-primary">Salvar Seleção & Enviar Mailing</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    <script src="{{ url_for('static', filename='js/assign_directorates.js') }}"></script>
+{% endblock %}

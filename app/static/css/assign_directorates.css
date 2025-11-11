@@ -1,0 +1,114 @@
+@import url("checkbox_buttons.css");
+
+.assign-meta {
+    margin-bottom: 1rem;
+    color: var(--foreground);
+}
+
+.assign-note {
+    color: var(--muted-foreground);
+    margin-top: 0.5rem;
+    display: block;
+    font-size: 0.95rem;
+}
+
+.form-actions {
+    margin-top: 1rem;
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+}
+
+.form-actions.align-right {
+    justify-content: flex-end;
+}
+
+.btn-cancel {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--foreground);
+    padding: 0.85rem 1rem;
+    border-radius: 0.5rem;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.checkbox-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 0.5rem;
+}
+
+.checkbox-item {
+    position: relative;
+}
+
+.checkbox-input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    border: 0;
+    padding: 0;
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.checkbox-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    width: 100%;
+    padding: 0.6rem 0.75rem;
+    border-radius: 0.5rem;
+    border: 2px solid var(--border);
+    background: var(--card-bg);
+    color: var(--foreground);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    text-align: left;
+    user-select: none;
+}
+
+.checkbox-btn .checkbox-label {
+    font-weight: 400;
+    color: var(--muted-foreground);
+    margin-left: 0.5rem;
+}
+
+.checkbox-btn:hover,
+.checkbox-input:focus + .checkbox-btn {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 12px rgba(72, 94, 253, 0.06);
+}
+
+.checkbox-input:checked + .checkbox-btn {
+    background: var(--bb-blue);
+    color: white;
+    border-color: var(--bb-blue);
+    box-shadow: 0 8px 18px rgba(72, 94, 253, 0.12);
+}
+
+.checkbox-btn.cb-checked {
+    background: var(--bb-blue);
+    color: white;
+    border-color: var(--bb-blue);
+    box-shadow: 0 8px 18px rgba(72, 94, 253, 0.12);
+}
+
+.checkbox-input:focus + .checkbox-btn,
+.checkbox-btn:focus {
+    outline: 3px solid rgba(72,94,253,0.15);
+    outline-offset: 2px;
+}
+
+@media (max-width: 480px) {
+    .checkbox-grid {
+        grid-template-columns: 1fr;
+    }
+}
