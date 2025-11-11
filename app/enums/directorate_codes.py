@@ -55,3 +55,8 @@ class DirectorateCode(EnumInterface):
     URI_REL_INVESTIDORES = "URI-Rel. Investidores"
     USD_SEG_DIGITAL_INF = "USD-Seg. Digital Inf."
     USI_SEGUR_INST = "USI-Segur. Inst."
+
+    @classmethod
+    def list_excluding(cls):
+        exclusions = {cls.FB, cls.DIMAC_MARKETING_COM_PRIORITARIO}
+        return [member for member in cls if member not in exclusions]
