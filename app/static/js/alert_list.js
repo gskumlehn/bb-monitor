@@ -20,7 +20,6 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // Limpa o conteúdo da tabela antes de fazer o request
         alertTableBody.innerHTML = '';
         alertTableContainer.style.display = 'none';
 
@@ -50,7 +49,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
                 alertTableContainer.style.display = 'block';
 
-                // Add click event to rows
                 document.querySelectorAll('.clickable-row').forEach(row => {
                     row.addEventListener('click', () => {
                         const alertId = row.dataset.alertId;
