@@ -16,7 +16,7 @@
                     <h3><strong>Título do Alerta:</strong> {{ alert.title }} - {{ alert.criticality_level.value }}</h3>
                 </div>
                 <br>
-                <form id="assignForm" method="post" class="form">
+                <form id="assignForm" method="post" action="{{ url_for('email.send_alert_to_directorates', alert_id=alert.id) }}" class="form">
                     <div class="form-group">
                         <label class="label">Diretorias</label>
                         <small class="assign-note">
