@@ -35,13 +35,63 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const form = document.getElementById('assignForm');
     if (form) {
-        form.addEventListener('submit', function (e) {
+        form.addEventListener('submit', async function (e) {
             e.preventDefault();
             const chosen = Array.from(document.querySelectorAll('.checkbox-input'))
                 .filter(i => i.value === "true")
                 .map(i => i.name);
-            console.log('Selected directorates:', chosen);
-            return false;
+
+            if (chosen.length === 0) {
+                showToast('Selecione pelo menos uma diretoria para enviar o mailing.', 'error');
+                return;
+            }
+
+            const url = form.getAttribute('action');
+
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ directorates: chosen }),
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    handleMailingResponse(result);
+                } else {
+                    const error = await response.json();
+                    showToast(error.description || 'Erro ao enviar mailing. Entre em contato com o atendimento.', 'error');
+                }
+            } catch (err) {
+                showToast('Erro ao enviar mailing. Entre em contato com o atendimento.', 'error');
+                console.error('Erro ao enviar mailing:', err);
+            }
         });
+    }
+
+    function handleMailingResponse(result) {
+        const errors = result.results.filter(r => r.status === 'error');
+        if (errors.length === result.results.length) {
+            showToast('Erro ao enviar mailing. Entre em contato com o atendimento.', 'error');
+        } else if (errors.length > 0) {
+            const errorDirectorates = errors.map(e => e.directorate).join(', ');
+            showToast(`Erro ao enviar para as seguintes diretorias: ${errorDirectorates}. Entre em contato com o atendimento.`, 'error');
+        } else {
+            showToast('Mailing enviado com sucesso!', 'success');
+        }
+    }
+
+    function showToast(message, type = 'success') {
+        const toast = document.getElementById('toast');
+        if (!toast) return;
+
+        toast.textContent = message;
+        toast.className = `toast ${type} show`;
+
+        setTimeout(() => {
+            toast.classList.remove('show');
+        }, 3000);
     }
 });
