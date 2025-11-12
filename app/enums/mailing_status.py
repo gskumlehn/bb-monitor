@@ -5,3 +5,4 @@ class MailingStatus(EnumInterface):
     NOT_SENT = "NÃO"
     SENT = "SIM"
     EMAIL_SENT = "Email Enviado"
+    MAILING_SENT = "Mailing Enviado"
