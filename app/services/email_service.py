@@ -10,7 +10,7 @@ from app.services.mailing_service import MailingService
 
 class EmailService:
 
-    def get_recipients_for_alert(self, alert) -> dict:
+    def get_recipients_for_alert(self, directorate_code=None) -> dict:
         env = os.getenv("ENV", "").strip().upper()
 
         if env == "DEV":
@@ -21,8 +21,13 @@ class EmailService:
             return {"to": to_list, "cc": cc_list}
 
         mailing_service = MailingService()
-        to_list = mailing_service.get_emails_by_directorates([DirectorateCode.DIMAC_MARKETING_COM_PRIORITARIO]) or []
-        cc_list = mailing_service.get_emails_by_directorates([DirectorateCode.FB]) or []
+
+        if directorate_code:
+            to_list = mailing_service.get_emails_by_directorates([directorate_code]) or []
+            cc_list = mailing_service.get_emails_by_directorates([DirectorateCode.DIMAC_MARKETING_COM_PRIORITARIO, DirectorateCode.FB]) or []
+        else:
+            to_list = mailing_service.get_emails_by_directorates([DirectorateCode.DIMAC_MARKETING_COM_PRIORITARIO]) or []
+            cc_list = mailing_service.get_emails_by_directorates([DirectorateCode.FB]) or []
 
         return {"to": to_list, "cc": cc_list}
 
@@ -133,3 +138,40 @@ class EmailService:
 
         result = re.sub(pattern, replace_bold, text)
         return Markup(result)
+
+    def send_alert_to_directorates(self, alert, directorates: list[DirectorateCode]) -> dict:
+        env = os.getenv("ENV", "").strip().upper()
+        email_manager = EmailManager()
+        results = []
+
+        rendered_html = self.render_alert_html(alert)
+        subject_template = f"[RISCO DE REPUTAÇÃO BB] – Alerta{' de Repercussão' if alert.is_repercussion else ''} Nível {str(alert.criticality_level.number)} - {alert.title}"
+
+        if env == "DEV":
+            recipients = self.get_recipients_for_alert()
+            to_list = recipients["to"]
+            cc_list = recipients["cc"]
+            directorates_str = ", ".join([d.name for d in directorates])
+            subject = f"{subject_template} | Diretorias: {directorates_str}"
+
+            try:
+                email_manager.send_email(to_list, subject, rendered_html, cc=cc_list)
+                results.append({"directorates": directorates_str, "to": to_list, "cc": cc_list, "status": "sent"})
+            except Exception as e:
+                results.append({"directorates": directorates_str, "to": to_list, "cc": cc_list, "status": "error", "error": str(e)})
+
+            return {"results": results}
+
+        for directorate in directorates:
+            recipients = self.get_recipients_for_alert(directorate_code=directorate)
+            to_list = recipients["to"]
+            cc_list = recipients["cc"]
+
+            try:
+                email_manager.send_email(to_list, subject_template, rendered_html, cc=cc_list)
+                results.append({"directorate": directorate.value, "to": to_list, "cc": cc_list, "status": "sent"})
+            except Exception as e:
+                results.append({"directorate": directorate.value, "to": to_list, "cc": cc_list, "status": "error", "error": str(e)})
+
+        AlertService().update_mailing_status(alert, MailingStatus.MAILING_SENT)
+        return {"results": results}
