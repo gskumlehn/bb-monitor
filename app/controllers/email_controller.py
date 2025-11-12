@@ -1,4 +1,5 @@
-from flask import Blueprint, abort, jsonify
+from flask import Blueprint, abort, jsonify, request
+from app.enums.directorate_codes import DirectorateCode
 from app.services.alert_service import AlertService
 from app.services.email_service import EmailService
 
@@ -11,7 +12,7 @@ email_service = EmailService()
 def render_alert_email(alert_id):
     alert = alert_service.get_by_id(alert_id)
     if not alert:
-        abort(404, description="Alerta não encontrado")
+        abort(404, description="Alerta não encontrado.")
 
     return email_service.render_alert_html(alert)
 
@@ -19,19 +20,19 @@ def render_alert_email(alert_id):
 def send_alert_email(alert_id):
     alert = alert_service.get_by_id(alert_id)
     if not alert:
-        abort(404, description="Alerta não encontrado")
+        abort(404, description="Alerta não encontrado.")
 
     try:
         result = email_service.send_alert_email(alert)
         return jsonify(result), 200
-    except Exception as e:
-        abort(500, description=f"Falha ao enviar email: {str(e)}")
+    except Exception:
+        abort(500, description="Falha ao enviar e-mail.")
 
 @email_bp.route("/validate/<alert_id>", methods=["GET"])
 def validate_recipients_for_alert(alert_id):
     alert = alert_service.get_by_id(alert_id)
     if not alert:
-        abort(404, description="Alerta não encontrado")
+        abort(404, description="Alerta não encontrado.")
 
     result = email_service.validate_send(alert)
     return jsonify(result), 200
