@@ -28,4 +28,8 @@ class ErrorMessages:
         "Mailing.email.empty": "Email não pode ser vazio.",
         "Mailing.email.invalid": "Formato do email é inválido.",
         "Mailing.email.domain.invalid": "Domínio do email não é permitido",
+        "MailingHistory.missingFields": "Os seguintes campos obrigatórios do histórico de mailing estão ausentes ou vazios: {fields}",
+        "MailingHistory.primaryDirectorate.invalid": "Diretoria principal inválida",
+        "MailingHistory.toEmails.invalid": "Lista de destinatários inválida",
+        "MailingHistory.senderEmail.invalid": "Email do remetente inválido",
     }

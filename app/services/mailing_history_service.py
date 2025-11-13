@@ -1,6 +1,7 @@
+from app.constants.error_messages import ErrorMessages
+from app.enums.directorate_codes import DirectorateCode
 from app.models.mailing_history import MailingHistory
 from app.repositories.mailing_history_repository import MailingHistoryRepository
-from app.enums.directorate_codes import DirectorateCode
 from datetime import datetime
 
 class MailingHistoryService:
@@ -14,15 +15,23 @@ class MailingHistoryService:
             "alert_id",
             "primary_directorate",
             "to_emails",
-            "sender_email"
+            "sender_email",
         ]
 
-        missing_fields = [field for field in required_fields if field not in history_data or not history_data[field]]
+        missing_fields = [
+            field
+            for field in required_fields
+            if field not in history_data or not history_data[field]
+        ]
         if missing_fields:
-            raise ValueError(f"Os seguintes campos obrigatórios estão ausentes: {', '.join(missing_fields)}")
+            raise ValueError(
+                ErrorMessages.model["MailingHistory.missingFields"].format(
+                    fields=", ".join(missing_fields)
+                )
+            )
 
         if not isinstance(history_data.get("primary_directorate"), DirectorateCode):
-            raise ValueError("O campo 'primary_directorate' deve ser uma instância válida de DirectorateCode.")
+            raise ValueError(ErrorMessages.model["MailingHistory.primaryDirectorate.invalid"])
 
     def create(self, history_data: dict) -> MailingHistory:
         history = MailingHistory()
