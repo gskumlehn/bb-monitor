@@ -115,7 +115,7 @@ class EmailService:
 
             url = m.group(0)
             visible = f"{open_ch}{url}{close_ch}"
-            anchor = f'<a href="{url}" style="display: inline-block;">{visible}</a>'
+            anchor = f'<a href="{url}" style="display:inline; white-space:inherit; word-break:break-word;">{visible}</a>'
             result_parts.append(anchor)
 
             last_idx = consume_end
