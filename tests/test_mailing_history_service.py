@@ -35,7 +35,7 @@ class TestMailingHistoryService(unittest.TestCase):
 
         # Delete all created mailing histories
         for history in self.created_histories:
-            MailingHistoryService().save(history)
+            self.history_service.delete_by_id(history.id)  # Updated to use the new service method
 
     def test_save_mailing_history_success(self):
         history_data = {
