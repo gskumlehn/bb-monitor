@@ -1,5 +1,4 @@
 import os
-import re
 from flask import render_template
 from markupsafe import Markup
 from app.enums.directorate_codes import DirectorateCode
@@ -7,6 +6,8 @@ from app.enums.mailing_status import MailingStatus
 from app.infra.email_manager import EmailManager
 from app.services.alert_service import AlertService
 from app.services.mailing_service import MailingService
+from app.services.mailing_history_service import MailingHistoryService
+from app.utils.email_utils import EmailUtils
 
 class EmailService:
 
@@ -32,8 +33,8 @@ class EmailService:
         return {"to": to_list, "cc": cc_list}
 
     def format_description(self, text: str) -> Markup:
-        linked_text = self.linkify(text)
-        boldified_text = self.boldify(linked_text)
+        linked_text = EmailUtils.linkify(text)
+        boldified_text = EmailUtils.boldify(linked_text)
         return boldified_text
 
     def render_alert_html(self, alert) -> str:
@@ -48,7 +49,7 @@ class EmailService:
             "NIVEL": str(alert.criticality_level.number),
             "TITULO_POSTAGEM": alert.title,
             "PERFIL_USUARIO": profile,
-            "DESCRICAO_COMPLETA": self.format_description(alert.alert_text),  # Updated to use format_description
+            "DESCRICAO_COMPLETA": self.format_description(alert.alert_text),
             "DIRECTORY": DirectorateCode.FB.name,
             "should_render_mailing_cancelation": False,
             "is_repercussion": alert.is_repercussion
@@ -77,67 +78,6 @@ class EmailService:
     def validate_send(self, alert) -> dict:
         recipients = self.get_recipients_for_alert(alert)
         return {"status": alert.mailing_status.name, "recipients": recipients["to"], "cc": recipients["cc"]}
-
-    def linkify(self, text: str) -> Markup:
-        if not text:
-            return Markup("")
-
-        s = text.replace('\\r\\n', '\n').replace('\\n', '\n').replace('\\r', '\n')
-
-        a_tags = {}
-        def _protect_a(m):
-            key = f"__A_TAG_{len(a_tags)}__"
-            a_tags[key] = m.group(0)
-            return key
-        protected = re.sub(r'<a\b[^>]*?>.*?</a>', _protect_a, s, flags=re.IGNORECASE | re.DOTALL)
-
-        url_pattern = re.compile(r'https?://[^\s<>()\[\]{}]+', flags=re.IGNORECASE)
-
-        result_parts = []
-        last_idx = 0
-        for m in url_pattern.finditer(protected):
-            start, end = m.start(), m.end()
-
-            consume_start = start
-            consume_end = end
-
-            open_ch = ""
-            if start - 1 >= 0 and protected[start - 1] in "([{":
-                open_ch = protected[start - 1]
-                consume_start = start - 1
-
-            close_ch = ""
-            if end < len(protected) and protected[end] in ")]}":
-                close_ch = protected[end]
-                consume_end = end + 1
-
-            result_parts.append(protected[last_idx:consume_start])
-
-            url = m.group(0)
-            visible = f"{open_ch}{url}{close_ch}"
-            anchor = f'<a href="{url}" style="display:inline; white-space:inherit; word-break:break-word;">{visible}</a>'
-            result_parts.append(anchor)
-
-            last_idx = consume_end
-
-        result_parts.append(protected[last_idx:])
-        linked = "".join(result_parts)
-
-        for key, val in a_tags.items():
-            linked = linked.replace(key, val)
-
-        wrapped = f'<div style="white-space: pre-wrap;">{linked}</div>'
-        return Markup(wrapped)
-
-    def boldify(self, text: str) -> Markup:
-        pattern = re.compile(r'(\*{1,2})(.+?)\1', flags=re.DOTALL)
-
-        def replace_bold(match):
-            content = match.group(2)
-            return f"<b>{content}</b>"
-
-        result = re.sub(pattern, replace_bold, text)
-        return Markup(result)
 
     def send_alert_to_directorates(self, alert, directorates: list[DirectorateCode]) -> dict:
         env = os.getenv("ENV", "").strip().upper()
@@ -170,8 +110,15 @@ class EmailService:
             try:
                 email_manager.send_email(to_list, subject_template, rendered_html, cc=cc_list)
                 results.append({"directorate": directorate.value, "to": to_list, "cc": cc_list, "status": "sent"})
+
+                history_data = {
+                    "alert_id": alert.id,
+                    "primary_directorate": directorate,
+                    "to_emails": to_list,
+                    "cc_emails": cc_list,
+                    "sender_email": os.getenv("EMAIL_USER"),
+                }
+                MailingHistoryService().save(history_data)
             except Exception as e:
                 results.append({"directorate": directorate.value, "to": to_list, "cc": cc_list, "status": "error", "error": str(e)})
-
-        AlertService().update_mailing_status(alert, MailingStatus.MAILING_SENT)
         return {"results": results}
