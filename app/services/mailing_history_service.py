@@ -13,7 +13,8 @@ class MailingHistoryService:
 
         MailingHistoryRepository.save(history)
 
-        AlertService().update_mailing_status(history.alert, MailingStatus.MAILING_SENT)
+        alert = AlertService().get_by_id(history.alert_id)
+        AlertService().update_mailing_status(alert, MailingStatus.MAILING_SENT)
 
         return MailingHistoryRepository.save(history)
 
