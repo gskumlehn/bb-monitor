@@ -1,18 +1,19 @@
-from app.models.alert import Alert
-from app.repositories.alert_repository import AlertRepository
+import uuid
+from datetime import datetime, timedelta
+from typing import Optional
+
+from app.constants.error_messages import ErrorMessages
 from app.enums.alert_type import AlertType
+from app.enums.critical_topic import CriticalTopic
 from app.enums.criticality_level import CriticalityLevel
 from app.enums.mailing_status import MailingStatus
-from app.enums.stakeholders import Stakeholders
-from app.constants.error_messages import ErrorMessages
-from app.enums.critical_topic import CriticalTopic
 from app.enums.press_source import PressSource
-from app.enums.social_media_source import SocialMediaSource
-from app.enums.social_media_engagement import SocialMediaEngagement
 from app.enums.repercussion import Repercussion
-import uuid
-from typing import Optional
-from datetime import datetime, timedelta
+from app.enums.social_media_engagement import SocialMediaEngagement
+from app.enums.social_media_source import SocialMediaSource
+from app.enums.stakeholders import Stakeholders
+from app.models.alert import Alert
+from app.repositories.alert_repository import AlertRepository
 
 class AlertService:
     def save(self, alert_data: dict) -> Alert:
