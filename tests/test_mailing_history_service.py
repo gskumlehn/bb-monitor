@@ -54,6 +54,11 @@ class TestMailingHistoryService(unittest.TestCase):
         self.assertEqual(saved_history.cc_emails, history_data["cc_emails"])
         self.assertEqual(saved_history.sender_email, history_data["sender_email"])
 
+        # Validate that the alert's mailing status was updated
+        updated_alert = self.alert_service.get_by_id(self.alert.id)
+        self.assertIsNotNone(updated_alert)
+        self.assertEqual(updated_alert.mailing_status, MailingStatus.MAILING_SENT)
+
         # Track created history for cleanup
         self.created_histories.append(saved_history)
 
