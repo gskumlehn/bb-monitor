@@ -1,13 +1,20 @@
 from app.constants.error_messages import ErrorMessages
 from app.enums.directorate_codes import DirectorateCode
+from app.enums.mailing_status import MailingStatus
 from app.models.mailing_history import MailingHistory
 from app.repositories.mailing_history_repository import MailingHistoryRepository
+from app.services.alert_service import AlertService
 from datetime import datetime
 
 class MailingHistoryService:
     def save(self, history_data: dict) -> MailingHistory:
         self.validate_history_data(history_data)
         history = self.create(history_data)
+
+        MailingHistoryRepository.save(history)
+
+        AlertService().update_mailing_status(history.alert, MailingStatus.MAILING_SENT)
+
         return MailingHistoryRepository.save(history)
 
     def validate_history_data(self, history_data: dict):
@@ -42,3 +49,6 @@ class MailingHistoryService:
         history.sender_email = history_data.get("sender_email")
         history.date_sent = datetime.utcnow()
         return history
+
+    def delete_by_id(self, history_id: str):
+        MailingHistoryRepository.delete_by_id(history_id)
