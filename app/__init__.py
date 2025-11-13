@@ -24,6 +24,6 @@ def create_app():
     app.register_blueprint(mailing_bp, url_prefix="/mailing")
     app.register_blueprint(email_bp, url_prefix="/email")
     app.register_blueprint(alert_bp, url_prefix="/alert")
-    app.register_blueprint(directorate_bp, url_prefix="/directorates")
+    app.register_blueprint(directorate_bp, url_prefix="/directorate")
 
     return app
