@@ -58,7 +58,7 @@ class EmailService:
         return render_template("email-template.html", **context)
 
     def send_alert_email(self, alert) -> dict:
-        recipients = self.get_recipients_for_alert(alert)
+        recipients = self.get_recipients_for_alert()
         to_list = recipients["to"]
         cc_list = recipients["cc"]
 
@@ -76,7 +76,7 @@ class EmailService:
         return {"message": "Email enviado com sucesso", "to": to_list, "cc": cc_list}
 
     def validate_send(self, alert) -> dict:
-        recipients = self.get_recipients_for_alert(alert)
+        recipients = self.get_recipients_for_alert()
         return {"status": alert.mailing_status.name, "recipients": recipients["to"], "cc": recipients["cc"]}
 
     def send_alert_to_directorates(self, alert, directorates: list[DirectorateCode]) -> dict:
