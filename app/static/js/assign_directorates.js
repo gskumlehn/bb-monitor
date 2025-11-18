@@ -34,6 +34,19 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     const form = document.getElementById('assignForm');
+    const submitBtn = document.getElementById('submitBtn');
+
+    function setLoading(isLoading) {
+        if (!submitBtn) return;
+        if (isLoading) {
+            submitBtn.classList.add('loading');
+            submitBtn.disabled = true;
+        } else {
+            submitBtn.classList.remove('loading');
+            submitBtn.disabled = false;
+        }
+    }
+
     if (form) {
         form.addEventListener('submit', async function (e) {
             e.preventDefault();
@@ -48,6 +61,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             const url = form.getAttribute('action');
 
+            setLoading(true);
             try {
                 const response = await fetch(url, {
                     method: 'POST',
@@ -67,6 +81,8 @@ document.addEventListener('DOMContentLoaded', function () {
             } catch (err) {
                 showToast('Erro ao enviar mailing. Entre em contato com o atendimento.', 'error');
                 console.error('Erro ao enviar mailing:', err);
+            } finally {
+                setLoading(false);
             }
         });
     }

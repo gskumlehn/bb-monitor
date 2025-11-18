@@ -1,0 +1,118 @@
+.btn {
+    padding: 1rem 1.5rem;
+    border: none;
+    border-radius: 0.5rem;
+    font-size: 1.125rem;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    transition: all 0.3s;
+}
+
+.btn .btn-spinner {
+    display: inline-block;
+    width: 0;
+    height: 0;
+    margin-left: 0.5rem;
+    vertical-align: middle;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    border-top-color: currentColor;
+    border-right-color: rgba(255, 255, 255, 0.6);
+    box-sizing: border-box;
+    transition: width 0.12s ease, height 0.12s ease, margin-left 0.12s ease;
+}
+
+.btn.loading .btn-text {
+    opacity: 0.6;
+}
+
+.btn.loading .btn-spinner {
+    width: 1rem;
+    height: 1rem;
+    margin-left: 0.6rem;
+    animation: spin 0.8s linear infinite;
+}
+
+.btn.btn-primary {
+    background-color: var(--bb-blue);
+    color: white;
+}
+
+.btn.btn-primary:hover {
+    background-color: var(--bb-blue-dark);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.btn.btn-primary:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.btn.btn-delete {
+    padding: 0.5rem;
+    background-color: transparent;
+    color: var(--destructive);
+    border: none;
+    cursor: pointer;
+    border-radius: 0.25rem;
+    transition: all 0.3s;
+}
+
+.btn.btn-delete:hover {
+    background-color: rgba(239, 68, 68, 0.1);
+}
+
+#sendEmailBtnHeader {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.95rem;
+    border-radius: 0.5rem;
+}
+
+#sendEmailBtn {
+    padding: 10px 18px;
+    border-radius: 4px;
+}
+
+.preview-actions .btn,
+#sendEmailBtnHeader {
+    font-family: var(--font-family-base);
+    font-size: var(--font-size-sm);
+    line-height: 1;
+    font-weight: var(--font-weight-semibold);
+    padding: 8px 12px;
+    border-radius: 8px;
+    min-height: 36px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    box-shadow: none;
+    transition: box-shadow 0.15s ease, transform 0.08s ease;
+}
+
+.preview-actions .btn:enabled,
+#sendEmailBtnHeader:enabled {
+    box-shadow: 0 4px 12px rgba(72, 94, 253, 0.12);
+}
+
+.preview-actions .btn:active,
+#sendEmailBtnHeader:active {
+    transform: translateY(1px);
+}
+
+.preview-actions .btn:disabled,
+#sendEmailBtnHeader:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}

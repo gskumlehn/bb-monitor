@@ -23,18 +23,6 @@
     justify-content: flex-end;
 }
 
-.btn-cancel {
-    background: transparent;
-    border: 1px solid var(--border);
-    color: var(--foreground);
-    padding: 0.85rem 1rem;
-    border-radius: 0.5rem;
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-}
-
 .checkbox-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
