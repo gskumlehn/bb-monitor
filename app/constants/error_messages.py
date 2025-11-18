@@ -32,4 +32,5 @@ class ErrorMessages:
         "MailingHistory.primaryDirectorate.invalid": "Diretoria principal inválida",
         "MailingHistory.toEmails.invalid": "Lista de destinatários inválida",
         "MailingHistory.senderEmail.invalid": "Email do remetente inválido",
+        "MailingHistory.invalidDirectorate": "Diretoria inválida.",
     }

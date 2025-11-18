@@ -19,12 +19,7 @@ class EmailManager:
         self.sender_email = sender_email
         self.sender_password = sender_password
 
-    def send_email(self, recipients, subject, body, cc=None):
-        """
-        recipients: str or list[str] - primary recipients
-        cc: None or str or list[str] - cc recipients
-        """
-        # normalize recipients
+    def send_email(self, recipients, subject, body, cc=None, bcc=None):
         if isinstance(recipients, str):
             to_list = [r.strip() for r in recipients.split(",") if r.strip()]
         else:
@@ -35,7 +30,11 @@ class EmailManager:
         else:
             cc_list = list(cc or [])
 
-        # build message
+        if isinstance(bcc, str):
+            bcc_list = [r.strip() for r in bcc.split(",") if r.strip()]
+        else:
+            bcc_list = list(bcc or [])
+
         message = MIMEMultipart("alternative")
         message['From'] = self.sender_email
         message['To'] = ", ".join(to_list)
@@ -44,7 +43,7 @@ class EmailManager:
         message['Subject'] = subject
         message.attach(MIMEText(body, 'html'))
 
-        all_recipients = to_list + cc_list
+        all_recipients = to_list + cc_list + bcc_list
 
         server = None
         try:
@@ -52,7 +51,6 @@ class EmailManager:
             if EMAIL_USE_TLS:
                 server.starttls()
             server.login(self.sender_email, self.sender_password)
-            # send_message allows explicit recipient list to avoid relying on headers
             server.send_message(message, from_addr=self.sender_email, to_addrs=all_recipients)
             print("E-mail enviado com sucesso!")
         except smtplib.SMTPServerDisconnected as e:

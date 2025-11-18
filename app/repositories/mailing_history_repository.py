@@ -18,4 +18,9 @@ class MailingHistoryRepository:
                 session.delete(history)
                 session.commit()
             except NoResultFound:
-                pass  # Handle case where the record does not exist
+                pass
+
+    @staticmethod
+    def list(alert_id: str) -> list[MailingHistory]:
+        with get_session() as session:
+            return session.query(MailingHistory).filter_by(alert_id=alert_id).all()

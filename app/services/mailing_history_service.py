@@ -7,6 +7,7 @@ from app.services.alert_service import AlertService
 from datetime import datetime
 
 class MailingHistoryService:
+
     def save(self, history_data: dict) -> MailingHistory:
         self.validate_history_data(history_data)
         history = self.create(history_data)
@@ -21,7 +22,6 @@ class MailingHistoryService:
     def validate_history_data(self, history_data: dict):
         required_fields = [
             "alert_id",
-            "primary_directorate",
             "to_emails",
             "sender_email",
         ]
@@ -38,8 +38,11 @@ class MailingHistoryService:
                 )
             )
 
-        if not isinstance(history_data.get("primary_directorate"), DirectorateCode):
-            raise ValueError(ErrorMessages.model["MailingHistory.primaryDirectorate.invalid"])
+        for field in ["to_directorates", "cc_directorates", "bcc_directorates"]:
+            if field in history_data and history_data[field]:
+                for directorate in history_data[field]:
+                    if not isinstance(directorate, DirectorateCode):
+                        raise ValueError(ErrorMessages.model["MailingHistory.invalidDirectorate"])
 
     def create(self, history_data: dict) -> MailingHistory:
         history = MailingHistory()
@@ -47,9 +50,19 @@ class MailingHistoryService:
         history.primary_directorate = history_data.get("primary_directorate")
         history.to_emails = history_data.get("to_emails", [])
         history.cc_emails = history_data.get("cc_emails", [])
+        history.bcc_emails = history_data.get("bcc_emails", [])
         history.sender_email = history_data.get("sender_email")
+        history.to_directorates = history_data.get("to_directorates", [])
+        history.cc_directorates = history_data.get("cc_directorates", [])
+        history.bcc_directorates = history_data.get("bcc_directorates", [])
         history.date_sent = datetime.utcnow()
         return history
 
     def delete_by_id(self, history_id: str):
         MailingHistoryRepository.delete_by_id(history_id)
+
+    def list(self, alert_id: str) -> list[MailingHistory]:
+        """
+        Retorna todos os históricos de mailing associados a um alerta.
+        """
+        return MailingHistoryRepository.list(alert_id)
