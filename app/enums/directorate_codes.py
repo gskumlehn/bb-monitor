@@ -53,5 +53,5 @@ class DirectorateCode(EnumInterface):
 
     @classmethod
     def list_excluding(cls):
-        exclusions = {cls.FB, cls.DIMAC_MARKETING_COM_PRIORITARIO}
+        exclusions = {cls.FB, cls.DIMAC_MARKETING_COM_PRIORITARIO, cls.DIMAC_PRIORITARIO}
         return [member for member in cls if member not in exclusions]

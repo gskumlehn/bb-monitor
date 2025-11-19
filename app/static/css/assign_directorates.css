@@ -47,11 +47,13 @@
 }
 
 .checkbox-btn {
-    display: inline-flex;
+    display: flex;
     align-items: center;
+    justify-content: center;
     gap: 0.5rem;
     width: 100%;
-    padding: 0.6rem 0.75rem;
+    height:5rem;
+    padding: 0.6rem 0.6rem; /* Dobrar a altura */
     border-radius: 0.5rem;
     border: 2px solid var(--border);
     background: var(--card-bg);
@@ -59,7 +61,7 @@
     font-weight: 600;
     cursor: pointer;
     transition: all 0.18s ease;
-    text-align: left;
+    text-align: center; /* Justificar o texto */
     user-select: none;
 }
 

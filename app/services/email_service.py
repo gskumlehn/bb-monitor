@@ -97,7 +97,7 @@ class EmailService:
 
         try:
             email_manager.send_email(to_list, subject, rendered_html, cc=cc_list, bcc=bcc_list)
-            if env != "DEV":
+            if True:
                 history_data = {
                     "alert_id": alert.id,
                     "to_emails": to_list,
@@ -113,9 +113,7 @@ class EmailService:
         except Exception as e:
             return {"directorates": [d.value for d in directorates], "to": to_list, "cc": cc_list, "bcc": bcc_list, "status": "error", "error": str(e)}
 
-    def validate_sent_mailing(self, alert) -> list[DirectorateCode]:
-        alerted_directorates = []
-
+    def validate_sent_mailing(self, alert) -> dict:
         if alert.mailing_status == MailingStatus.MAILING_SENT:
             mailing_histories = MailingHistoryService().list(alert.id)
             all_directorates = set()
@@ -123,6 +121,10 @@ class EmailService:
             for history in mailing_histories:
                 all_directorates.update(history.bcc_directorates)
 
-            alerted_directorates = list(all_directorates),
+            return {
+                "alerted_directorates": [directorate.value for directorate in list(all_directorates)]
+            }
 
-        return alerted_directorates
+        return {
+            "alerted_directorates": [],
+        }

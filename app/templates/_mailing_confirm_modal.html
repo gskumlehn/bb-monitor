@@ -1,13 +1,13 @@
 <div id="mailingConfirmModal" class="modal" style="display:none; position:fixed; inset:0; z-index:2000; align-items:center; justify-content:center;">
     <div class="modal-overlay" style="position:absolute; inset:0; background:rgba(0,0,0,0.4);"></div>
     <div class="modal-content" style="position:relative; background:var(--card-bg); padding:16px; border-radius:8px; width:90%; max-width:520px; box-shadow:0 8px 24px rgba(0,0,0,0.16);">
-        <h3 style="margin:0 0 8px 0; font-size:1.1rem;">Confirmar envio</h3>
-        <p style="margin:0 0 12px 0; color:var(--muted-foreground);">As seguintes diretorias já foram alertadas:</p>
-        <div id="alertedDirectoratesListContainer" style="max-height:140px; overflow:auto; margin-bottom:8px;">
+        <h3 id="mailingConfirmTitle" style="margin:0 0 8px 0; font-size:1.1rem;">Confirmar envio</h3>
+        <p id="mailingConfirmMessage" style="margin:0 0 12px 0; color:var(--muted-foreground);"></p>
+        <div id="alertedDirectoratesListContainer" style="max-height:140px; overflow:auto; margin-bottom:8px; display:none;">
             <ul id="alertedDirectoratesList" style="list-style:none; padding-left:0; margin:0;"></ul>
         </div>
 
-        <div id="confirmSendCheckbox" style="margin:8px 0;">
+        <div id="confirmSendCheckboxContainer" style="margin:8px 0; display:none;">
             <label style="display:flex;align-items:center;gap:8px;">
                 <input type="checkbox" id="confirmSendCheckboxInput">
                 <span id="confirmSendCheckboxMessage">Deseja realmente reenviar este alerta?</span>
@@ -15,8 +15,7 @@
         </div>
         <div style="display:flex; gap:10px; justify-content:flex-end;">
             <button id="cancelSendBtn" type="button" class="btn" style="background:transparent; border:1px solid var(--border);">Cancelar</button>
-            <button id="confirmSendBtn" type="button" class="btn btn-primary">Confirmar e enviar</button>
+            <button id="confirmSendBtn" type="button" class="btn btn-primary" disabled>Confirmar e enviar</button>
         </div>
     </div>
 </div>
-

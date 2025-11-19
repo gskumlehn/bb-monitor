@@ -61,17 +61,13 @@ def send_alert_to_directorates(alert_id):
 
 @email_bp.route("/validate_sent_mailing/<alert_id>", methods=["POST"])
 def validate_sent_mailing(alert_id):
-    payload = request.get_json(silent=True) or {}
-    dir_names = payload.get("directorates") or []
-    if not isinstance(dir_names, list):
-        abort(400, description="O campo 'directorates' deve ser uma lista de nomes de diretorias.")
-
     alert = alert_service.get_by_id(alert_id)
     if not alert:
         abort(404, description="Alerta não encontrado.")
 
     try:
-        alerted_directorates = email_service.validate_sent_mailing(alert)
-        return jsonify({"alerted_directorates": alerted_directorates}), 200
-    except Exception:
+        result = email_service.validate_sent_mailing(alert)
+        return jsonify(result), 200
+    except Exception as e:
+        print(f"Erro ao validar envio de mailing: {e}")  # Log para depuração
         abort(500, description="Falha ao validar os dados para envio às diretorias.")
