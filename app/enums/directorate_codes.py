@@ -2,8 +2,6 @@ from app.interfaces.enum_interface import EnumInterface
 
 class DirectorateCode(EnumInterface):
     FB = "FutureBrand"
-    DIMAC_MARKETING_COM_PRIORITARIO = "DIMAC-Marketing Com. Prioritário"
-
     ASG = "Unidade ASG"
     BB_ASSET = "BB Asset"
     BB_CONSORCIOS = "BB Consórcios"
@@ -53,5 +51,5 @@ class DirectorateCode(EnumInterface):
 
     @classmethod
     def list_excluding(cls):
-        exclusions = {cls.FB, cls.DIMAC_MARKETING_COM_PRIORITARIO, cls.DIMAC_PRIORITARIO}
+        exclusions = {cls.FB, cls.DIMAC_PRIORITARIO}
         return [member for member in cls if member not in exclusions]

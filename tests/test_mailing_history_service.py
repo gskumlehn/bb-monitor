@@ -44,9 +44,9 @@ class TestMailingHistoryService(unittest.TestCase):
             "cc_emails": ["cc1@example.com", "cc2@example.com"],
             "bcc_emails": ["bcc1@example.com", "bcc2@example.com"],
             "sender_email": "sender@example.com",
-            "to_directorates": [DirectorateCode.DIMAC_MARKETING_COM_PRIORITARIO],
+            "to_directorates": [DirectorateCode.DIMAC_PRIORITARIO],
             "cc_directorates": [DirectorateCode.FB],
-            "bcc_directorates": [DirectorateCode.FB, DirectorateCode.DIMAC_MARKETING_COM_PRIORITARIO],
+            "bcc_directorates": [DirectorateCode.FB, DirectorateCode.DIMAC_PRIORITARIO],
         }
 
         saved_history = self.history_service.save(history_data)

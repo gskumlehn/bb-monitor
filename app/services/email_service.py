@@ -13,7 +13,7 @@ class EmailService:
 
     mailing_service = MailingService()
 
-    TO_DIRECTORATE = DirectorateCode.DIMAC_MARKETING_COM_PRIORITARIO
+    TO_DIRECTORATE = DirectorateCode.DIMAC_PRIORITARIO
     CC_DIRECTORATE = DirectorateCode.FB
 
     def get_recipients_for_alert(self, directorates: list[DirectorateCode] = None) -> dict:

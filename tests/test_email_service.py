@@ -88,7 +88,7 @@ class TestEmailService:
         alert.is_repercussion = False
         alert.alert_text = "Texto de alerta para teste."  # Definir o atributo alert_text como string válida
 
-        directorates = [DirectorateCode.FB, DirectorateCode.DIMAC_MARKETING_COM_PRIORITARIO]
+        directorates = [DirectorateCode.FB, DirectorateCode.DIMAC_PRIORITARIO]
 
         # Enviar o e-mail diretamente no ambiente DEV
         result = email_service.send_alert_to_directorates(alert, directorates)
