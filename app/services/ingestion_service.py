@@ -37,7 +37,7 @@ class IngestionService:
 
     async def _trigger_mentions_creation(self, alerts: List[Any]):
         mention_service = MentionService()
-        tasks = [mention_service.save(alert) for alert in alerts]
+        tasks = [mention_service.save_all(alert.urls, alert.delivery_datetime) for alert in alerts]
 
     def fetchParsedData(self, start_row: int, end_row: int) -> List[dict]:
         table_data = self.fetchTableData(start_row, end_row)
