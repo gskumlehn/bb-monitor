@@ -1,38 +1,46 @@
-from typing import Dict, Any, List
+from typing import List, Dict, Any
 from app.models.mention import Mention
 from app.repositories.mention_repository import MentionRepository
 from app.services.brandwatch_service import BrandwatchService
-from app.models.alert import Alert
+from app.enums.mention_category_parent_name import MentionCategoryParentName
+from app.enums.mention_category_name import MentionCategoryName
 
 class MentionService:
 
-    def save(self, alert: Alert) -> List[Mention]:
+    def save_all(self, urls: List[str], datetime) -> List[Mention]:
         brandwatch_service = BrandwatchService()
 
-        mentions = MentionRepository.find_by_alert_id(alert.id) or []
-        if len(mentions) == len(alert.urls):
-            return mentions
+        existing_mentions = MentionRepository.list_by_urls(urls)
+        existing_urls = {m.url for m in existing_mentions}
+        missing_urls = [url for url in urls if url not in existing_urls]
 
-        missing_mention_urls = [u for u in alert.urls if u not in {m.url for m in mentions}]
+        mentions_data = brandwatch_service.fetch_mentions_by_urls_with_retry(urls=missing_urls, end_date=datetime)
 
-        mentions_data = brandwatch_service.fetch_mentions_by_urls_with_retry(
-            urls=missing_mention_urls,
-            end_date=alert.delivery_datetime
-        ) or []
-
+        new_mentions = []
         for mention_data in mentions_data:
-            mention = self.create({
-                "alert_id": alert.id,
-                "url": mention_data.url,
-            })
-            saved = MentionRepository.save(mention)
-            mentions.append(saved)
+            mention = self.create(mention_data)
+            saved_mention = MentionRepository.save(mention)
+            new_mentions.append(saved_mention)
 
-        return mentions
+        return existing_mentions + new_mentions
 
     def create(self, data: Dict[str, Any]) -> Mention:
         mention = Mention()
-        mention.alert_id = data.get("alert_id")
         mention.url = data.get("url")
+
+        filtered_categories = [
+            category for category in data.get("categoryDetails", [])
+            if category["parentName"] in [parent.value for parent in MentionCategoryParentName]
+        ]
+
+        mention.category_parent_names = [
+            MentionCategoryParentName(category["parentName"])
+            for category in filtered_categories
+        ]
+
+        mention.category_names = [
+            MentionCategoryName(category["name"])
+            for category in filtered_categories
+        ]
 
         return mention
