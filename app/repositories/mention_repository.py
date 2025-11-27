@@ -1,6 +1,6 @@
+from sqlalchemy import select
 from app.models.mention import Mention
 from app.infra.bq_sa import get_session
-from typing import List
 
 class MentionRepository:
 
@@ -12,6 +12,8 @@ class MentionRepository:
             return mention
 
     @staticmethod
-    def find_by_alert_id(alert_id: str) -> List[Mention]:
+    def list_by_urls(urls: list[str]) -> list[Mention]:
         with get_session() as session:
-            return session.query(Mention).filter(Mention.alert_id == alert_id).all()
+            query = select(Mention).where(Mention.url.in_(urls))
+            result = session.execute(query).scalars().all()
+            return result
