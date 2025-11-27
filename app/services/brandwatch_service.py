@@ -32,10 +32,7 @@ class BrandwatchService:
                 for mention in self._client.queries.iter_mentions(name=self._client.queryName, **filters):
                     for url in list(remaining_urls):
                         if self._is_match(mention, url):
-                            matched_mentions.append({
-                                "brandwatch_id": mention.get("guid"),
-                                "url": url
-                            })
+                            matched_mentions.append(mention)
 
                             remaining_urls.remove(url)
                             break
@@ -55,9 +52,8 @@ class BrandwatchService:
     def _is_match(self, mention: Dict, original_url: str) -> bool:
         mention_url = mention.get('url', '')
         mention_original_url = mention.get('originalUrl', '')
-        mention_thread_url = mention.get('threadURL', '')
 
-        if original_url in {mention_url, mention_original_url, mention_thread_url}:
+        if original_url in {mention_url, mention_original_url}:
             return True
 
         mention_url_clean = mention_url.split('?')[0].split('#')[0].rstrip('/') if mention_url else ''
