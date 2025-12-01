@@ -37,7 +37,7 @@ class EmailService:
         boldified_text = EmailUtils.boldify(linked_text)
         return boldified_text
 
-    def render_alert_html(self, alert) -> str:
+    def render_alert_html(self, alert, should_manage_directorates = False) -> str:
         profile = alert.profiles_or_portals[0]
         email = os.getenv("EMAIL_USER")
         base_url_env = os.getenv("BASE_URL")
@@ -52,6 +52,7 @@ class EmailService:
             "DESCRICAO_COMPLETA": self.format_description(alert.alert_text),
             "DIRECTORY": DirectorateCode.FB.name,
             "should_render_mailing_cancelation": False,
+            "should_render_manage_directorates": should_manage_directorates,
             "is_repercussion": alert.is_repercussion
         }
 
@@ -63,7 +64,7 @@ class EmailService:
         cc_list = recipients["cc"]
 
         subject = f"[RISCO DE REPUTAÇÃO BB] – Alerta{' de Repercussão' if alert.is_repercussion else ''} Nível {str(alert.criticality_level.number)} - {alert.title}"
-        rendered_html = self.render_alert_html(alert)
+        rendered_html = self.render_alert_html(alert, True)
 
         email_manager = EmailManager()
         try:
