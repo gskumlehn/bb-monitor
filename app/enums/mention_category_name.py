@@ -1,6 +1,7 @@
 from app.interfaces.enum_interface import EnumInterface
 
 class MentionCategoryName(EnumInterface):
+
     BB_ASSET = "BB Asset"
     HARASSMENT_OR_PAY_INEQUITY = "Assédios ou inequidade salarial"
     HUMAN_RIGHTS_AND_DIVERSITY = "Direitos humanos e diversidade"
@@ -11,7 +12,7 @@ class MentionCategoryName(EnumInterface):
     BB_CONSORTIUM = "BB Consórcio"
     GENERAL_COLLABORATES = "Coligadas Geral"
     CORPORATE_POLICIES = "Políticas corporativas"
-    AGENCY_GOALS_AND_BUSINESS = "Metas e negócios das agências/funcionarios"
+    AGENCY_GOALS_AND_BUSINESS = "Metas e negócios das agências/funcionários"
     FINANCE = "Finanças"
     SUPPLIER = "Fornecedor"
     COMPLIANCE = "Compliance"
