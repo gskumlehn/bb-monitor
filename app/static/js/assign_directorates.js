@@ -1,4 +1,3 @@
-// Função para exibir mensagens de toast
 function showToast(message, type = 'success') {
     const toast = document.getElementById('toast');
     if (!toast) {
@@ -31,6 +30,32 @@ document.addEventListener('DOMContentLoaded', function () {
     if (!ASSIGN_API.VALIDATE_SENT_MAILING || !ASSIGN_API.SEND_MAILING) {
         console.error('URLs de validação ou envio não definidas no formulário.');
         return;
+    }
+
+    async function fetchAlertedDirectorates() {
+        const alertId = form.dataset.sendUrl.split('/').pop(); // Extrair alert_id da URL
+        const endpoint = `/directorate/list_alerted_directorates/${alertId}`;
+
+        try {
+            const response = await fetch(endpoint, { method: 'POST' });
+            if (response.ok) {
+                const directorates = await response.json();
+                updateCheckboxes(directorates);
+            } else {
+                console.error('Erro ao buscar diretorias alertadas:', await response.text());
+            }
+        } catch (err) {
+            console.error('Erro ao buscar diretorias alertadas:', err);
+        }
+    }
+
+    function updateCheckboxes(directorates) {
+        const checkboxes = document.querySelectorAll('.checkbox-input');
+        checkboxes.forEach(checkbox => {
+            if (directorates.includes(checkbox.name)) {
+                checkbox.checked = true;
+            }
+        });
     }
 
     function setLoading(isLoading) {
@@ -148,6 +173,8 @@ document.addEventListener('DOMContentLoaded', function () {
             return null;
         }
     }
+
+    fetchAlertedDirectorates();
 
     form.addEventListener('submit', async function (e) {
         e.preventDefault();
