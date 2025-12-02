@@ -33,7 +33,6 @@ class TestAlertService(unittest.TestCase):
             "social_media_sources": [SocialMediaSource.MICRO_INFLUENCER],
             "stakeholders": [Stakeholders.PRESS_JOURNALISTS],
             "social_media_engagements": [SocialMediaEngagement.INTERACTIONS_250],
-            "repercussions": [Repercussion.EXPOSURE_TIME_ABOVE_24H],
             "history": "Test history",
         }
 
@@ -55,7 +54,6 @@ class TestAlertService(unittest.TestCase):
         self.assertEqual(db_alert.social_media_sources, alert_data["social_media_sources"])
         self.assertEqual(db_alert.stakeholders, alert_data["stakeholders"])
         self.assertEqual(db_alert.social_media_engagements, alert_data["social_media_engagements"])
-        self.assertEqual(db_alert.repercussions, alert_data["repercussions"])
         self.assertEqual(db_alert.history, alert_data["history"])
 
         self.service.delete_by_id(saved_alert.id)
@@ -201,22 +199,6 @@ class TestAlertService(unittest.TestCase):
             self.service.save(alert_data)
         self.assertEqual(str(context.exception), ErrorMessages.model["Alert.socialMediaEngagements.invalid"])
 
-    def test_invalid_repercussions(self):
-        alert_data = {
-            "urls": ["http://example.com"],
-            "title": "[[TESTE]] Test Alert",
-            "delivery_datetime": datetime(2023, 10, 10, 10, 0, 0),
-            "mailing_status": MailingStatus.NOT_SENT,
-            "criticality_level": CriticalityLevel.LEVEL_1,
-            "alert_types": [AlertType.PRESS],
-            "profiles_or_portals": ["Profile1"],
-            "alert_text": "Test alert text",
-            "repercussions": ["INVALID_REPERCUSSION"],  # Invalid repercussion
-        }
-        with self.assertRaises(ValueError) as context:
-            self.service.save(alert_data)
-        self.assertEqual(str(context.exception), ErrorMessages.model["Alert.repercussions.invalid"])
-
     def test_update_alert_success(self):
         alert_data = {
             "urls": ["http://example.com"],
@@ -232,7 +214,6 @@ class TestAlertService(unittest.TestCase):
             "social_media_sources": [SocialMediaSource.MICRO_INFLUENCER],
             "stakeholders": [Stakeholders.PRESS_JOURNALISTS],
             "social_media_engagements": [SocialMediaEngagement.INTERACTIONS_250],
-            "repercussions": [Repercussion.EXPOSURE_TIME_ABOVE_24H],
             "history": "Original history",
         }
 
@@ -255,7 +236,6 @@ class TestAlertService(unittest.TestCase):
             "social_media_sources": [SocialMediaSource.MACRO_INFLUENCER],  # Valid updated value
             "stakeholders": [Stakeholders.CLIENT_SOCIETY],
             "social_media_engagements": [SocialMediaEngagement.INTERACTIONS_2500],
-            "repercussions": [Repercussion.TRENDING_TOPIC_GOOGLE_NEWS],
             "history": "Updated history",
         }
 
@@ -283,7 +263,6 @@ class TestAlertService(unittest.TestCase):
         self.assertEqual(db_alert.social_media_sources, update_data["social_media_sources"])
         self.assertEqual(db_alert.stakeholders, update_data["stakeholders"])
         self.assertEqual(db_alert.social_media_engagements, update_data["social_media_engagements"])
-        self.assertEqual(db_alert.repercussions, update_data["repercussions"])
         self.assertEqual(db_alert.history, update_data["history"])
 
         # Clean up
@@ -304,7 +283,6 @@ class TestAlertService(unittest.TestCase):
             "social_media_sources": [SocialMediaSource.MICRO_INFLUENCER],
             "stakeholders": [Stakeholders.PRESS_JOURNALISTS],
             "social_media_engagements": [SocialMediaEngagement.INTERACTIONS_250],
-            "repercussions": [Repercussion.EXPOSURE_TIME_ABOVE_24H],
             "history": "New history",
         }
 
@@ -333,7 +311,6 @@ class TestAlertService(unittest.TestCase):
             "social_media_sources": [SocialMediaSource.MICRO_INFLUENCER],
             "stakeholders": [Stakeholders.PRESS_JOURNALISTS],
             "social_media_engagements": [SocialMediaEngagement.INTERACTIONS_250],
-            "repercussions": [Repercussion.EXPOSURE_TIME_ABOVE_24H],
             "history": "Original history",
         }
 
@@ -354,7 +331,6 @@ class TestAlertService(unittest.TestCase):
             "social_media_sources": [SocialMediaSource.MACRO_INFLUENCER],
             "stakeholders": [Stakeholders.CLIENT_SOCIETY],
             "social_media_engagements": [SocialMediaEngagement.INTERACTIONS_2500],
-            "repercussions": [Repercussion.TRENDING_TOPIC_GOOGLE_NEWS],
             "history": "Updated history",
         }
 
@@ -375,7 +351,6 @@ class TestAlertService(unittest.TestCase):
         self.assertEqual(db_alert.social_media_sources, update_data["social_media_sources"])
         self.assertEqual(db_alert.stakeholders, update_data["stakeholders"])
         self.assertEqual(db_alert.social_media_engagements, update_data["social_media_engagements"])
-        self.assertEqual(db_alert.repercussions, update_data["repercussions"])
         self.assertEqual(db_alert.history, update_data["history"])
 
         # Assert that `urls` and `mailing_status` were not updated
@@ -534,7 +509,6 @@ class TestAlertService(unittest.TestCase):
         alert_1 = self.service.save(alert_data_1)
         self.assertIsNotNone(alert_1)
 
-        # Save the second alert and check if it is marked as a repercussion
         alert_2 = self.service.save(alert_data_2)
         self.assertIsNotNone(alert_2)
         self.assertTrue(alert_2.is_repercussion)

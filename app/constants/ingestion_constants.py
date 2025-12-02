@@ -2,7 +2,7 @@ class IngestionConstants:
     SPREADSHEET_ID = "1yOD6bD_Syyv-zo5CtYXlCGMaWHIR12gUNzW1Zb7klbs"
     SHEET_NAME = "Nova Configuração de Planilha - Todas as Variáveis"
     START_COL = "A"
-    END_COL = "P"
+    END_COL = "Q"
     EXPECTED_COLUMNS = [
         "Enviado ao Cliente?",
         "Data de entrega",
@@ -19,5 +19,6 @@ class IngestionConstants:
         "Stakeholders",
         "Engajamento de redes sociais",
         "Repercussão",
-        "Historico"
+        "Historico",
+        "Id do alerta anterior"
     ]

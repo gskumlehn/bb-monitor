@@ -8,7 +8,6 @@ from app.enums.critical_topic import CriticalTopic
 from app.enums.criticality_level import CriticalityLevel
 from app.enums.mailing_status import MailingStatus
 from app.enums.press_source import PressSource
-from app.enums.repercussion import Repercussion
 from app.enums.social_media_engagement import SocialMediaEngagement
 from app.enums.social_media_source import SocialMediaSource
 from app.enums.stakeholders import Stakeholders
@@ -111,10 +110,6 @@ class AlertService:
         if social_media_engagements and (not isinstance(social_media_engagements, list) or not all(isinstance(item, SocialMediaEngagement) for item in social_media_engagements)):
             raise ValueError(ErrorMessages.model["Alert.socialMediaEngagements.invalid"])
 
-        repercussions = alert_data.get("repercussions", [])
-        if repercussions and (not isinstance(repercussions, list) or not all(isinstance(item, Repercussion) for item in repercussions)):
-            raise ValueError(ErrorMessages.model["Alert.repercussions.invalid"])
-
     def create(self, alert_data: dict) -> Alert:
         alert = Alert()
         alert.id = str(uuid.uuid4())
@@ -136,8 +131,8 @@ class AlertService:
         alert.social_media_sources = alert_data.get("social_media_sources")
         alert.stakeholders = alert_data.get("stakeholders")
         alert.social_media_engagements = alert_data.get("social_media_engagements")
-        alert.repercussions = alert_data.get("repercussions")
         alert.history = alert_data.get("history")
+        alert.previous_alert_id = alert_data.get("previous_alert_id")
 
     def delete_by_id(self, alert_id: str) -> None:
         AlertRepository.delete_by_id(alert_id)
@@ -153,5 +148,8 @@ class AlertService:
         return AlertRepository.list_by_month_year(month, year)
 
     def determine_is_repercussion(self, alert: Alert) -> bool:
+        if alert.previous_alert_id:
+            return True
+
         since = datetime.utcnow() - timedelta(hours=24)
         return AlertRepository.exists_by_any_url_within(alert.urls, since)

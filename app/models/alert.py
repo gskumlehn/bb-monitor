@@ -15,7 +15,6 @@ from app.enums.press_source import PressSource
 from app.enums.social_media_source import SocialMediaSource
 from app.enums.critical_topic import CriticalTopic
 from app.enums.social_media_engagement import SocialMediaEngagement
-from app.enums.repercussion import Repercussion
 
 Base = declarative_base()
 
@@ -37,9 +36,9 @@ class Alert(Base):
     _social_media_sources = Column("social_media_sources", ARRAY(String), nullable=True)
     _stakeholders = Column("stakeholders", ARRAY(String), nullable=True)
     _social_media_engagements = Column("social_media_engagements", ARRAY(String), nullable=True)
-    _repercussions = Column("repercussions", ARRAY(String), nullable=True)
     history = Column(Text, nullable=True)
     is_repercussion = Column(Boolean, nullable=False, default=False)
+    previous_alert_id = Column(String(64), nullable=True)
 
     SP_TZ = ZoneInfo(DateUtils.BRAZIL_TZ)
     UTC_TZ = ZoneInfo(DateUtils.UTC_TZ)
@@ -182,18 +181,6 @@ class Alert(Base):
     @social_media_engagements.expression
     def social_media_engagements(cls):
         return cls._social_media_engagements
-
-    @hybrid_property
-    def repercussions(self) -> list[Repercussion]:
-        return [Repercussion.from_name(name) for name in self._repercussions or []]
-
-    @repercussions.setter
-    def repercussions(self, repercussions: list[Repercussion]):
-        self._repercussions = [repercussion.name for repercussion in repercussions] if repercussions else []
-
-    @repercussions.expression
-    def repercussions(cls):
-        return cls._repercussions
 
     def to_dict_list(self):
         return {
