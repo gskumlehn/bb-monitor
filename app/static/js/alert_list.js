@@ -3,6 +3,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const alertTableContainer = document.getElementById('alertTableContainer');
     const alertTableBody = document.querySelector('#alertTable tbody');
     const baseUrl = document.getElementById('baseUrl').value;
+    const exportCsvButton = document.getElementById('exportCsvButton');
 
     const now = new Date();
     const currentMonth = now.getMonth() + 1;
@@ -65,5 +66,43 @@ document.addEventListener('DOMContentLoaded', () => {
             console.error('Erro ao buscar alertas:', error);
             alert('Erro ao buscar alertas.');
         }
+    });
+
+    exportCsvButton.addEventListener('click', () => {
+        const rows = Array.from(alertTableBody.querySelectorAll('tr'));
+        if (rows.length === 0) {
+            alert('Nenhum dado para exportar.');
+            return;
+        }
+
+        const month = document.getElementById('month').value.trim();
+        const year = document.getElementById('year').value.trim();
+        const fileName = `alertas-bb-${month}-${year}.csv`;
+
+        const csvContent = [];
+        csvContent.push(['Data de Entrega', 'Título', 'Status', 'Nível de Criticidade', 'Id', 'Link'].join(','));
+
+        rows.forEach(row => {
+            const cells = Array.from(row.querySelectorAll('td'));
+            const rowData = cells.map((cell, index) => {
+                if (index === 5) {
+                    // Extract only the href from the link in the last column
+                    const link = cell.querySelector('a');
+                    return link ? `"${link.getAttribute('href')}"` : '""';
+                }
+                return `"${cell.textContent.trim()}"`;
+            });
+            csvContent.push(rowData.join(','));
+        });
+
+        const csvBlob = new Blob([csvContent.join('\n')], { type: 'text/csv;charset=utf-8;' });
+        const csvUrl = URL.createObjectURL(csvBlob);
+        const downloadLink = document.createElement('a');
+        downloadLink.href = csvUrl;
+        downloadLink.download = fileName;
+        downloadLink.style.display = 'none';
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+        document.body.removeChild(downloadLink);
     });
 });
