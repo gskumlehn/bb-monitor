@@ -6,6 +6,7 @@
 
 {% block content %}
     <div class="content-wrapper">
+        <input type="hidden" id="baseUrl" value="{{ base_url }}">
         <div class="card form-card">
             <div class="card-header">
                 <h2>Filtrar Alertas</h2>
@@ -51,6 +52,7 @@
                             <th>Status</th>
                             <th>Nível de Criticidade</th>
                             <th>Id</th>
+                            <th>Link</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -61,6 +63,7 @@
                             <td>{{ alerta.status }}</td>
                             <td>{{ alerta.nivel_criticidade }}</td>
                             <td>{{ alerta.id }}</td>
+                            <td>{{ url_for('alert_detail', id=alerta.id) }}</td>
                         </tr>
                         {% endfor %}
                     </tbody>

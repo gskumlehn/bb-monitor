@@ -2,6 +2,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const filterForm = document.getElementById('filterForm');
     const alertTableContainer = document.getElementById('alertTableContainer');
     const alertTableBody = document.querySelector('#alertTable tbody');
+    const baseUrl = document.getElementById('baseUrl').value;
 
     const now = new Date();
     const currentMonth = now.getMonth() + 1;
@@ -44,6 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <td>${alert.mailing_status}</td>
                         <td>${alert.criticality_level}</td>
                         <td>${alert.id}</td>
+                        <td><a href="${baseUrl}/email/render/${alert.id}">link</a></td>
                     `;
                     alertTableBody.appendChild(row);
                 });
@@ -52,7 +54,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 document.querySelectorAll('.clickable-row').forEach(row => {
                     row.addEventListener('click', () => {
                         const alertId = row.dataset.alertId;
-                        window.location.href = `/email/render/${alertId}`;
+                        window.location.href = `${baseUrl}/email/render/${alertId}`;
                     });
                 });
             } else {
