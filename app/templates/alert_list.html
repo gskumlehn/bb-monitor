@@ -6,6 +6,7 @@
 
 {% block content %}
     <div class="content-wrapper">
+        <input type="hidden" id="baseUrl" value="{{ base_url }}">
         <div class="card form-card">
             <div class="card-header">
                 <h2>Filtrar Alertas</h2>
@@ -39,8 +40,9 @@
         </div>
 
         <div id="alertTableContainer" class="card" style="margin-top: 20px; display: none;">
-            <div class="card-header">
+            <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
                 <h2>Alertas</h2>
+                <button id="exportCsvButton" class="btn btn-secondary">Exportar para CSV</button>
             </div>
             <div class="card-content">
                 <table id="alertTable" class="table">
@@ -51,6 +53,7 @@
                             <th>Status</th>
                             <th>Nível de Criticidade</th>
                             <th>Id</th>
+                            <th>Link</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -61,6 +64,7 @@
                             <td>{{ alerta.status }}</td>
                             <td>{{ alerta.nivel_criticidade }}</td>
                             <td>{{ alerta.id }}</td>
+                            <td>{{ url_for('alert_detail', id=alerta.id) }}</td>
                         </tr>
                         {% endfor %}
                     </tbody>

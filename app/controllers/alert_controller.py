@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, render_template, request
+import os
 from app.services.alert_service import AlertService
 from flask import Blueprint, jsonify, render_template, request
 
@@ -9,7 +9,8 @@ alert_service = AlertService()
 @alert_bp.get("/ui")
 def ui():
     try:
-        return render_template("alert_list.html")
+        base_url = os.getenv("BASE_URL")
+        return render_template("alert_list.html", base_url=base_url)
     except Exception as e:
         return jsonify({"error": "Erro ao carregar a página de listagem de alertas", "detail": str(e)}), 500
 
@@ -36,4 +37,3 @@ def involved_variables(alert_id):
         return render_template("involved_variables.html", alert=alert)
     except Exception as e:
         return jsonify({"error": "Erro ao buscar variáveis envolvidas", "detail": str(e)}), 500
-
