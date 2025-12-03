@@ -38,7 +38,7 @@ class Alert(Base):
     _social_media_engagements = Column("social_media_engagements", ARRAY(String), nullable=True)
     history = Column(Text, nullable=True)
     is_repercussion = Column(Boolean, nullable=False, default=False)
-    previous_alert_id = Column(String(64), nullable=True)
+    previous_alerts_ids = Column(ARRAY(String), nullable=True)
 
     SP_TZ = ZoneInfo(DateUtils.BRAZIL_TZ)
     UTC_TZ = ZoneInfo(DateUtils.UTC_TZ)
