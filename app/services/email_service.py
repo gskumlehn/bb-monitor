@@ -4,6 +4,7 @@ from markupsafe import Markup
 from app.enums.directorate_codes import DirectorateCode
 from app.enums.mailing_status import MailingStatus
 from app.infra.email_manager import EmailManager
+from app.repositories.alert_repository import AlertRepository
 from app.services.alert_service import AlertService
 from app.services.mailing_service import MailingService
 from app.services.mailing_history_service import MailingHistoryService
@@ -42,6 +43,8 @@ class EmailService:
         email = os.getenv("EMAIL_USER")
         base_url_env = os.getenv("BASE_URL")
 
+        previous_alerts = self.format_previous_alerts_data(alert.previous_alerts_ids)
+
         context = {
             "BASE_URL": base_url_env,
             "ALERT_ID": alert.id,
@@ -51,8 +54,8 @@ class EmailService:
             "PERFIL_USUARIO": profile,
             "DESCRICAO_COMPLETA": self.format_description(alert.alert_text),
             "DIRECTORY": DirectorateCode.FB.name,
-            "should_render_mailing_cancelation": False,
-            "is_repercussion": alert.is_repercussion
+            "IS_REPERCUSSION": alert.is_repercussion,
+            "PREVIOUS_ALERTS": previous_alerts,
         }
 
         return render_template("email-template.html", **context)
@@ -128,3 +131,19 @@ class EmailService:
         return {
             "alerted_directorates": [],
         }
+
+
+    def format_previous_alerts_data(self, previous_alerts_ids: list) -> list:
+        if not previous_alerts_ids:
+            return []
+
+        previous_alerts = sorted(AlertRepository.list_by_ids(previous_alerts_ids), key=lambda a: a.delivery_datetime)
+
+        return [
+            {
+                "id": alert.id,
+                "delivery_datetime": alert.delivery_datetime.strftime("%d/%m/%Y %H:%M"),
+                "criticality_level": alert.criticality_level.value,
+            }
+            for alert in previous_alerts
+        ]
