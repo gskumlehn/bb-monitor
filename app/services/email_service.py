@@ -8,7 +8,7 @@ from app.repositories.alert_repository import AlertRepository
 from app.services.alert_service import AlertService
 from app.services.mailing_service import MailingService
 from app.services.mailing_history_service import MailingHistoryService
-from app.utils.email_utils import EmailUtils
+from app.custom_utils.email_utils import EmailUtils
 
 class EmailService:
 
