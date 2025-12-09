@@ -18,18 +18,9 @@ class EmailService:
     CC_DIRECTORATE = DirectorateCode.FB
 
     def get_recipients_for_alert(self, directorates: list[DirectorateCode] = None) -> dict:
-        env = os.getenv("ENV", "").strip().upper()
-
-        if env == "DEV":
-            email_user = os.getenv("EMAIL_USER")
-            bw_email = os.getenv("BW_EMAIL")
-            to_list = [email_user] if email_user else []
-            cc_list = [bw_email] if bw_email else []
-            bcc_list = ["gskumlehn@gmail.com"]
-        else:
-            to_list = self.mailing_service.get_emails_by_directorates([self.TO_DIRECTORATE]) or []
-            cc_list = self.mailing_service.get_emails_by_directorates([self.CC_DIRECTORATE]) or []
-            bcc_list = self.mailing_service.get_emails_by_directorates(directorates) if directorates else []
+        to_list = self.mailing_service.get_emails_by_directorates([self.TO_DIRECTORATE]) or []
+        cc_list = self.mailing_service.get_emails_by_directorates([self.CC_DIRECTORATE]) or []
+        bcc_list = self.mailing_service.get_emails_by_directorates(directorates) if directorates else []
 
         return {"to": to_list, "cc": cc_list, "bcc": bcc_list}
 

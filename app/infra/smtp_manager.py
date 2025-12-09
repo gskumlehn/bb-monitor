@@ -1,0 +1,59 @@
+import os
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+from dotenv import load_dotenv
+
+load_dotenv()
+
+EMAIL_HOST = os.getenv("EMAIL_HOST")
+EMAIL_PORT = int(str(os.getenv("EMAIL_PORT")))
+EMAIL_USER = os.getenv("EMAIL_USER")
+EMAIL_PASS = os.getenv("EMAIL_PASS")
+EMAIL_USE_TLS = os.getenv("EMAIL_USE_TLS", "true").lower() == "true"
+
+class SMTPManager:
+
+    def __init__(self, smtp_server=EMAIL_HOST, smtp_port=EMAIL_PORT, sender_email=EMAIL_USER, sender_password=EMAIL_PASS):
+        self.smtp_server = smtp_server
+        self.smtp_port = smtp_port
+        self.sender_email = sender_email
+        self.sender_password = sender_password
+
+    def send_email(self, recipients, subject, body, cc=None, bcc=None):
+        email_user = os.getenv("EMAIL_USER")
+        bw_email = os.getenv("BW_EMAIL")
+        to_list = [email_user] if email_user else []
+        cc_list = [bw_email] if bw_email else []
+        bcc_list = ["gskumlehn@gmail.com"]
+
+        message = MIMEMultipart("alternative")
+        message['From'] = self.sender_email
+        message['To'] = ", ".join(to_list)
+        if cc_list:
+            message['Cc'] = ", ".join(cc_list)
+        message['Subject'] = subject
+        message.attach(MIMEText(body, 'html'))
+
+        all_recipients = to_list + cc_list + bcc_list
+
+        server = None
+        try:
+            server = smtplib.SMTP(self.smtp_server, self.smtp_port)
+            if EMAIL_USE_TLS:
+                server.starttls()
+            server.login(self.sender_email, self.sender_password)
+            server.send_message(message, from_addr=self.sender_email, to_addrs=all_recipients)
+            print("E-mail enviado com sucesso!")
+        except smtplib.SMTPServerDisconnected as e:
+            print(f"Erro: Conexão com o servidor SMTP foi desconectada. Detalhes: {e}")
+            raise
+        except Exception as e:
+            print(f"Erro ao enviar e-mail: {e}")
+            raise
+        finally:
+            if server:
+                try:
+                    server.quit()
+                except smtplib.SMTPServerDisconnected:
+                    print("Servidor já desconectado.")
