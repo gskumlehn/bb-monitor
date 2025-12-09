@@ -1,11 +1,10 @@
-import os
+from app.infra.environment import Environment
 from app.infra.smtp_manager import SMTPManager
 from app.infra.ses_manager import SESManager
 
 class EmailManager:
     def __init__(self):
-        env = os.getenv("ENV", "").strip().upper()
-        if env == "DEV":
+        if Environment.is_development():
             self.manager = SMTPManager()
         else:
             self.manager = SESManager()

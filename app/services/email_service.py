@@ -4,6 +4,7 @@ from markupsafe import Markup
 from app.enums.directorate_codes import DirectorateCode
 from app.enums.mailing_status import MailingStatus
 from app.infra.email_manager import EmailManager
+from app.infra.environment import Environment
 from app.repositories.alert_repository import AlertRepository
 from app.services.alert_service import AlertService
 from app.services.mailing_service import MailingService
@@ -74,7 +75,6 @@ class EmailService:
         return {"status": alert.mailing_status.name, "recipients": recipients["to"], "cc": recipients["cc"]}
 
     def send_alert_to_directorates(self, alert, directorates: list[DirectorateCode]) -> dict:
-        env = os.getenv("ENV", "").strip().upper()
         email_manager = EmailManager()
 
         rendered_html = self.render_alert_html(alert)
@@ -85,13 +85,13 @@ class EmailService:
         cc_list = recipients["cc"]
         bcc_list = recipients["bcc"]
 
-        if env == "DEV":
+        if Environment.is_development():
             directorates_str = ", ".join([d.name for d in directorates])
             subject = f"{subject} | Diretorias: {directorates_str}"
 
         try:
             email_manager.send_email(to_list, subject, rendered_html, cc=cc_list, bcc=bcc_list)
-            if True:
+            if Environment.is_production():
                 history_data = {
                     "alert_id": alert.id,
                     "to_emails": to_list,
