@@ -1,4 +1,6 @@
 from app.interfaces.enum_interface import EnumInterface
+from app.enums.alert_subcategory import AlertSubcategory
+from app.constants.category_constants import CATEGORY_MAP
 
 class AlertCategory(EnumInterface):
 
@@ -21,3 +23,7 @@ class AlertCategory(EnumInterface):
     SECURITY = "OPERAÇÃO BB :: Segurança"
     TERRITORIES = "OPERAÇÃO BB :: Territórios"
     CREDIT = "OPERAÇÃO BB :: Crédito"
+
+    @classmethod
+    def parse_from_subcategories(cls, subcategories: list[AlertSubcategory]) -> list["AlertCategory"]:
+        return list({CATEGORY_MAP[subcategory] for subcategory in subcategories})
