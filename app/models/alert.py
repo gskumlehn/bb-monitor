@@ -3,7 +3,7 @@ from sqlalchemy_bigquery import TIMESTAMP
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.ext.declarative import declarative_base
 from zoneinfo import ZoneInfo
-from datetime import datetime, timezone
+from datetime import datetime
 import uuid
 
 from app.enums.alert_type import AlertType
@@ -15,6 +15,8 @@ from app.enums.press_source import PressSource
 from app.enums.social_media_source import SocialMediaSource
 from app.enums.critical_topic import CriticalTopic
 from app.enums.social_media_engagement import SocialMediaEngagement
+from app.enums.alert_category import AlertCategory
+from app.enums.alert_subcategory import AlertSubcategory
 
 Base = declarative_base()
 
@@ -36,6 +38,8 @@ class Alert(Base):
     _social_media_sources = Column("social_media_sources", ARRAY(String), nullable=True)
     _stakeholders = Column("stakeholders", ARRAY(String), nullable=True)
     _social_media_engagements = Column("social_media_engagements", ARRAY(String), nullable=True)
+    _categories = Column("categories", ARRAY(String), nullable=True)
+    _subcategories = Column("subcategories", ARRAY(String), nullable=True)
     history = Column(Text, nullable=True)
     is_repercussion = Column(Boolean, nullable=False, default=False)
     previous_alerts_ids = Column(ARRAY(String), nullable=True)
@@ -181,6 +185,30 @@ class Alert(Base):
     @social_media_engagements.expression
     def social_media_engagements(cls):
         return cls._social_media_engagements
+
+    @hybrid_property
+    def categories(self) -> list[AlertCategory]:
+        return [AlertCategory.from_name(name) for name in self._categories or []]
+
+    @categories.setter
+    def categories(self, categories: list[AlertCategory]):
+        self._categories = [category.name for category in categories] if categories else []
+
+    @categories.expression
+    def categories(cls):
+        return cls._categories
+
+    @hybrid_property
+    def subcategories(self) -> list[AlertSubcategory]:
+        return [AlertSubcategory.from_name(name) for name in self._subcategories or []]
+
+    @subcategories.setter
+    def subcategories(self, subcategories: list[AlertSubcategory]):
+        self._subcategories = [subcategory.name for subcategory in subcategories] if subcategories else []
+
+    @subcategories.expression
+    def subcategories(cls):
+        return cls._subcategories
 
     def to_dict_list(self):
         return {
