@@ -33,7 +33,7 @@ class AlertService:
         urls = alert_data.get("urls")
 
         previous_alert_id = alert_data.get("previous_alert_id")
-        previous_alert = AlertRepository.get_by_id(previous_alert_id)
+        previous_alert = AlertRepository.get_by_id(previous_alert_id) if previous_alert_id else None
         previous_alerts_ids = []
 
         if previous_alert_id:
