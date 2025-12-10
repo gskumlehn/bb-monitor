@@ -1,6 +1,6 @@
 from app.interfaces.enum_interface import EnumInterface
 
-class MentionCategoryParentName(EnumInterface):
+class AlertCategory(EnumInterface):
 
     ESG = "OPERAÇÃO BB :: ASG"
     AGRIBUSINESS = "OPERAÇÃO BB :: Agronegócio"

@@ -1,6 +1,6 @@
 from app.interfaces.enum_interface import EnumInterface
 
-class MentionCategoryName(EnumInterface):
+class AlertSubcategory(EnumInterface):
 
     ESG_HARASSMENT_OR_PAY_INEQUITY = "ASG :: Assédios ou inequidade Salarial"
     ESG_HUMAN_RIGHTS_AND_DIVERSITY = "ASG :: Direitos Humanos e diversidade"

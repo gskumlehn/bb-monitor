@@ -2,8 +2,8 @@ from typing import List, Dict, Any
 from app.models.mention import Mention
 from app.repositories.mention_repository import MentionRepository
 from app.services.brandwatch_service import BrandwatchService
-from app.enums.mention_category_parent_name import MentionCategoryParentName
-from app.enums.mention_category_name import MentionCategoryName
+from app.enums.alert_category import AlertCategory
+from app.enums.alert_subcategory import AlertSubcategory
 
 class MentionService:
 
@@ -30,16 +30,16 @@ class MentionService:
 
         filtered_categories = [
             category for category in data.get("categoryDetails", [])
-            if category["parentName"] in [parent.value for parent in MentionCategoryParentName]
+            if category["parentName"] in [parent.value for parent in AlertCategory]
         ]
 
         mention.category_parent_names = [
-            MentionCategoryParentName(category["parentName"])
+            AlertCategory(category["parentName"])
             for category in filtered_categories
         ]
 
         mention.category_names = [
-            MentionCategoryName(category["name"])
+            AlertSubcategory(category["name"])
             for category in filtered_categories
         ]
 
