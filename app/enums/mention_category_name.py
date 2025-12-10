@@ -2,8 +2,8 @@ from app.interfaces.enum_interface import EnumInterface
 
 class MentionCategoryName(EnumInterface):
 
-    ASG_HARASSMENT_OR_PAY_INEQUITY = "ASG :: Assédios ou inequidade Salarial"
-    ASG_HUMAN_RIGHTS_AND_DIVERSITY = "ASG :: Direitos Humanos e diversidade"
+    ESG_HARASSMENT_OR_PAY_INEQUITY = "ASG :: Assédios ou inequidade Salarial"
+    ESG_HUMAN_RIGHTS_AND_DIVERSITY = "ASG :: Direitos Humanos e diversidade"
     AGRIBUSINESS_SUSTAINABILITY_IN_AGRO = "Agronegócio :: Sustentabilidade no agro"
     AGRIBUSINESS_PROGRAMS_FOR_AGRO = "Agronegócio :: Programas para o agro"
     AGRIBUSINESS_GENERAL_AGRO_OPERATIONS = "Agronegócio :: Geral Operações do agro"

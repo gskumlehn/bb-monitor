@@ -9,187 +9,186 @@ class MailingConstants:
     }
 
     CATEGORY_TO_DIRECTORATE_MAP = {
-        MentionCategoryName.HARASSMENT_OR_PAY_INEQUITY: [
+        MentionCategoryName.ESG_HARASSMENT_OR_PAY_INEQUITY: [
             DirectorateCode.ASG,
             DirectorateCode.DIPES
         ],
-        MentionCategoryName.HUMAN_RIGHTS_AND_DIVERSITY: [
+        MentionCategoryName.ESG_HUMAN_RIGHTS_AND_DIVERSITY: [
             DirectorateCode.ASG
         ],
-        MentionCategoryName.SUSTAINABILITY_IN_AGRO: [
+        MentionCategoryName.AGRIBUSINESS_SUSTAINABILITY_IN_AGRO: [
             DirectorateCode.DIRAG,
             DirectorateCode.ASG
         ],
-        MentionCategoryName.PROGRAMS_FOR_AGRO: [
+        MentionCategoryName.AGRIBUSINESS_PROGRAMS_FOR_AGRO: [
             DirectorateCode.DIRAG,
             DirectorateCode.DIGOV
         ],
-        MentionCategoryName.GENERAL_AGRO_OPERATIONS: [
+        MentionCategoryName.AGRIBUSINESS_GENERAL_AGRO_OPERATIONS: [
             DirectorateCode.DIRAG
         ],
-        MentionCategoryName.BB_ASSET: [
+        MentionCategoryName.RELATED_ENTITIES_BB_ASSET: [
             DirectorateCode.BB_ASSET,
             DirectorateCode.UPE
         ],
-        MentionCategoryName.BB_SECURITIES: [
+        MentionCategoryName.RELATED_ENTITIES_SECURITIES: [
             DirectorateCode.BB_SEGUROS,
             DirectorateCode.UPE
         ],
-        MentionCategoryName.BB_CONSORTIUM: [
+        MentionCategoryName.RELATED_ENTITIES_BB_CONSORTIUM: [
             DirectorateCode.UPE,
             DirectorateCode.BB_CONSORCIOS
         ],
-        MentionCategoryName.GENERAL_COLLABORATES: [
+        MentionCategoryName.RELATED_ENTITIES_GENERAL_COLLABORATES: [
             DirectorateCode.UPE
         ],
-        MentionCategoryName.CORPORATE_POLICIES: [
+        MentionCategoryName.STRATEGY_CORPORATE_POLICIES: [
             DirectorateCode.DIREO
         ],
-        MentionCategoryName.AGENCY_GOALS_AND_BUSINESS: [
+        MentionCategoryName.STRATEGY_AGENCY_GOALS_AND_BUSINESS: [
             DirectorateCode.DIVAR
         ],
-        MentionCategoryName.FINANCE: [
+        MentionCategoryName.FINANCE_ACCOUNTING_AND_TREASURY: [
             DirectorateCode.DIFIN,
             DirectorateCode.URI,
             DirectorateCode.UCI,
             DirectorateCode.TESOURARIA_GLOBAL,
             DirectorateCode.COGER
         ],
-        MentionCategoryName.SUPPLIER: [
+        MentionCategoryName.SUPPLIER_GENERAL: [
             DirectorateCode.DISEC
         ],
-        MentionCategoryName.COMPLIANCE: [
+        MentionCategoryName.GOVERNANCE_COMPLIANCE: [
             DirectorateCode.DICOI,
             DirectorateCode.DITEC
         ],
-        MentionCategoryName.FEDERAL_RESOURCE_PROGRAM: [
+        MentionCategoryName.GOVERNANCE_FEDERAL_RESOURCE_PROGRAM: [
             DirectorateCode.DIGOV,
             DirectorateCode.UEG
         ],
-        MentionCategoryName.BALANCES_AND_RESULTS: [
+        MentionCategoryName.INSTITUTIONAL_BALANCES_AND_RESULTS: [
             DirectorateCode.COGER,
             DirectorateCode.DIFIN,
             DirectorateCode.DIRCO,
             DirectorateCode.URI,
             DirectorateCode.UGR
         ],
-        MentionCategoryName.REGULATORY: [
+        MentionCategoryName.INSTITUTIONAL_REGULATORY: [
             DirectorateCode.UCI
         ],
         MentionCategoryName.INSTITUTIONAL_SPEECHES: [
             DirectorateCode.UGR
         ],
-        MentionCategoryName.INTERNATIONAL: [
+        MentionCategoryName.INTERNATIONAL_GENERAL: [
             DirectorateCode.UNI
         ],
-        MentionCategoryName.LEGAL: [
+        MentionCategoryName.LEGAL_GENERAL: [
             DirectorateCode.DIJUR
         ],
-        MentionCategoryName.COMMUNICATION_CHANNELS_OR_SEGMENTATION: [
+        MentionCategoryName.MARKETING_COMMUNICATION_CHANNELS: [
             DirectorateCode.CRM,
             DirectorateCode.DIMAC_GERAL
         ],
-        MentionCategoryName.CCBB: [
+        MentionCategoryName.MARKETING_CCBB: [
             DirectorateCode.DIMAC_GERAL,
             DirectorateCode.CCBB
         ],
-        MentionCategoryName.CAMPAIGN_CONTENT: [
+        MentionCategoryName.MARKETING_CAMPAIGN_CONTENT: [
             DirectorateCode.DIMAC_GERAL
         ],
-        MentionCategoryName.INVESTMENT: [
+        MentionCategoryName.MARKETING_INVESTMENT: [
             DirectorateCode.UCI
         ],
-        MentionCategoryName.EVENTS_PROMOTIONS_OR_SPONSORSHIPS: [
+        MentionCategoryName.MARKETING_EVENTS_PROMOTIONS: [
             DirectorateCode.DIMAC_GERAL
         ],
-        MentionCategoryName.SYSTEM_INSTABILITY: [
+        MentionCategoryName.SYSTEM_INSTABILITY_GENERAL: [
             DirectorateCode.DIMEP,
             DirectorateCode.DITEC
         ],
-        MentionCategoryName.POLITICAL_AGENDAS: [
+        MentionCategoryName.POLITICAL_AGENDAS_GENERAL: [
             DirectorateCode.RESTRITO
         ],
-        MentionCategoryName.UNIONS_OR_PUBLIC_CONTESTS: [
+        MentionCategoryName.PEOPLE_PUBLIC_CONTESTS: [
             DirectorateCode.DIPES,
             DirectorateCode.DIREO
         ],
-        MentionCategoryName.EMPLOYEES: [
+        MentionCategoryName.PEOPLE_UNIONS: [
             DirectorateCode.DIPES
         ],
-        MentionCategoryName.INVESTMENTS: [
+        MentionCategoryName.PEOPLE_EMPLOYEES: [
+            DirectorateCode.DIPES
+        ],
+        MentionCategoryName.PRODUCTS_SERVICES_INVESTMENTS: [
             DirectorateCode.UCI
         ],
-        MentionCategoryName.LOANS_AND_FINANCING: [
+        MentionCategoryName.PRODUCTS_SERVICES_LOANS_AND_FINANCING: [
             DirectorateCode.DIEMP
         ],
-        MentionCategoryName.LOYALTY_PROGRAM: [
+        MentionCategoryName.PRODUCTS_SERVICES_LOYALTY_PROGRAM: [
             DirectorateCode.DIMEP
         ],
-        MentionCategoryName.PAYMENT_METHOD: [
+        MentionCategoryName.PRODUCTS_SERVICES_PAYMENT_METHOD: [
             DirectorateCode.DIMEP
         ],
-        MentionCategoryName.PAYROLL: [
+        MentionCategoryName.PRODUCTS_SERVICES_PAYROLL: [
             DirectorateCode.DIMEP,
             DirectorateCode.DIGOV
         ],
-        MentionCategoryName.AGENCIES: [
+        MentionCategoryName.CUSTOMER_RELATIONS_AGENCIES: [
             DirectorateCode.DIREC,
             DirectorateCode.DIVAR
         ],
-        MentionCategoryName.DIGITAL: [
+        MentionCategoryName.CUSTOMER_RELATIONS_DIGITAL: [
             DirectorateCode.UAC,
             DirectorateCode.DINED
         ],
-        MentionCategoryName.TELEPHONIC: [
+        MentionCategoryName.CUSTOMER_RELATIONS_TELEPHONIC: [
             DirectorateCode.UAC
         ],
-        MentionCategoryName.GENERAL_OPERATIONAL: [
+        MentionCategoryName.CUSTOMER_RELATIONS_GENERAL_OPERATIONAL: [
             DirectorateCode.DIOPE
         ],
-        MentionCategoryName.ACCESSIBILITY: [
+        MentionCategoryName.CUSTOMER_RELATIONS_ACCESSIBILITY: [
             DirectorateCode.DISEC,
             DirectorateCode.UAC
         ],
-        MentionCategoryName.INTERNAL_SCAMS_AND_FRAUDS: [
-            DirectorateCode.USI,
-            DirectorateCode.DIPES
-        ],
-        MentionCategoryName.EXTERNAL_SCAMS_AND_FRAUDS: [
+        MentionCategoryName.SECURITY_EXTERNAL_SCAMS_AND_FRAUDS: [
             DirectorateCode.USD,
             DirectorateCode.USI
         ],
-        MentionCategoryName.ROBBERIES_AND_PHYSICAL_SECURITY: [
+        MentionCategoryName.SECURITY_ROBBERIES_AND_PHYSICAL_SECURITY: [
             DirectorateCode.DIVAR,
             DirectorateCode.USI
         ],
-        MentionCategoryName.CORRUPTION: [
+        MentionCategoryName.SECURITY_CORRUPTION: [
             DirectorateCode.USI
         ],
-        MentionCategoryName.DATA_LEAKS: [
+        MentionCategoryName.SECURITY_DATA_LEAKS: [
             DirectorateCode.USD,
             DirectorateCode.USI
         ],
-        MentionCategoryName.SUSTAINABILITY: [
+        MentionCategoryName.TERRITORIES_SUSTAINABILITY: [
             DirectorateCode.DIMAC_GERAL,
             DirectorateCode.ASG
         ],
-        MentionCategoryName.TECHNOLOGY: [
+        MentionCategoryName.TERRITORIES_TECHNOLOGY: [
             DirectorateCode.DIMAC_GERAL,
             DirectorateCode.DINED,
             DirectorateCode.DITEC
         ],
-        MentionCategoryName.CULTURE_AND_SPORTS: [
+        MentionCategoryName.TERRITORIES_CULTURE_AND_SPORTS: [
             DirectorateCode.DIMAC_GERAL
         ],
-        MentionCategoryName.LIMIT_RELEASE_AND_MANAGEMENT: [
+        MentionCategoryName.CREDIT_LIMIT_RELEASE_AND_MANAGEMENT: [
             DirectorateCode.DIVAR,
             DirectorateCode.DICRE
         ],
-        MentionCategoryName.DEFAULT: [
+        MentionCategoryName.CREDIT_DEFAULT: [
             DirectorateCode.UCR,
             DirectorateCode.DIVAR
         ],
-        MentionCategoryName.DEBT_RENEGOTIATION: [
+        MentionCategoryName.CREDIT_DEBT_RENEGOTIATION: [
             DirectorateCode.UCR
         ],
     }
