@@ -30,7 +30,7 @@ class EmailService:
         boldified_text = EmailUtils.boldify(linked_text)
         return boldified_text
 
-    def render_alert_html(self, alert, should_manage_directorates = False) -> str:
+    def render_alert_html(self, alert, should_manage_directorates=False) -> str:
         profile = alert.profiles_or_portals[0]
         email = os.getenv("EMAIL_USER")
         base_url_env = os.getenv("BASE_URL")
@@ -47,7 +47,7 @@ class EmailService:
             "DESCRICAO_COMPLETA": self.format_description(alert.alert_text),
             "DIRECTORY": DirectorateCode.FB.name,
             "IS_REPERCUSSION": alert.is_repercussion,
-            "should_render_manage_directorates": should_manage_directorates,
+            "SHOULD_RENDER_MANAGE_DIRECTORATES": should_manage_directorates,
             "PREVIOUS_ALERTS": previous_alerts,
         }
 
