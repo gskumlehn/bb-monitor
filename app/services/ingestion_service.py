@@ -10,14 +10,9 @@ from app.enums.critical_topic import CriticalTopic
 from app.enums.press_source import PressSource
 from app.enums.social_media_source import SocialMediaSource
 from app.enums.social_media_engagement import SocialMediaEngagement
-from app.enums.repercussion import Repercussion
 import logging
 import pandas as pd
 from typing import List, Sequence, Any
-import asyncio
-from concurrent.futures import ThreadPoolExecutor
-
-from app.services.mention_service import MentionService
 
 logger = logging.getLogger(__name__)
 
@@ -30,14 +25,7 @@ class IngestionService:
         alert_dicts = self.fetchParsedData(start_row, end_row)
         alerts = self.saveOrUpdateAlerts(alert_dicts)
 
-        executor = ThreadPoolExecutor(max_workers=1)
-        executor.submit(asyncio.run, self._trigger_mentions_creation(alerts))
-
         return {"message": "Alerta(s) ingerido(s) com sucesso.", "alerts": [alert.id for alert in alerts]}
-
-    async def _trigger_mentions_creation(self, alerts: List[Any]):
-        mention_service = MentionService()
-        tasks = [mention_service.save_all(alert.urls, alert.delivery_datetime) for alert in alerts]
 
     def fetchParsedData(self, start_row: int, end_row: int) -> List[dict]:
         table_data = self.fetchTableData(start_row, end_row)
