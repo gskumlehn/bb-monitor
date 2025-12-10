@@ -8,7 +8,7 @@ class MailingConstants:
         "bb.com.br"
     }
 
-    CATEGORY_TO_DIRECTORATE_MAP = {
+    SUBCATEGORY_TO_DIRECTORATE_MAP = {
         AlertSubcategory.ESG_HARASSMENT_OR_PAY_INEQUITY: [
             DirectorateCode.ASG,
             DirectorateCode.DIPES
