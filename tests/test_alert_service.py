@@ -33,7 +33,6 @@ class TestAlertService(unittest.TestCase):
             "social_media_sources": [SocialMediaSource.MICRO_INFLUENCER],
             "stakeholders": [Stakeholders.PRESS_JOURNALISTS],
             "social_media_engagements": [SocialMediaEngagement.INTERACTIONS_250],
-            "repercussions": [Repercussion.EXPOSURE_TIME_ABOVE_24H],
             "history": "Test history",
         }
 
@@ -55,7 +54,6 @@ class TestAlertService(unittest.TestCase):
         self.assertEqual(db_alert.social_media_sources, alert_data["social_media_sources"])
         self.assertEqual(db_alert.stakeholders, alert_data["stakeholders"])
         self.assertEqual(db_alert.social_media_engagements, alert_data["social_media_engagements"])
-        self.assertEqual(db_alert.repercussions, alert_data["repercussions"])
         self.assertEqual(db_alert.history, alert_data["history"])
 
         self.service.delete_by_id(saved_alert.id)
@@ -201,22 +199,6 @@ class TestAlertService(unittest.TestCase):
             self.service.save(alert_data)
         self.assertEqual(str(context.exception), ErrorMessages.model["Alert.socialMediaEngagements.invalid"])
 
-    def test_invalid_repercussions(self):
-        alert_data = {
-            "urls": ["http://example.com"],
-            "title": "[[TESTE]] Test Alert",
-            "delivery_datetime": datetime(2023, 10, 10, 10, 0, 0),
-            "mailing_status": MailingStatus.NOT_SENT,
-            "criticality_level": CriticalityLevel.LEVEL_1,
-            "alert_types": [AlertType.PRESS],
-            "profiles_or_portals": ["Profile1"],
-            "alert_text": "Test alert text",
-            "repercussions": ["INVALID_REPERCUSSION"],  # Invalid repercussion
-        }
-        with self.assertRaises(ValueError) as context:
-            self.service.save(alert_data)
-        self.assertEqual(str(context.exception), ErrorMessages.model["Alert.repercussions.invalid"])
-
     def test_update_alert_success(self):
         alert_data = {
             "urls": ["http://example.com"],
@@ -232,7 +214,6 @@ class TestAlertService(unittest.TestCase):
             "social_media_sources": [SocialMediaSource.MICRO_INFLUENCER],
             "stakeholders": [Stakeholders.PRESS_JOURNALISTS],
             "social_media_engagements": [SocialMediaEngagement.INTERACTIONS_250],
-            "repercussions": [Repercussion.EXPOSURE_TIME_ABOVE_24H],
             "history": "Original history",
         }
 
@@ -255,7 +236,6 @@ class TestAlertService(unittest.TestCase):
             "social_media_sources": [SocialMediaSource.MACRO_INFLUENCER],  # Valid updated value
             "stakeholders": [Stakeholders.CLIENT_SOCIETY],
             "social_media_engagements": [SocialMediaEngagement.INTERACTIONS_2500],
-            "repercussions": [Repercussion.TRENDING_TOPIC_GOOGLE_NEWS],
             "history": "Updated history",
         }
 
@@ -283,7 +263,6 @@ class TestAlertService(unittest.TestCase):
         self.assertEqual(db_alert.social_media_sources, update_data["social_media_sources"])
         self.assertEqual(db_alert.stakeholders, update_data["stakeholders"])
         self.assertEqual(db_alert.social_media_engagements, update_data["social_media_engagements"])
-        self.assertEqual(db_alert.repercussions, update_data["repercussions"])
         self.assertEqual(db_alert.history, update_data["history"])
 
         # Clean up
@@ -304,7 +283,6 @@ class TestAlertService(unittest.TestCase):
             "social_media_sources": [SocialMediaSource.MICRO_INFLUENCER],
             "stakeholders": [Stakeholders.PRESS_JOURNALISTS],
             "social_media_engagements": [SocialMediaEngagement.INTERACTIONS_250],
-            "repercussions": [Repercussion.EXPOSURE_TIME_ABOVE_24H],
             "history": "New history",
         }
 
@@ -333,7 +311,6 @@ class TestAlertService(unittest.TestCase):
             "social_media_sources": [SocialMediaSource.MICRO_INFLUENCER],
             "stakeholders": [Stakeholders.PRESS_JOURNALISTS],
             "social_media_engagements": [SocialMediaEngagement.INTERACTIONS_250],
-            "repercussions": [Repercussion.EXPOSURE_TIME_ABOVE_24H],
             "history": "Original history",
         }
 
@@ -354,7 +331,6 @@ class TestAlertService(unittest.TestCase):
             "social_media_sources": [SocialMediaSource.MACRO_INFLUENCER],
             "stakeholders": [Stakeholders.CLIENT_SOCIETY],
             "social_media_engagements": [SocialMediaEngagement.INTERACTIONS_2500],
-            "repercussions": [Repercussion.TRENDING_TOPIC_GOOGLE_NEWS],
             "history": "Updated history",
         }
 
@@ -375,7 +351,6 @@ class TestAlertService(unittest.TestCase):
         self.assertEqual(db_alert.social_media_sources, update_data["social_media_sources"])
         self.assertEqual(db_alert.stakeholders, update_data["stakeholders"])
         self.assertEqual(db_alert.social_media_engagements, update_data["social_media_engagements"])
-        self.assertEqual(db_alert.repercussions, update_data["repercussions"])
         self.assertEqual(db_alert.history, update_data["history"])
 
         # Assert that `urls` and `mailing_status` were not updated
@@ -399,149 +374,61 @@ class TestAlertService(unittest.TestCase):
             self.service.save_or_update(alert_data)
         self.assertIn("urls", str(context.exception))
 
-    def test_is_repercussion_within_24_hours(self):
-        now = datetime.now(tz=ZoneInfo("UTC"))
-        alert_data_1 = {
-            "urls": ["http://example.com"],
-            "title": "[[TESTE]] First Alert",
-            "delivery_datetime": now - timedelta(hours=23),
+    def test_save_alert_with_repercussion_success(self):
+        # Create the original alert with a unique URL
+        original_alert_data = {
+            "urls": ["http://example.com/original-unique"],
+            "title": "Original Alert",
+            "delivery_datetime": datetime(2023, 10, 10, 10, 0, 0, tzinfo=ZoneInfo("America/Sao_Paulo")),
             "mailing_status": MailingStatus.NOT_SENT,
             "criticality_level": CriticalityLevel.LEVEL_1,
             "alert_types": [AlertType.PRESS],
             "profiles_or_portals": ["Profile1"],
-            "alert_text": "First alert text",
+            "alert_text": "Original alert text",
         }
-        alert_data_2 = {
-            "urls": ["http://example.com", "http://example2.com"],
-            "title": "[[TESTE]] Second Alert",
-            "delivery_datetime": now,
+        original_alert = self.service.save(original_alert_data)
+        self.assertIsNotNone(original_alert)
+
+        # Create the repercussion alert with a different unique URL
+        repercussion_alert_data = {
+            "urls": ["http://example.com/repercussion-unique"],
+            "title": "Repercussion Alert",
+            "delivery_datetime": datetime(2023, 10, 11, 11, 0, 0, tzinfo=ZoneInfo("America/Sao_Paulo")),
             "mailing_status": MailingStatus.NOT_SENT,
-            "criticality_level": CriticalityLevel.LEVEL_1,
-            "alert_types": [AlertType.PRESS],
+            "criticality_level": CriticalityLevel.LEVEL_2,
+            "alert_types": [AlertType.SOCIAL_MEDIA],
             "profiles_or_portals": ["Profile2"],
-            "alert_text": "Second alert text",
+            "alert_text": "Repercussion alert text",
+            "previous_alert_id": original_alert.id,
         }
-
-        # Save the first alert
-        alert_1 = self.service.save(alert_data_1)
-        self.assertIsNotNone(alert_1)
-
-        # Save the second alert and check if it is marked as a repercussion
-        alert_2 = self.service.save(alert_data_2)
-        self.assertIsNotNone(alert_2)
-        self.assertTrue(alert_2.is_repercussion)
+        repercussion_alert = self.service.save_or_update(repercussion_alert_data)
+        self.assertIsNotNone(repercussion_alert)
+        self.assertTrue(repercussion_alert.is_repercussion)
+        self.assertIn(original_alert.id, repercussion_alert.previous_alerts_ids)
 
         # Clean up
-        self.service.delete_by_id(alert_1.id)
-        self.service.delete_by_id(alert_2.id)
+        self.service.delete_by_id(repercussion_alert.id)
+        self.service.delete_by_id(original_alert.id)
 
-    def test_is_not_repercussion_outside_24_hours(self):
-        now = datetime.now(tz=ZoneInfo("UTC"))
-        alert_data_1 = {
-            "urls": ["http://example.com"],
-            "title": "[[TESTE]] First Alert",
-            "delivery_datetime": now - timedelta(hours=25),
+    def test_save_alert_with_nonexistent_previous_alert(self):
+        # Attempt to create an alert with a non-existent previous alert ID
+        non_existent_alert_id = "non-existent-id"
+        alert_data = {
+            "urls": ["http://example.com/repercussion"],
+            "title": "Repercussion Alert",
+            "delivery_datetime": datetime(2023, 10, 11, 11, 0, 0, tzinfo=ZoneInfo("America/Sao_Paulo")),
             "mailing_status": MailingStatus.NOT_SENT,
-            "criticality_level": CriticalityLevel.LEVEL_1,
-            "alert_types": [AlertType.PRESS],
-            "profiles_or_portals": ["Profile1"],
-            "alert_text": "First alert text",
-        }
-        alert_data_2 = {
-            "urls": ["http://example.com", "http://example2.com"],
-            "title": "[[TESTE]] Second Alert",
-            "delivery_datetime": now,
-            "mailing_status": MailingStatus.NOT_SENT,
-            "criticality_level": CriticalityLevel.LEVEL_1,
-            "alert_types": [AlertType.PRESS],
+            "criticality_level": CriticalityLevel.LEVEL_2,
+            "alert_types": [AlertType.SOCIAL_MEDIA],
             "profiles_or_portals": ["Profile2"],
-            "alert_text": "Second alert text",
+            "alert_text": "Repercussion alert text",
+            "previous_alert_id": non_existent_alert_id,
         }
 
-        # Save the first alert
-        alert_1 = self.service.save(alert_data_1)
-        self.assertIsNotNone(alert_1)
+        with self.assertRaises(ValueError) as context:
+            self.service.save_or_update(alert_data)
+        self.assertEqual(str(context.exception), ErrorMessages.model["Alert.previousAlert.notFound"])
 
-        # Save the second alert and check if it is not marked as a repercussion
-        alert_2 = self.service.save(alert_data_2)
-        self.assertIsNotNone(alert_2)
-        self.assertFalse(alert_2.is_repercussion)
-
-        # Clean up
-        self.service.delete_by_id(alert_1.id)
-        self.service.delete_by_id(alert_2.id)
-
-    def test_is_not_repercussion_outside_7_days(self):
-        now = datetime.now(tz=ZoneInfo("UTC"))
-        alert_data_1 = {
-            "urls": ["http://example.com"],
-            "title": "[[TESTE]] First Alert",
-            "delivery_datetime": now - timedelta(days=8),
-            "mailing_status": MailingStatus.NOT_SENT,
-            "criticality_level": CriticalityLevel.LEVEL_1,
-            "alert_types": [AlertType.PRESS],
-            "profiles_or_portals": ["Profile1"],
-            "alert_text": "First alert text",
-        }
-        alert_data_2 = {
-            "urls": ["http://example.com", "http://example2.com"],
-            "title": "[[TESTE]] Second Alert",
-            "delivery_datetime": now,
-            "mailing_status": MailingStatus.NOT_SENT,
-            "criticality_level": CriticalityLevel.LEVEL_1,
-            "alert_types": [AlertType.PRESS],
-            "profiles_or_portals": ["Profile2"],
-            "alert_text": "Second alert text",
-        }
-
-        # Save the first alert
-        alert_1 = self.service.save(alert_data_1)
-        self.assertIsNotNone(alert_1)
-
-        # Save the second alert and check if it is not marked as a repercussion
-        alert_2 = self.service.save(alert_data_2)
-        self.assertIsNotNone(alert_2)
-        self.assertFalse(alert_2.is_repercussion)
-
-        # Clean up
-        self.service.delete_by_id(alert_1.id)
-        self.service.delete_by_id(alert_2.id)
-
-    def test_is_repercussion_with_smaller_urls(self):
-        now = datetime.now(tz=ZoneInfo("UTC"))
-        alert_data_1 = {
-            "urls": ["http://example.com"],
-            "title": "[[TESTE]] First Alert",
-            "delivery_datetime": now - timedelta(hours=23),
-            "mailing_status": MailingStatus.NOT_SENT,
-            "criticality_level": CriticalityLevel.LEVEL_1,
-            "alert_types": [AlertType.PRESS],
-            "profiles_or_portals": ["Profile1"],
-            "alert_text": "First alert text",
-        }
-        alert_data_2 = {
-            "urls": ["http://example.com", "http://example2.com"],
-            "title": "[[TESTE]] Second Alert",
-            "delivery_datetime": now,
-            "mailing_status": MailingStatus.NOT_SENT,
-            "criticality_level": CriticalityLevel.LEVEL_1,
-            "alert_types": [AlertType.PRESS],
-            "profiles_or_portals": ["Profile2"],
-            "alert_text": "Second alert text",
-        }
-
-        # Save the first alert
-        alert_1 = self.service.save(alert_data_1)
-        self.assertIsNotNone(alert_1)
-
-        # Save the second alert and check if it is marked as a repercussion
-        alert_2 = self.service.save(alert_data_2)
-        self.assertIsNotNone(alert_2)
-        self.assertTrue(alert_2.is_repercussion)
-
-        # Clean up
-        self.service.delete_by_id(alert_1.id)
-        self.service.delete_by_id(alert_2.id)
 
 if __name__ == "__main__":
     unittest.main()

@@ -82,3 +82,13 @@ class AlertRepository:
             )
             result = session.execute(query).scalar()
             return result > 0
+
+    @staticmethod
+    def list_by_ids(alert_ids: list[str]) -> list[Alert]:
+        with get_session() as session:
+            query = (
+                select(Alert)
+                .where(Alert.id.in_(alert_ids))
+                .order_by(Alert._delivery_datetime.asc())
+            )
+            return session.execute(query).scalars().all()

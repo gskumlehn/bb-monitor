@@ -4,10 +4,12 @@ from markupsafe import Markup
 from app.enums.directorate_codes import DirectorateCode
 from app.enums.mailing_status import MailingStatus
 from app.infra.email_manager import EmailManager
+from app.infra.environment import Environment
+from app.repositories.alert_repository import AlertRepository
 from app.services.alert_service import AlertService
 from app.services.mailing_service import MailingService
 from app.services.mailing_history_service import MailingHistoryService
-from app.utils.email_utils import EmailUtils
+from app.custom_utils.email_utils import EmailUtils
 
 class EmailService:
 
@@ -17,18 +19,9 @@ class EmailService:
     CC_DIRECTORATE = DirectorateCode.FB
 
     def get_recipients_for_alert(self, directorates: list[DirectorateCode] = None) -> dict:
-        env = os.getenv("ENV", "").strip().upper()
-
-        if env == "DEV":
-            email_user = os.getenv("EMAIL_USER")
-            bw_email = os.getenv("BW_EMAIL")
-            to_list = [email_user] if email_user else []
-            cc_list = [bw_email] if bw_email else []
-            bcc_list = ["gskumlehn@gmail.com"]
-        else:
-            to_list = self.mailing_service.get_emails_by_directorates([self.TO_DIRECTORATE]) or []
-            cc_list = self.mailing_service.get_emails_by_directorates([self.CC_DIRECTORATE]) or []
-            bcc_list = self.mailing_service.get_emails_by_directorates(directorates) if directorates else []
+        to_list = self.mailing_service.get_emails_by_directorates([self.TO_DIRECTORATE]) or []
+        cc_list = self.mailing_service.get_emails_by_directorates([self.CC_DIRECTORATE]) or []
+        bcc_list = self.mailing_service.get_emails_by_directorates(directorates) if directorates else []
 
         return {"to": to_list, "cc": cc_list, "bcc": bcc_list}
 
@@ -42,6 +35,8 @@ class EmailService:
         email = os.getenv("EMAIL_USER")
         base_url_env = os.getenv("BASE_URL")
 
+        previous_alerts = self.format_previous_alerts_data(alert.previous_alerts_ids)
+
         context = {
             "BASE_URL": base_url_env,
             "ALERT_ID": alert.id,
@@ -51,9 +46,9 @@ class EmailService:
             "PERFIL_USUARIO": profile,
             "DESCRICAO_COMPLETA": self.format_description(alert.alert_text),
             "DIRECTORY": DirectorateCode.FB.name,
-            "should_render_mailing_cancelation": False,
+            "IS_REPERCUSSION": alert.is_repercussion,
             "should_render_manage_directorates": should_manage_directorates,
-            "is_repercussion": alert.is_repercussion
+            "PREVIOUS_ALERTS": previous_alerts,
         }
 
         return render_template("email-template.html", **context)
@@ -81,7 +76,6 @@ class EmailService:
         return {"status": alert.mailing_status.name, "recipients": recipients["to"], "cc": recipients["cc"]}
 
     def send_alert_to_directorates(self, alert, directorates: list[DirectorateCode]) -> dict:
-        env = os.getenv("ENV", "").strip().upper()
         email_manager = EmailManager()
 
         rendered_html = self.render_alert_html(alert)
@@ -92,13 +86,13 @@ class EmailService:
         cc_list = recipients["cc"]
         bcc_list = recipients["bcc"]
 
-        if env == "DEV":
+        if Environment.is_development():
             directorates_str = ", ".join([d.name for d in directorates])
             subject = f"{subject} | Diretorias: {directorates_str}"
 
         try:
             email_manager.send_email(to_list, subject, rendered_html, cc=cc_list, bcc=bcc_list)
-            if True:
+            if Environment.is_production():
                 history_data = {
                     "alert_id": alert.id,
                     "to_emails": to_list,
@@ -129,3 +123,19 @@ class EmailService:
         return {
             "alerted_directorates": [],
         }
+
+
+    def format_previous_alerts_data(self, previous_alerts_ids: list) -> list:
+        if not previous_alerts_ids:
+            return []
+
+        previous_alerts = sorted(AlertRepository.list_by_ids(previous_alerts_ids), key=lambda a: a.delivery_datetime)
+
+        return [
+            {
+                "id": alert.id,
+                "delivery_datetime": alert.delivery_datetime.strftime("%d/%m/%Y %H:%M"),
+                "criticality_level": alert.criticality_level.value,
+            }
+            for alert in previous_alerts
+        ]

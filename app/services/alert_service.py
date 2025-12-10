@@ -8,7 +8,6 @@ from app.enums.critical_topic import CriticalTopic
 from app.enums.criticality_level import CriticalityLevel
 from app.enums.mailing_status import MailingStatus
 from app.enums.press_source import PressSource
-from app.enums.repercussion import Repercussion
 from app.enums.social_media_engagement import SocialMediaEngagement
 from app.enums.social_media_source import SocialMediaSource
 from app.enums.stakeholders import Stakeholders
@@ -16,32 +15,41 @@ from app.models.alert import Alert
 from app.repositories.alert_repository import AlertRepository
 
 class AlertService:
-    def save(self, alert_data: dict) -> Alert:
+    def save(self, alert_data: dict, previous_alerts_ids: list = []) -> Alert:
         self.validate_alert_data(alert_data, check_duplicate=True)
-        alert = self.create(alert_data)
-
-        alert.is_repercussion = self.determine_is_repercussion(alert)
+        alert = self.create(alert_data, previous_alerts_ids)
 
         return AlertRepository.save(alert)
 
-    def update(self, alert_id: str, alert_data: dict) -> Optional[Alert]:
+    def update(self, alert_id: str, alert_data: dict, previous_alerts_ids: list = []) -> Optional[Alert]:
         existing = AlertRepository.get_by_id(alert_id)
         if not existing:
             return None
 
         self.validate_alert_data(alert_data, check_duplicate=False)
-        self._apply_alert_data(existing, alert_data, skip_mailing_status=True)
+        self._apply_alert_data(existing, alert_data, previous_alerts_ids, skip_mailing_status=True)
         return AlertRepository.update(existing)
 
     def save_or_update(self, alert_data: dict) -> Alert:
         urls = alert_data.get("urls")
+
+        previous_alert_id = alert_data.get("previous_alert_id")
+        previous_alert = AlertRepository.get_by_id(previous_alert_id)
+        previous_alerts_ids = []
+
+        if previous_alert_id:
+            if not previous_alert:
+                raise ValueError(ErrorMessages.model["Alert.previousAlert.notFound"])
+            else:
+                previous_alerts_ids = previous_alert.previous_alerts_ids + [previous_alert_id]
+
         if urls:
             existing_alert = AlertRepository.get_by_urls(urls)
             if existing_alert:
-                updated = self.update(existing_alert.id, alert_data)
+                updated = self.update(existing_alert.id, alert_data, previous_alerts_ids)
                 return updated if updated is not None else existing_alert
 
-        return self.save(alert_data)
+        return self.save(alert_data, previous_alerts_ids)
 
     def validate_alert_data(self, alert_data: dict, check_duplicate: bool = True):
         self._validate_required_fields(alert_data)
@@ -111,17 +119,13 @@ class AlertService:
         if social_media_engagements and (not isinstance(social_media_engagements, list) or not all(isinstance(item, SocialMediaEngagement) for item in social_media_engagements)):
             raise ValueError(ErrorMessages.model["Alert.socialMediaEngagements.invalid"])
 
-        repercussions = alert_data.get("repercussions", [])
-        if repercussions and (not isinstance(repercussions, list) or not all(isinstance(item, Repercussion) for item in repercussions)):
-            raise ValueError(ErrorMessages.model["Alert.repercussions.invalid"])
-
-    def create(self, alert_data: dict) -> Alert:
+    def create(self, alert_data: dict, previous_alerts_ids: list) -> Alert:
         alert = Alert()
         alert.id = str(uuid.uuid4())
-        self._apply_alert_data(alert, alert_data)
+        self._apply_alert_data(alert, alert_data, previous_alerts_ids)
         return alert
 
-    def _apply_alert_data(self, alert: Alert, alert_data: dict, skip_mailing_status: bool = False):
+    def _apply_alert_data(self, alert: Alert, alert_data: dict, previous_alerts_ids: list, skip_mailing_status: bool = False):
         if not skip_mailing_status:
             alert.mailing_status = alert_data.get("mailing_status")
         alert.delivery_datetime = alert_data.get("delivery_datetime")
@@ -136,8 +140,9 @@ class AlertService:
         alert.social_media_sources = alert_data.get("social_media_sources")
         alert.stakeholders = alert_data.get("stakeholders")
         alert.social_media_engagements = alert_data.get("social_media_engagements")
-        alert.repercussions = alert_data.get("repercussions")
         alert.history = alert_data.get("history")
+        alert.previous_alerts_ids = previous_alerts_ids
+        alert.is_repercussion = True if previous_alerts_ids else False
 
     def delete_by_id(self, alert_id: str) -> None:
         AlertRepository.delete_by_id(alert_id)
@@ -151,7 +156,3 @@ class AlertService:
 
     def list_by_month_year(self, month: int, year: int) -> list[Alert]:
         return AlertRepository.list_by_month_year(month, year)
-
-    def determine_is_repercussion(self, alert: Alert) -> bool:
-        since = datetime.utcnow() - timedelta(hours=24)
-        return AlertRepository.exists_by_any_url_within(alert.urls, since)

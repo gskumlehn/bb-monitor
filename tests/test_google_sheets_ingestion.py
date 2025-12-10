@@ -26,9 +26,17 @@ class TestGoogleSheets(unittest.TestCase):
             "Rede Social",
             "@EInvestidor",
             "https://x.com/EInvestidor/status/1973329546863644676",
-            "",
+            "Ativa reduz preço-alvo da BB Seguridade, destaca E-Investidor",
             "Hoje de manhã, (01) às 07h10, o perfil de E-Investidor @EInvestidor, (https://x.com/EInvestidor/status/1973329546863644676?ref_src=twsrc%5Etfw%7Ctwcamp%5Etweetembed%7Ctwterm%5E1973329546863644676%7Ctwgr%5E011dedc8c55992bb9e377e52c0f21464bc90331d%7Ctwcon%5Es1_&ref_url=https%3A%2F%2Fapp.brandwatch.com%2Fproject%2F1998335642%2Fdashboards%2F1909249 )  tweetou: BB Seguridade (BBSE3): Ativa reduz preço-alvo da ação; veja motivos. Até o momento a publicação tem 244 visualizações e a página conta com 107.300 seguidores.",
-            "Nível 1"
+            "Nível 1",
+            "",  # Tema Crítico
+            "",  # Emissor Imprensa
+            "",  # Emissor Redes Sociais
+            "",  # Stakeholders
+            "",  # Engajamento de redes sociais
+            "",  # Repercussão
+            "",  # Historico
+            "1"  # Id do alerta anterior
         ]
 
         for i, value in enumerate(expected_first_row):

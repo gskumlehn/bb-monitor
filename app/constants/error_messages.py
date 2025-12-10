@@ -10,7 +10,6 @@ class ErrorMessages:
         "PressSource.invalid": "Fonte de imprensa inválida",
         "SocialMediaSource.invalid": "Fonte de rede social inválida",
         "SocialMediaEngagement.invalid": "Engajamento de redes sociais inválido",
-        "Repercussion.invalid": "Repercussão inválida",
     }
 
     model = {
@@ -24,7 +23,7 @@ class ErrorMessages:
         "Alert.pressSources.invalid": "Fonte de imprensa inválida",
         "Alert.socialMediaSources.invalid": "Fonte de rede social inválida",
         "Alert.socialMediaEngagements.invalid": "Engajamento de redes sociais inválido",
-        "Alert.repercussions.invalid": "Repercussão inválida",
+        "Alert.previousAlert.notFound": "Alerta anterior não encontrado.",
         "Mailing.email.empty": "Email não pode ser vazio.",
         "Mailing.email.invalid": "Formato do email é inválido.",
         "Mailing.email.domain.invalid": "Domínio do email não é permitido",
