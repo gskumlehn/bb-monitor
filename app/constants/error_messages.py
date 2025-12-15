@@ -10,6 +10,7 @@ class ErrorMessages:
         "PressSource.invalid": "Fonte de imprensa inválida",
         "SocialMediaSource.invalid": "Fonte de rede social inválida",
         "SocialMediaEngagement.invalid": "Engajamento de redes sociais inválido",
+        "Repercussion.invalid": "Repercussão inválida",
     }
 
     model = {

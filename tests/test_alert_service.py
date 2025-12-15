@@ -33,11 +33,14 @@ class TestAlertService(unittest.TestCase):
             "social_media_sources": [SocialMediaSource.MICRO_INFLUENCER],
             "stakeholders": [Stakeholders.PRESS_JOURNALISTS],
             "social_media_engagements": [SocialMediaEngagement.INTERACTIONS_250],
+            "repercussions": [Repercussion.EXPOSURE_TIME_ABOVE_24H],
             "history": "Test history",
         }
 
         saved_alert = self.service.save(alert_data)
         self.assertIsNotNone(saved_alert)
+        # verify returned object includes repercussions
+        self.assertEqual(saved_alert.repercussions, alert_data["repercussions"])
 
         db_alert = self.service.get_by_id(saved_alert.id)
         self.assertIsNotNone(db_alert)
@@ -54,6 +57,7 @@ class TestAlertService(unittest.TestCase):
         self.assertEqual(db_alert.social_media_sources, alert_data["social_media_sources"])
         self.assertEqual(db_alert.stakeholders, alert_data["stakeholders"])
         self.assertEqual(db_alert.social_media_engagements, alert_data["social_media_engagements"])
+        self.assertEqual(db_alert.repercussions, alert_data["repercussions"])
         self.assertEqual(db_alert.history, alert_data["history"])
 
         self.service.delete_by_id(saved_alert.id)
@@ -199,6 +203,22 @@ class TestAlertService(unittest.TestCase):
             self.service.save(alert_data)
         self.assertEqual(str(context.exception), ErrorMessages.model["Alert.socialMediaEngagements.invalid"])
 
+    def test_invalid_repercussions(self):
+        alert_data = {
+            "urls": ["http://example.com"],
+            "title": "[[TESTE]] Test Alert",
+            "delivery_datetime": datetime(2023, 10, 10, 10, 0, 0),
+            "mailing_status": MailingStatus.NOT_SENT,
+            "criticality_level": CriticalityLevel.LEVEL_1,
+            "alert_types": [AlertType.PRESS],
+            "profiles_or_portals": ["Profile1"],
+            "alert_text": "Test alert text",
+            "repercussions": ["INVALID_REPERCUSSION"],  # Invalid repercussion
+        }
+        with self.assertRaises(ValueError) as context:
+            self.service.save(alert_data)
+        self.assertEqual(str(context.exception), ErrorMessages.model["Alert.repercussions.invalid"])
+
     def test_update_alert_success(self):
         alert_data = {
             "urls": ["http://example.com"],
@@ -214,12 +234,15 @@ class TestAlertService(unittest.TestCase):
             "social_media_sources": [SocialMediaSource.MICRO_INFLUENCER],
             "stakeholders": [Stakeholders.PRESS_JOURNALISTS],
             "social_media_engagements": [SocialMediaEngagement.INTERACTIONS_250],
+            "repercussions": [Repercussion.EXPOSURE_TIME_ABOVE_24H],
             "history": "Original history",
         }
 
         # Save the initial alert
         saved_alert = self.service.save(alert_data)
         self.assertIsNotNone(saved_alert)
+        # verify returned object includes repercussions
+        self.assertEqual(saved_alert.repercussions, alert_data["repercussions"])
 
         # Update data (all fields except `urls` and `mailing_status`)
         update_data = {
@@ -236,12 +259,15 @@ class TestAlertService(unittest.TestCase):
             "social_media_sources": [SocialMediaSource.MACRO_INFLUENCER],  # Valid updated value
             "stakeholders": [Stakeholders.CLIENT_SOCIETY],
             "social_media_engagements": [SocialMediaEngagement.INTERACTIONS_2500],
+            "repercussions": [Repercussion.TRENDING_TOPIC_GOOGLE_NEWS],
             "history": "Updated history",
         }
 
         # Perform the update
         updated_alert = self.service.update(saved_alert.id, update_data)
         self.assertIsNotNone(updated_alert)
+        # verify returned object includes updated repercussions
+        self.assertEqual(updated_alert.repercussions, update_data["repercussions"])
 
         # Fetch the updated alert from the database
         db_alert = self.service.get_by_id(saved_alert.id)
@@ -264,6 +290,7 @@ class TestAlertService(unittest.TestCase):
         self.assertEqual(db_alert.stakeholders, update_data["stakeholders"])
         self.assertEqual(db_alert.social_media_engagements, update_data["social_media_engagements"])
         self.assertEqual(db_alert.history, update_data["history"])
+        self.assertEqual(db_alert.repercussions, update_data["repercussions"])
 
         # Clean up
         self.service.delete_by_id(saved_alert.id)
@@ -283,11 +310,14 @@ class TestAlertService(unittest.TestCase):
             "social_media_sources": [SocialMediaSource.MICRO_INFLUENCER],
             "stakeholders": [Stakeholders.PRESS_JOURNALISTS],
             "social_media_engagements": [SocialMediaEngagement.INTERACTIONS_250],
+            "repercussions": [Repercussion.EXPOSURE_TIME_ABOVE_24H],
             "history": "New history",
         }
 
         saved_alert = self.service.save_or_update(alert_data)
         self.assertIsNotNone(saved_alert)
+        # verify returned object includes repercussions
+        self.assertEqual(saved_alert.repercussions, alert_data["repercussions"])
 
         db_alert = self.service.get_by_id(saved_alert.id)
         self.assertIsNotNone(db_alert)
@@ -311,11 +341,14 @@ class TestAlertService(unittest.TestCase):
             "social_media_sources": [SocialMediaSource.MICRO_INFLUENCER],
             "stakeholders": [Stakeholders.PRESS_JOURNALISTS],
             "social_media_engagements": [SocialMediaEngagement.INTERACTIONS_250],
+            "repercussions": [Repercussion.EXPOSURE_TIME_ABOVE_24H],
             "history": "Original history",
         }
 
         saved_alert = self.service.save(alert_data)
         self.assertIsNotNone(saved_alert)
+        # verify returned object includes repercussions
+        self.assertEqual(saved_alert.repercussions, alert_data["repercussions"])
 
         update_data = {
             "urls": ["http://example.com"],  # Same URL to trigger update
@@ -331,12 +364,15 @@ class TestAlertService(unittest.TestCase):
             "social_media_sources": [SocialMediaSource.MACRO_INFLUENCER],
             "stakeholders": [Stakeholders.CLIENT_SOCIETY],
             "social_media_engagements": [SocialMediaEngagement.INTERACTIONS_2500],
+            "repercussions": [Repercussion.TRENDING_TOPIC_GOOGLE_NEWS],
             "history": "Updated history",
         }
 
         updated_alert = self.service.save_or_update(update_data)
         self.assertIsNotNone(updated_alert)
         self.assertEqual(updated_alert.id, saved_alert.id)
+        # verify returned object includes updated repercussions
+        self.assertEqual(updated_alert.repercussions, update_data["repercussions"])
 
         db_alert = self.service.get_by_id(updated_alert.id)
         self.assertIsNotNone(db_alert)

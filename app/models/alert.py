@@ -17,6 +17,7 @@ from app.enums.critical_topic import CriticalTopic
 from app.enums.social_media_engagement import SocialMediaEngagement
 from app.enums.alert_category import AlertCategory
 from app.enums.alert_subcategory import AlertSubcategory
+from app.enums.repercussion import Repercussion
 
 Base = declarative_base()
 
@@ -41,6 +42,7 @@ class Alert(Base):
     _categories = Column("categories", ARRAY(String), nullable=True)
     _subcategories = Column("subcategories", ARRAY(String), nullable=True)
     history = Column(Text, nullable=True)
+    _repercussions = Column("repercussions", ARRAY(String), nullable=True)
     is_repercussion = Column(Boolean, nullable=False, default=False)
     previous_alerts_ids = Column(ARRAY(String), nullable=True)
 
@@ -185,6 +187,18 @@ class Alert(Base):
     @social_media_engagements.expression
     def social_media_engagements(cls):
         return cls._social_media_engagements
+
+    @hybrid_property
+    def repercussions(self) -> list[Repercussion]:
+        return [Repercussion.from_name(name) for name in self._repercussions or []]
+
+    @repercussions.setter
+    def repercussions(self, repercussions: list[Repercussion]):
+        self._repercussions = [repercussion.name for repercussion in repercussions] if repercussions else []
+
+    @repercussions.expression
+    def repercussions(cls):
+        return cls._repercussions
 
     @hybrid_property
     def categories(self) -> list[AlertCategory]:
