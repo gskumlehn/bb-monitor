@@ -7,6 +7,7 @@ from app.enums.critical_topic import CriticalTopic
 from app.enums.criticality_level import CriticalityLevel
 from app.enums.mailing_status import MailingStatus
 from app.enums.press_source import PressSource
+from app.enums.repercussion import Repercussion
 from app.enums.social_media_engagement import SocialMediaEngagement
 from app.enums.social_media_source import SocialMediaSource
 from app.enums.stakeholders import Stakeholders
@@ -118,6 +119,10 @@ class AlertService:
         if social_media_engagements and (not isinstance(social_media_engagements, list) or not all(isinstance(item, SocialMediaEngagement) for item in social_media_engagements)):
             raise ValueError(ErrorMessages.model["Alert.socialMediaEngagements.invalid"])
 
+        repercussions = alert_data.get("repercussions", [])
+        if repercussions and (not isinstance(repercussions, list) or not all(isinstance(item, Repercussion) for item in repercussions)):
+            raise ValueError(ErrorMessages.model["Alert.repercussions.invalid"])
+
     def create(self, alert_data: dict, previous_alerts_ids: list) -> Alert:
         alert = Alert()
         alert.id = str(uuid.uuid4())
@@ -142,6 +147,7 @@ class AlertService:
         alert.subcategories = alert_data.get("subcategories")
         alert.categories = AlertCategory.parse_from_subcategories(alert.subcategories) if alert.subcategories else []
         alert.history = alert_data.get("history")
+        alert.repercussions = alert_data.get("repercussions")
         alert.previous_alerts_ids = previous_alerts_ids
         alert.is_repercussion = True if previous_alerts_ids else False
 

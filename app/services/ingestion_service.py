@@ -1,4 +1,5 @@
 from app.enums.alert_subcategory import AlertSubcategory
+from app.enums.repercussion import Repercussion
 from app.infra.google_sheets import GoogleSheets
 from app.constants.ingestion_constants import IngestionConstants
 from app.custom_utils.date_utils import DateUtils
@@ -91,6 +92,7 @@ class IngestionService:
         alert_data["stakeholders"] = Stakeholders.values_csv_to_type_list(table_row.get("Stakeholders").strip()) if table_row.get("Stakeholders") else []
         alert_data["social_media_engagements"] = SocialMediaEngagement.values_csv_to_type_list(table_row.get("Engajamento de redes sociais").strip()) if table_row.get("Engajamento de redes sociais") else []
         alert_data["subcategories"] = AlertSubcategory.values_csv_to_type_list(table_row.get("Subtemas").strip()) if table_row.get("Subtemas") else []
+        alert_data["repercussions"] = Repercussion.values_csv_to_type_list(table_row.get("Repercussão").strip()) if table_row.get("Repercussão") else []
         alert_data["history"] = table_row.get("Historico").strip() if table_row.get("Historico") else None
         alert_data["previous_alert_id"] = str(table_row.get("Id do alerta anterior")).strip() if table_row.get("Id do alerta anterior") else None
 
