@@ -1,3 +1,4 @@
+from app.enums.alert_subcategory import AlertSubcategory
 from app.infra.google_sheets import GoogleSheets
 from app.constants.ingestion_constants import IngestionConstants
 from app.custom_utils.date_utils import DateUtils
@@ -10,14 +11,9 @@ from app.enums.critical_topic import CriticalTopic
 from app.enums.press_source import PressSource
 from app.enums.social_media_source import SocialMediaSource
 from app.enums.social_media_engagement import SocialMediaEngagement
-from app.enums.repercussion import Repercussion
 import logging
 import pandas as pd
 from typing import List, Sequence, Any
-import asyncio
-from concurrent.futures import ThreadPoolExecutor
-
-from app.services.mention_service import MentionService
 
 logger = logging.getLogger(__name__)
 
@@ -30,14 +26,7 @@ class IngestionService:
         alert_dicts = self.fetchParsedData(start_row, end_row)
         alerts = self.saveOrUpdateAlerts(alert_dicts)
 
-        executor = ThreadPoolExecutor(max_workers=1)
-        executor.submit(asyncio.run, self._trigger_mentions_creation(alerts))
-
         return {"message": "Alerta(s) ingerido(s) com sucesso.", "alerts": [alert.id for alert in alerts]}
-
-    async def _trigger_mentions_creation(self, alerts: List[Any]):
-        mention_service = MentionService()
-        tasks = [mention_service.save_all(alert.urls, alert.delivery_datetime) for alert in alerts]
 
     def fetchParsedData(self, start_row: int, end_row: int) -> List[dict]:
         table_data = self.fetchTableData(start_row, end_row)
@@ -101,7 +90,7 @@ class IngestionService:
         alert_data["social_media_sources"] = SocialMediaSource.values_csv_to_type_list(table_row.get("Emissor Redes Sociais").strip()) if table_row.get("Emissor Redes Sociais") else []
         alert_data["stakeholders"] = Stakeholders.values_csv_to_type_list(table_row.get("Stakeholders").strip()) if table_row.get("Stakeholders") else []
         alert_data["social_media_engagements"] = SocialMediaEngagement.values_csv_to_type_list(table_row.get("Engajamento de redes sociais").strip()) if table_row.get("Engajamento de redes sociais") else []
-        alert_data["category_names"] = table_row.get("Subtemas").strip() if table_row.get("Subtemas") else None
+        alert_data["subcategories"] = AlertSubcategory.values_csv_to_type_list(table_row.get("Subtemas").strip()) if table_row.get("Subtemas") else []
         alert_data["history"] = table_row.get("Historico").strip() if table_row.get("Historico") else None
         alert_data["previous_alert_id"] = str(table_row.get("Id do alerta anterior")).strip() if table_row.get("Id do alerta anterior") else None
 

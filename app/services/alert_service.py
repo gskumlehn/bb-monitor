@@ -1,8 +1,7 @@
 import uuid
-from datetime import datetime, timedelta
 from typing import Optional
-
 from app.constants.error_messages import ErrorMessages
+from app.enums.alert_category import AlertCategory
 from app.enums.alert_type import AlertType
 from app.enums.critical_topic import CriticalTopic
 from app.enums.criticality_level import CriticalityLevel
@@ -34,7 +33,7 @@ class AlertService:
         urls = alert_data.get("urls")
 
         previous_alert_id = alert_data.get("previous_alert_id")
-        previous_alert = AlertRepository.get_by_id(previous_alert_id)
+        previous_alert = AlertRepository.get_by_id(previous_alert_id) if previous_alert_id else None
         previous_alerts_ids = []
 
         if previous_alert_id:
@@ -140,6 +139,8 @@ class AlertService:
         alert.social_media_sources = alert_data.get("social_media_sources")
         alert.stakeholders = alert_data.get("stakeholders")
         alert.social_media_engagements = alert_data.get("social_media_engagements")
+        alert.subcategories = alert_data.get("subcategories")
+        alert.categories = AlertCategory.parse_from_subcategories(alert.subcategories) if alert.subcategories else []
         alert.history = alert_data.get("history")
         alert.previous_alerts_ids = previous_alerts_ids
         alert.is_repercussion = True if previous_alerts_ids else False

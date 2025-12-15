@@ -26,5 +26,5 @@ def list_alerted_directorates(alert_id):
     if not alert:
         abort(404, description="Alerta não encontrado")
 
-    result = directorate_service.list_categories_for_urls(alert)
+    result = directorate_service.get_directorates_by_subcategories(alert.subcategories)
     return jsonify(result), 200

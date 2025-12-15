@@ -22,7 +22,7 @@ class SMTPManager:
 
     def send_email(self, recipients, subject, body, cc=None, bcc=None):
         email_user = os.getenv("EMAIL_USER")
-        bw_email = os.getenv("BW_EMAIL")
+        bw_email = "gkumlehn@timelens.com.br"
         to_list = [email_user] if email_user else []
         cc_list = [bw_email] if bw_email else []
         bcc_list = ["gskumlehn@gmail.com"]
