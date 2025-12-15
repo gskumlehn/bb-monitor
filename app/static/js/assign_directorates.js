@@ -86,12 +86,22 @@ document.addEventListener('DOMContentLoaded', function () {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ directorates: selectedDirectorates }),
             });
-            if (response.ok) {
-                const data = await response.json();
-                showToast('Mailing enviado com sucesso!', 'success');
-            } else {
+
+            if (!response.ok) {
                 const errorText = await response.text();
+                console.error('Erro ao enviar mailing:', errorText);
                 showToast(`Erro ao enviar mailing: ${errorText}`, 'error');
+                return;
+            }
+
+            const data = await response.json();
+
+            if (data.status === "error") {
+                const errorText = data.error || 'Erro desconhecido.';
+                console.error('Erro ao enviar mailing:', errorText);
+                showToast(`Erro ao enviar mailing: ${errorText}`, 'error');
+            } else {
+                showToast('Mailing enviado com sucesso!', 'success');
             }
         } catch (err) {
             console.error('Erro ao enviar mailing:', err);
