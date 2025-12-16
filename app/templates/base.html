@@ -19,7 +19,7 @@
                 {% if current_user.is_authenticated %}
                     <nav class="header-nav">
                         {% if current_user.role == 'admin' %}
-                            <a href="{{ url_for('root.index') }}" class="header-link">Admin</a>
+                            <a href="{{ url_for('auth.admin') }}" class="header-link">Admin</a>
                             <a href="{{ url_for('ingestion.index') }}" class="header-link">Ingestão</a>
                             <a href="{{ url_for('alert.index') }}" class="header-link">Alertas</a>
                             <a href="{{ url_for('root.index') }}" class="header-link">Mailing</a>
