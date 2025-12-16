@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{% block title %}Login{% endblock %}</title>
+</head>
+<body>
+    {% block header %}
+    <header>
+        <h1>{% block header_title %}Acesso ao Sistema{% endblock %}</h1>
+    </header>
+    {% endblock %}
+
+    {% block content %}
+    <div class="content-wrapper">
+        <div class="card form-card">
+            <div class="card-header">
+                <h2>Login</h2>
+            </div>
+            <div class="card-content">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                  {% if messages %}
+                    <ul>
+                    {% for category, message in messages %}
+                      <li style="color: {{ 'red' if category == 'danger' else 'green' }}">{{ message }}</li>
+                    {% endfor %}
+                    </ul>
+                  {% endif %}
+                {% endwith %}
+
+                <form method="POST" action="{{ url_for('auth.login', next=next) }}" class="form">
+                    <input type="hidden" name="next" value="{{ next }}">  <!-- Pass the next URL -->
+                    <div class="form-group">
+                        <label for="email" class="label">Email:</label>
+                        <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            required
+                            class="input"
+                            placeholder="Digite seu email"
+                        >
+                    </div>
+                    <div class="form-group">
+                        <label for="password" class="label">Senha:</label>
+                        <input
+                            type="password"
+                            id="password"
+                            name="password"
+                            required
+                            class="input"
+                            placeholder="Digite sua senha"
+                        >
+                    </div>
+                    <button type="submit" class="btn btn-primary">
+                        Entrar
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% endblock %}
+</body>
+</html>

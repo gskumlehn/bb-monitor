@@ -1,12 +1,14 @@
 import os
 from app.services.alert_service import AlertService
 from flask import Blueprint, jsonify, render_template, request
+from app.controllers.decorators import role_required
 
 alert_bp = Blueprint("alert", __name__)
 
 alert_service = AlertService()
 
 @alert_bp.get("/ui")
+@role_required(["monitoring"])
 def ui():
     try:
         base_url = os.getenv("BASE_URL")
@@ -15,6 +17,7 @@ def ui():
         return jsonify({"error": "Erro ao carregar a página de listagem de alertas", "detail": str(e)}), 500
 
 @alert_bp.get("/list")
+@role_required(["monitoring"])
 def list():
     try:
         month = request.args.get("month", type=int)

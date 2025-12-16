@@ -1,15 +1,18 @@
 from flask import Blueprint, jsonify, render_template, request
 from app.services.ingestion_service import IngestionService
+from app.controllers.decorators import role_required
 
 ingestion_bp = Blueprint("ingestion", __name__)
 
 ingestion_service = IngestionService()
 
 @ingestion_bp.get("/ui")
+@role_required(["monitoring"])
 def index():
     return render_template("ingestion.html")
 
 @ingestion_bp.route("/ingest", methods=["POST"])
+@role_required(["monitoring"])
 def ingest():
     try:
         row = request.json.get("row")

@@ -2,6 +2,7 @@ from flask import Blueprint, abort, jsonify, request
 from app.enums.directorate_codes import DirectorateCode
 from app.services.alert_service import AlertService
 from app.services.email_service import EmailService
+from app.controllers.decorators import role_required
 
 email_bp = Blueprint("email", __name__)
 
@@ -17,6 +18,7 @@ def render_alert_email(alert_id):
     return email_service.render_alert_html(alert)
 
 @email_bp.route("/send/<alert_id>", methods=["POST"])
+@role_required(["monitoring"])
 def send_alert_email(alert_id):
     alert = alert_service.get_by_id(alert_id)
     if not alert:
@@ -29,6 +31,7 @@ def send_alert_email(alert_id):
         abort(500, description="Falha ao enviar e-mail.")
 
 @email_bp.route("/validate/<alert_id>", methods=["GET"])
+@role_required(["monitoring"])
 def validate_recipients_for_alert(alert_id):
     alert = alert_service.get_by_id(alert_id)
     if not alert:
@@ -38,6 +41,7 @@ def validate_recipients_for_alert(alert_id):
     return jsonify(result), 200
 
 @email_bp.route("/send_to_directorates/<alert_id>", methods=["POST"])
+@role_required(["client"])
 def send_alert_to_directorates(alert_id):
     payload = request.get_json(silent=True) or {}
     dir_names = payload.get("directorates") or []
@@ -60,6 +64,7 @@ def send_alert_to_directorates(alert_id):
         abort(500, description="Falha ao enviar e-mails para as diretorias.")
 
 @email_bp.route("/validate_sent_mailing/<alert_id>", methods=["POST"])
+@role_required(["client"])
 def validate_sent_mailing(alert_id):
     alert = alert_service.get_by_id(alert_id)
     if not alert:
