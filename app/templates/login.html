@@ -40,9 +40,14 @@
                         Entrar
                     </button>
                 </form>
+                <div class="form-footer">
+                    <a href="#" class="small-link" id="forgotPasswordTrigger">Esqueceu sua senha?</a>
+                </div>
             </div>
         </div>
     </div>
+
+    {% include "_forgot_password_modal.html" %}
 {% endblock %}
 
 {% block scripts %}
