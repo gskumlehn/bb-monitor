@@ -6,7 +6,7 @@
 
 .header-link {
     text-decoration: none;
-    color: var(--bb-blue); /* Always the same color as the text */
+    color: var(--bb-blue);
     font-weight: bold;
     font-size: 1rem;
     transition: color 0.3s ease;
@@ -14,37 +14,37 @@
 
 .header-link:link,
 .header-link:visited {
-    color: var(--bb-blue); /* Ensure the same color for visited links */
-    text-decoration: none; /* Remove underline for all states */
+    color: var(--bb-blue);
+    text-decoration: none;
 }
 
 .header-link:hover {
-    color: var(--bb-dark-blue); /* Slightly darker color on hover */
-    text-decoration: none; /* No underline on hover */
+    color: var(--bb-blue-dark);
+    text-decoration: none;
 }
 
 .header-link:active {
-    color: var(--bb-dark-blue); /* Same hover color for active state */
-    text-decoration: none; /* No underline on active */
+    color: var(--bb-blue-dark);
+    text-decoration: none;
 }
 
 .logout-link {
-    color: #d9534f;
+    color: var(--destructive);
     font-weight: bold;
 }
 
 .logout-link:link,
 .logout-link:visited {
-    color: #d9534f; /* Ensure the same color for visited links */
-    text-decoration: none; /* Remove underline for all states */
+    color: var(--destructive);
+    text-decoration: none;
 }
 
 .logout-link:hover {
-    color: #c9302c; /* Slightly darker color on hover */
-    text-decoration: none; /* No underline on hover */
+    color: #c9302c;
+    text-decoration: none;
 }
 
 .logout-link:active {
-    color: #c9302c; /* Same hover color for active state */
-    text-decoration: none; /* No underline on active */
+    color: #c9302c;
+    text-decoration: none;
 }

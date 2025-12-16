@@ -10,8 +10,8 @@
                 <h2>Login</h2>
             </div>
             <div class="card-content">
-                <form method="POST" action="{{ url_for('auth.login', next=next) }}" class="form">
-                    <input type="hidden" name="next" value="{{ next }}">  <!-- Pass the next URL -->
+                <form id="loginForm" method="POST" action="{{ url_for('auth.login', next=next) }}" class="form">
+                    <input type="hidden" name="next" value="{{ next }}">
                     <div class="form-group">
                         <label for="email" class="label">Email:</label>
                         <input
@@ -21,6 +21,7 @@
                             required
                             class="input"
                             placeholder="Digite seu email"
+                            value="{{ request.form.get('email', '') }}"
                         >
                     </div>
                     <div class="form-group">
@@ -32,6 +33,7 @@
                             required
                             class="input"
                             placeholder="Digite sua senha"
+                            value="{{ request.form.get('password', '') }}"
                         >
                     </div>
                     <button type="submit" class="btn btn-primary">
@@ -44,13 +46,5 @@
 {% endblock %}
 
 {% block scripts %}
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const messages = {{ get_flashed_messages(with_categories=true) | tojson }};
-            messages.forEach(([category, message]) => {
-                const type = category === 'danger' ? 'error' : 'success';
-                showToast(message, type);
-            });
-        });
-    </script>
+    <script src="{{ url_for('static', filename='js/login.js') }}"></script>
 {% endblock %}
