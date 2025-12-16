@@ -1,5 +1,6 @@
 import os
 import boto3
+import time
 from botocore.exceptions import ClientError
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
@@ -25,7 +26,6 @@ class SESManager:
         )
 
     def send_email(self, recipients, subject, body, cc=None, bcc=None):
-        # --- Lógica de tratamento de listas (Idêntica à original) ---
         if isinstance(recipients, str):
             to_list = [r.strip() for r in recipients.split(",") if r.strip()]
         else:
@@ -41,41 +41,52 @@ class SESManager:
         else:
             bcc_list = list(bcc or [])
 
-        # Lista combinada para o envelope de envio da AWS (quem realmente recebe)
-        all_recipients = to_list + cc_list + bcc_list
+        all_unique_targets = set(to_list + cc_list + bcc_list)
 
-        if not all_recipients:
+        if not all_unique_targets:
             print("Erro: Nenhum destinatário definido.")
-            return
+            return []
 
-        # --- Construção do MIME (Idêntica à original) ---
-        message = MIMEMultipart("alternative")
-        message['From'] = self.sender_email
-        message['To'] = ", ".join(to_list)
-        if cc_list:
-            message['Cc'] = ", ".join(cc_list)
-        # Nota: Não adicionamos header de BCC no MIME para não expor os e-mails ocultos,
-        # mas eles devem estar em 'all_recipients' para o SES entregar.
+        header_to = ", ".join(to_list)
+        header_cc = ", ".join(cc_list)
+        reply_to_emails = to_list + cc_list
+        header_reply_to = ", ".join(reply_to_emails)
 
-        message['Subject'] = subject
-        message.attach(MIMEText(body, 'html'))
+        sent_ids = []
 
-        # --- Envio via Boto3 (Substituindo smtplib) ---
-        try:
-            # send_raw_email é necessário quando usamos objetos MIME/Multipart
-            response = self.client.send_raw_email(
-                Source=self.sender_email,
-                Destinations=all_recipients,  # O SES usa essa lista para rotear, não os headers do MIME
-                RawMessage={
-                    'Data': message.as_string(),
-                }
-            )
-            print(f"E-mail enviado com sucesso! MessageId: {response['MessageId']}")
-            return response['MessageId']
+        print(f"Iniciando envio para {len(all_unique_targets)} destinatários únicos...")
 
-        except ClientError as e:
-            print(f"Erro ao enviar e-mail via SES: {e.response['Error']['Message']}")
-            raise
-        except Exception as e:
-            print(f"Erro inesperado: {e}")
-            raise
+        for target_email in all_unique_targets:
+            try:
+                message = MIMEMultipart("alternative")
+                message['From'] = self.sender_email
+                if header_to:
+                    message['To'] = header_to
+                if header_cc:
+                    message['Cc'] = header_cc
+                if header_reply_to:
+                    message.add_header('Reply-To', header_reply_to)
+                message['Subject'] = subject
+                message.attach(MIMEText(body, 'html'))
+
+                response = self.client.send_raw_email(
+                    Source=self.sender_email,
+                    Destinations=[target_email],
+                    RawMessage={
+                        'Data': message.as_string(),
+                    }
+                )
+
+                sent_ids.append(response['MessageId'])
+                time.sleep(0.1)
+
+            except ClientError as e:
+                print(f"Erro ao enviar para {target_email}: {e.response['Error']['Message']}")
+                if e.response['Error']['Code'] == 'Throttling':
+                    print("Atingido limite de envios por segundo. Aguardando...")
+                    time.sleep(1)
+            except Exception as e:
+                print(f"Erro inesperado para {target_email}: {e}")
+
+        print(f"Processo finalizado. {len(sent_ids)} e-mails enviados com sucesso.")
+        return sent_ids
