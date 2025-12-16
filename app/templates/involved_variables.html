@@ -59,6 +59,20 @@
                         </div>
                         <br>
                     {% endif %}
+                    {% if alert.categories %}
+                        <div class="variable-group">
+                            <strong>Categorias:</strong>
+                            <div>{{ alert.categories | map(attribute='value') | join(", ") }}</div>
+                        </div>
+                        <br>
+                    {% endif %}
+                    {% if alert.subcategories %}
+                        <div class="variable-group">
+                            <strong>Subcategorias:</strong>
+                            <div>{{ alert.subcategories | map(attribute='value') | join(", ") }}</div>
+                        </div>
+                        <br>
+                    {% endif %}
                 </div>
             </div>
         </div>
