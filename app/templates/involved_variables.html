@@ -62,14 +62,22 @@
                     {% if alert.categories %}
                         <div class="variable-group">
                             <strong>Categorias:</strong>
-                            <div>{{ alert.categories | map(attribute='value') | join(", ") }}</div>
+                            <div>
+                                {% for category in alert.categories %}
+                                    {{ category.value.split("::")[1].strip() }}{% if not loop.last %}, {% endif %}
+                                {% endfor %}
+                            </div>
                         </div>
                         <br>
                     {% endif %}
                     {% if alert.subcategories %}
                         <div class="variable-group">
                             <strong>Subcategorias:</strong>
-                            <div>{{ alert.subcategories | map(attribute='value') | join(", ") }}</div>
+                            <div>
+                                {% for subcategory in alert.subcategories %}
+                                    {{ subcategory.value.replace("::", "-").strip() }}{% if not loop.last %}, {% endif %}
+                                {% endfor %}
+                            </div>
                         </div>
                         <br>
                     {% endif %}
