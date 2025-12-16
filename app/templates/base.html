@@ -8,13 +8,30 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/header_nav.css') }}">
     <title>{% block title %}Aplicação{% endblock %}</title>
 </head>
 <body>
     <header class="header">
         <div class="container">
             <div class="header-content">
-                <img src="{{ url_for('static', filename='images/logo-horizontal.png') }}" alt="Banco do Brasil" class="header-logo" style="width: 200px; height: auto;">
+                <img src="{{ url_for('static', filename='images/logo-horizontal.png') }}" alt="Banco do Brasil" class="header-logo">
+                {% if current_user.is_authenticated %}
+                    <nav class="header-nav">
+                        {% if current_user.role == 'admin' %}
+                            <a href="{{ url_for('root.index') }}" class="header-link">Admin</a>
+                            <a href="{{ url_for('ingestion.index') }}" class="header-link">Ingestão</a>
+                            <a href="{{ url_for('alert.index') }}" class="header-link">Alertas</a>
+                            <a href="{{ url_for('root.index') }}" class="header-link">Mailing</a>
+                        {% elif current_user.role == 'monitoring' %}
+                            <a href="{{ url_for('ingestion.index') }}" class="header-link">Ingestão</a>
+                            <a href="{{ url_for('alert.index') }}" class="header-link">Alertas</a>
+                        {% elif current_user.role == 'client' %}
+                            <a href="{{ url_for('root.index') }}" class="header-link">Mailing</a>
+                        {% endif %}
+                        <a href="{{ url_for('auth.logout') }}" class="header-link logout-link">Logout</a>
+                    </nav>
+                {% endif %}
                 <h1>{% block header_title %}Aplicação{% endblock %}</h1>
             </div>
         </div>
@@ -26,4 +43,3 @@
     {% block scripts %}{% endblock %}
 </body>
 </html>
-

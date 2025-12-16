@@ -9,7 +9,7 @@ alert_service = AlertService()
 
 @alert_bp.get("/ui")
 @role_required(["monitoring"])
-def ui():
+def index():
     try:
         base_url = os.getenv("BASE_URL")
         return render_template("alert_list.html", base_url=base_url)

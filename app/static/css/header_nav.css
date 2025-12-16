@@ -1,0 +1,50 @@
+.header-nav {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.header-link {
+    text-decoration: none;
+    color: var(--bb-blue); /* Always the same color as the text */
+    font-weight: bold;
+    font-size: 1rem;
+    transition: color 0.3s ease;
+}
+
+.header-link:link,
+.header-link:visited {
+    color: var(--bb-blue); /* Ensure the same color for visited links */
+    text-decoration: none; /* Remove underline for all states */
+}
+
+.header-link:hover {
+    color: var(--bb-dark-blue); /* Slightly darker color on hover */
+    text-decoration: none; /* No underline on hover */
+}
+
+.header-link:active {
+    color: var(--bb-dark-blue); /* Same hover color for active state */
+    text-decoration: none; /* No underline on active */
+}
+
+.logout-link {
+    color: #d9534f;
+    font-weight: bold;
+}
+
+.logout-link:link,
+.logout-link:visited {
+    color: #d9534f; /* Ensure the same color for visited links */
+    text-decoration: none; /* Remove underline for all states */
+}
+
+.logout-link:hover {
+    color: #c9302c; /* Slightly darker color on hover */
+    text-decoration: none; /* No underline on hover */
+}
+
+.logout-link:active {
+    color: #c9302c; /* Same hover color for active state */
+    text-decoration: none; /* No underline on active */
+}

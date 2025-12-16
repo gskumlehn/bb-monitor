@@ -1,32 +1,15 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>{% block title %}Login{% endblock %}</title>
-</head>
-<body>
-    {% block header %}
-    <header>
-        <h1>{% block header_title %}Acesso ao Sistema{% endblock %}</h1>
-    </header>
-    {% endblock %}
+{% extends "base.html" %}
 
-    {% block content %}
+{% block title %}Login{% endblock %}
+{% block header_title %}Login{% endblock %}
+
+{% block content %}
     <div class="content-wrapper">
         <div class="card form-card">
             <div class="card-header">
                 <h2>Login</h2>
             </div>
             <div class="card-content">
-                {% with messages = get_flashed_messages(with_categories=true) %}
-                  {% if messages %}
-                    <ul>
-                    {% for category, message in messages %}
-                      <li style="color: {{ 'red' if category == 'danger' else 'green' }}">{{ message }}</li>
-                    {% endfor %}
-                    </ul>
-                  {% endif %}
-                {% endwith %}
-
                 <form method="POST" action="{{ url_for('auth.login', next=next) }}" class="form">
                     <input type="hidden" name="next" value="{{ next }}">  <!-- Pass the next URL -->
                     <div class="form-group">
@@ -58,6 +41,16 @@
             </div>
         </div>
     </div>
-    {% endblock %}
-</body>
-</html>
+{% endblock %}
+
+{% block scripts %}
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const messages = {{ get_flashed_messages(with_categories=true) | tojson }};
+            messages.forEach(([category, message]) => {
+                const type = category === 'danger' ? 'error' : 'success';
+                showToast(message, type);
+            });
+        });
+    </script>
+{% endblock %}
