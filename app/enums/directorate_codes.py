@@ -50,6 +50,9 @@ class DirectorateCode(EnumInterface):
     DIMAC_PRIORITARIO = "DIMAC Prioritário – Equipe Risco de Reputação"
 
     @classmethod
+    def exclusions(cls):
+        return {cls.FB, cls.DIMAC_PRIORITARIO}
+
+    @classmethod
     def list_excluding(cls):
-        exclusions = {cls.FB, cls.DIMAC_PRIORITARIO}
-        return [member for member in cls if member not in exclusions]
+        return [member for member in cls if member not in cls.exclusions()]
