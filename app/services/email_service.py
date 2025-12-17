@@ -15,13 +15,22 @@ class EmailService:
 
     mailing_service = MailingService()
 
+    TO_EMAILS = ["dimac.riscoreputacao@bb.com.br"]
+    CC_EMAILS = ["alertasbb@futurebrand.com.br", "jsantos@futurebrand.com.br"]
     TO_DIRECTORATE = DirectorateCode.DIMAC_PRIORITARIO
     CC_DIRECTORATE = DirectorateCode.FB
 
     def get_recipients_for_alert(self, directorates: list[DirectorateCode] = None) -> dict:
-        to_list = self.mailing_service.get_emails_by_directorates([self.TO_DIRECTORATE]) or []
-        cc_list = self.mailing_service.get_emails_by_directorates([self.CC_DIRECTORATE]) or []
-        bcc_list = self.mailing_service.get_emails_by_directorates(directorates) if directorates else []
+        if directorates:
+            to_list = self.TO_EMAILS
+            cc_list = self.CC_EMAILS
+
+            directorates += [self.TO_DIRECTORATE, self.CC_DIRECTORATE]
+            bcc_list = self.mailing_service.get_emails_by_directorates(directorates)
+        else:
+            to_list = self.mailing_service.get_emails_by_directorates([self.TO_DIRECTORATE]) or []
+            cc_list = self.mailing_service.get_emails_by_directorates([self.CC_DIRECTORATE]) or []
+            bcc_list = []
 
         return {"to": to_list, "cc": cc_list, "bcc": bcc_list}
 
