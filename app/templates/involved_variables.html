@@ -59,6 +59,39 @@
                         </div>
                         <br>
                     {% endif %}
+                    {% if alert.categories %}
+                        <div class="variable-group">
+                            <strong>Categorias:</strong>
+                            <div>
+                                {% for category in alert.categories %}
+                                    {{ category.value.split("::")[1].strip() }}{% if not loop.last %}, {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <br>
+                    {% endif %}
+                    {% if alert.subcategories %}
+                        <div class="variable-group">
+                            <strong>Subcategorias:</strong>
+                            <div>
+                                {% for subcategory in alert.subcategories %}
+                                    {{ subcategory.value.replace("::", "-").strip() }}{% if not loop.last %}, {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <br>
+                    {% endif %}
+                    {% if alerted_directorates %}
+                        <div class="variable-group">
+                            <strong>Diretorias alertadas:</strong>
+                            <div>
+                                {% for alerted_directory in alerted_directorates %}
+                                    {{ alerted_directory.value }}{% if not loop.last %}<br>{% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <br>
+                    {% endif %}
                 </div>
             </div>
         </div>

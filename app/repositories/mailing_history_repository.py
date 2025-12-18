@@ -1,3 +1,4 @@
+from typing import List
 from app.models.mailing_history import MailingHistory
 from app.infra.bq_sa import get_session
 from sqlalchemy.orm.exc import NoResultFound
@@ -21,6 +22,6 @@ class MailingHistoryRepository:
                 pass
 
     @staticmethod
-    def list(alert_id: str) -> list[MailingHistory]:
+    def list(alert_id: str) -> List[MailingHistory]:
         with get_session() as session:
             return session.query(MailingHistory).filter_by(alert_id=alert_id).all()

@@ -1,3 +1,4 @@
+from typing import List
 from app.constants.error_messages import ErrorMessages
 from app.enums.directorate_codes import DirectorateCode
 from app.enums.mailing_status import MailingStatus
@@ -61,8 +62,18 @@ class MailingHistoryService:
     def delete_by_id(self, history_id: str):
         MailingHistoryRepository.delete_by_id(history_id)
 
-    def list(self, alert_id: str) -> list[MailingHistory]:
-        """
-        Retorna todos os históricos de mailing associados a um alerta.
-        """
+    def list(self, alert_id: str) -> List[MailingHistory]:
         return MailingHistoryRepository.list(alert_id)
+
+    def list_alerted_directorates(self, alert_id: str) -> List[DirectorateCode]:
+        mailing_histories = self.list(alert_id)
+        alerted_directorates = set()
+
+        for history in mailing_histories:
+            alerted_directorates.update(history.bcc_directorates)
+
+        alerted_directorates = alerted_directorates.difference(DirectorateCode.exclusions())
+        sorted_directorates = sorted(
+            alerted_directorates, key=lambda d: d.value if hasattr(d, "value") else str(d)
+        )
+        return list(sorted_directorates)

@@ -1,11 +1,13 @@
-import os
 from app.services.alert_service import AlertService
+from app.services.mailing_history_service import MailingHistoryService
 from flask import Blueprint, jsonify, render_template, request
 from app.controllers.decorators import role_required
+import os
 
 alert_bp = Blueprint("alert", __name__)
 
 alert_service = AlertService()
+mailing_history_service = MailingHistoryService()
 
 @alert_bp.get("/ui")
 @role_required(["monitoring"])
@@ -35,8 +37,9 @@ def list():
 def involved_variables(alert_id):
     try:
         alert = alert_service.get_by_id(alert_id)
+        alerted_directorates = mailing_history_service.list_alerted_directorates(alert_id)
         if not alert:
             return jsonify({"error": "Alerta não encontrado"}), 404
-        return render_template("involved_variables.html", alert=alert)
+        return render_template("involved_variables.html", alert=alert, alerted_directorates=alerted_directorates)
     except Exception as e:
         return jsonify({"error": "Erro ao buscar variáveis envolvidas", "detail": str(e)}), 500
