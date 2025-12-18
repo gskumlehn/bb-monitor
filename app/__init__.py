@@ -37,8 +37,6 @@ def create_app():
         secret = secrets.token_hex(32)
     else:
         secret = os.getenv('SECRET_KEY')
-        if not secret:
-            raise ValueError("No SECRET_KEY set for production.")
 
     app.config['SECRET_KEY'] = secret
 
