@@ -393,3 +393,28 @@ body {
     margin: 0 8px;
     color: var(--muted-foreground);
 }
+
+/* Forgot password link styling */
+.forgot-password-wrapper {
+    margin-top: 0.75rem; /* spacing between the submit button and the link */
+    display: flex;
+    justify-content: flex-end; /* align to the right */
+}
+
+/* changed: use a darker gray for the link (not the border color) */
+.forgot-link,
+.forgot-link:link,
+.forgot-link:visited,
+.forgot-link:active,
+.forgot-link:focus {
+    color: var(--muted-foreground); /* darker gray instead of border */
+    text-decoration: none;
+    outline: none;
+    transition: color 0.15s ease;
+}
+
+/* hover should be noticeably darker */
+.forgot-link:hover {
+    color: var(--foreground); /* darker on hover */
+    text-decoration: none;
+}
