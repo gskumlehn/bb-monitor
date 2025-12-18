@@ -10,7 +10,7 @@ alert_service = AlertService()
 directorate_service = DirectorateService()
 
 @directorate_bp.route("/alert/<alert_id>", methods=["GET"])
-@role_required(["client"])
+# @role_required(["client"])
 def manage_directorates(alert_id):
     alert = alert_service.get_by_id(alert_id)
     if not alert:
@@ -23,7 +23,7 @@ def manage_directorates(alert_id):
     )
 
 @directorate_bp.route("/list_alerted_directorates/<alert_id>", methods=["POST"])
-@role_required(["client"])
+# @role_required(["client"])
 def list_alerted_directorates(alert_id):
     alert = alert_service.get_by_id(alert_id)
     if not alert:

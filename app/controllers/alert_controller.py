@@ -1,7 +1,8 @@
+import os
+from flask_login import login_required
 from app.services.alert_service import AlertService
 from app.services.mailing_history_service import MailingHistoryService
 from flask import Blueprint, jsonify, render_template, request
-from app.controllers.decorators import role_required
 import os
 
 alert_bp = Blueprint("alert", __name__)
@@ -10,7 +11,7 @@ alert_service = AlertService()
 mailing_history_service = MailingHistoryService()
 
 @alert_bp.get("/ui")
-@role_required(["monitoring"])
+@login_required
 def index():
     try:
         base_url = os.getenv("BASE_URL")
@@ -19,7 +20,7 @@ def index():
         return jsonify({"error": "Erro ao carregar a página de listagem de alertas", "detail": str(e)}), 500
 
 @alert_bp.get("/list")
-@role_required(["monitoring"])
+@login_required
 def list():
     try:
         month = request.args.get("month", type=int)

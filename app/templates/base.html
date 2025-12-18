@@ -18,14 +18,13 @@
                 <img src="{{ url_for('static', filename='images/logo-horizontal.png') }}" alt="Banco do Brasil" class="header-logo">
                 {% if current_user.is_authenticated %}
                     <nav class="header-nav">
+                        <a href="{{ url_for('alert.index') }}" class="header-link">Alertas</a>
                         {% if current_user.role == 'admin' %}
-                            <a href="{{ url_for('auth.admin') }}" class="header-link">Admin</a>
                             <a href="{{ url_for('ingestion.index') }}" class="header-link">Ingestão</a>
-                            <a href="{{ url_for('alert.index') }}" class="header-link">Alertas</a>
                             <a href="{{ url_for('root.index') }}" class="header-link">Mailing</a>
+                            <a href="{{ url_for('auth.admin') }}" class="header-link">Admin</a>
                         {% elif current_user.role == 'monitoring' %}
                             <a href="{{ url_for('ingestion.index') }}" class="header-link">Ingestão</a>
-                            <a href="{{ url_for('alert.index') }}" class="header-link">Alertas</a>
                         {% elif current_user.role == 'client' %}
                             <a href="{{ url_for('root.index') }}" class="header-link">Mailing</a>
                         {% endif %}
