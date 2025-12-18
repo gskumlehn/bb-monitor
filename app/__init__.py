@@ -32,13 +32,13 @@ def create_app():
     ADMIN_DB_NAME = os.getenv('ADMIN_DB_NAME')
 
     app.config['SQLALCHEMY_DATABASE_URI'] = f"postgresql://{DB_USER}:{DB_PASS}@{DB_HOST}:{DB_PORT}/{ADMIN_DB_NAME}"
-    app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
-
 
     if Environment.is_development():
         secret = secrets.token_hex(32)
     else:
         secret = os.getenv('SECRET_KEY')
+        if not secret:
+            raise ValueError("No SECRET_KEY set for production.")
 
     app.config['SECRET_KEY'] = secret
 
