@@ -6,14 +6,12 @@ from app.enums.mailing_status import MailingStatus
 from app.infra.email_manager import EmailManager
 from app.infra.environment import Environment
 from app.repositories.alert_repository import AlertRepository
+from app.repositories.mailing_repository import MailingRepository
 from app.services.alert_service import AlertService
-from app.services.mailing_service import MailingService
 from app.services.mailing_history_service import MailingHistoryService
 from app.custom_utils.email_utils import EmailUtils
 
 class EmailService:
-
-    mailing_service = MailingService()
 
     TO_EMAILS = ["dimac.riscoreputacao@bb.com.br"]
     CC_EMAILS = ["alertasbb@futurebrand.com.br", "jsantos@futurebrand.com.br"]
@@ -26,10 +24,10 @@ class EmailService:
             cc_list = self.CC_EMAILS
 
             directorates += [self.TO_DIRECTORATE, self.CC_DIRECTORATE]
-            bcc_list = self.mailing_service.get_emails_by_directorates(directorates)
+            bcc_list = MailingRepository.get_emails_by_directorates(directorates)
         else:
-            to_list = self.mailing_service.get_emails_by_directorates([self.TO_DIRECTORATE]) or []
-            cc_list = self.mailing_service.get_emails_by_directorates([self.CC_DIRECTORATE]) or []
+            to_list = MailingRepository.get_emails_by_directorates([self.TO_DIRECTORATE]) or []
+            cc_list = MailingRepository.get_emails_by_directorates([self.CC_DIRECTORATE]) or []
             bcc_list = []
 
         return {"to": to_list, "cc": cc_list, "bcc": bcc_list}
