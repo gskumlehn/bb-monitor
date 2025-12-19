@@ -25,6 +25,7 @@ class ErrorMessages:
         "Alert.socialMediaSources.invalid": "Fonte de rede social inválida",
         "Alert.socialMediaEngagements.invalid": "Engajamento de redes sociais inválido",
         "Alert.previousAlert.notFound": "Alerta anterior não encontrado.",
+        "Mailing.exists": "Mailing já cadastrado para este e-mail e diretoria.",
         "Mailing.email.empty": "Email não pode ser vazio.",
         "Mailing.email.invalid": "Formato do email é inválido.",
         "Mailing.email.domain.invalid": "Domínio do email não é permitido",

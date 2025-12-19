@@ -1,10 +1,10 @@
-from typing import Iterable, List, Union, Tuple
+from app.constants.error_messages import ErrorMessages
+from app.constants.mailing_constants import MailingConstants
+from app.custom_utils.email_utils import EmailUtils
+from app.enums.directorate_codes import DirectorateCode
 from app.models.mailing import Mailing
 from app.repositories.mailing_repository import MailingRepository
-from app.enums.directorate_codes import DirectorateCode
-from app.constants.mailing_constants import MailingConstants
-from app.constants.error_messages import ErrorMessages
-from app.custom_utils.email_utils import EmailUtils
+from typing import Union, Tuple
 
 class MailingService:
 
@@ -23,6 +23,9 @@ class MailingService:
         email_norm = self.validate_email(email)
         directorate_code = DirectorateCode.from_name(directorate_code)
 
+        if MailingRepository.exists(email_norm, directorate_code.name):
+            raise ValueError(ErrorMessages.model["Mailing.exists"])
+
         return email_norm, directorate_code
 
     def validate_email(self, email: str) -> str:
@@ -38,6 +41,3 @@ class MailingService:
 
     def delete(self, email: str, directorate_code: str) -> int:
         return MailingRepository.delete(EmailUtils.normalize_email(email), DirectorateCode.from_name(directorate_code))
-
-    def get_emails_by_directorates(self, codes: Iterable[DirectorateCode]) -> List[str]:
-        return MailingRepository.get_emails_by_directorates(codes)

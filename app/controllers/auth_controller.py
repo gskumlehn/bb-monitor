@@ -1,9 +1,9 @@
-from flask import Blueprint, jsonify, request, redirect, url_for, flash, render_template, current_app
-from flask_login import login_user, logout_user, login_required, current_user
-from app.models.user import User
-from app.database import db
 from app.controllers.decorators import role_required
+from app.infra.database import db
 from app.infra.email_manager import EmailManager
+from app.models.user import User
+from flask import Blueprint, jsonify, request, redirect, url_for, flash, render_template
+from flask_login import login_user, logout_user, login_required, current_user
 import random
 import string
 

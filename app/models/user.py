@@ -1,6 +1,6 @@
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
-from app.database import db
+from app.infra.database import db
 
 class Roles:
     ADMIN = 'admin'
@@ -8,6 +8,7 @@ class Roles:
     CLIENT = 'client'
 
 class User(UserMixin, db.Model):
+    __bind_key__ = 'admin'
     __tablename__ = 'users'
 
     id = db.Column(db.Integer, primary_key=True)

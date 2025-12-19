@@ -5,7 +5,7 @@ from app.controllers.email_controller import email_bp
 from app.controllers.ingestion_controller import ingestion_bp
 from app.controllers.mailing_controller import mailing_bp
 from app.controllers.root_controller import root_bp
-from app.database import db, login_manager
+from app.infra.database import db, login_manager
 from dotenv import load_dotenv
 from flask import Flask
 from werkzeug.middleware.proxy_fix import ProxyFix
@@ -29,9 +29,13 @@ def create_app():
     DB_PASS = os.getenv('DB_PASS')
     DB_HOST = os.getenv('DB_HOST')
     DB_PORT = os.getenv('DB_PORT')
+    DB_NAME = os.getenv('DB_NAME')
     ADMIN_DB_NAME = os.getenv('ADMIN_DB_NAME')
 
-    app.config['SQLALCHEMY_DATABASE_URI'] = f"postgresql://{DB_USER}:{DB_PASS}@{DB_HOST}:{DB_PORT}/{ADMIN_DB_NAME}"
+    app.config['SQLALCHEMY_DATABASE_URI'] = f"postgresql://{DB_USER}:{DB_PASS}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+
+    admin_db_url = f"postgresql://{DB_USER}:{DB_PASS}@{DB_HOST}:{DB_PORT}/{ADMIN_DB_NAME}"
+    app.config['SQLALCHEMY_BINDS'] = {'admin': admin_db_url}
 
     if Environment.is_development():
         secret = secrets.token_hex(32)
