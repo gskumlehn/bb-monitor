@@ -152,7 +152,9 @@ class AlertService:
         alert.is_repercussion = True if previous_alerts_ids else False
 
     def delete_by_id(self, alert_id: str) -> None:
-        AlertRepository.delete_by_id(alert_id)
+        alert = AlertRepository.get_by_id(alert_id)
+        if alert:
+            AlertRepository.delete(alert)
 
     def get_by_id(self, alert_id: str) -> Alert | None:
         return AlertRepository.get_by_id(alert_id)

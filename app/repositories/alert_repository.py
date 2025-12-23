@@ -1,94 +1,57 @@
-from sqlalchemy import select, func, literal_column
+from sqlalchemy import select, extract
 from app.models.alert import Alert
-from app.infra.bq_sa import get_session
-import datetime
+from app.repositories.base_repository import BaseRepository
+from app.infra.database import db
+from datetime import datetime
+from typing import List, Optional
 
-class AlertRepository:
-
-    @staticmethod
-    def save(alert: Alert) -> Alert:
-        with get_session() as session:
-            session.add(alert)
-            session.commit()
-            return alert
+class AlertRepository(BaseRepository[Alert]):
+    model = Alert
 
     @staticmethod
-    def get_by_urls(urls: list[str]) -> Alert | None:
+    def get_by_urls(urls: List[str]) -> Optional[Alert]:
         if not urls:
             return None
+        
+        sorted_urls = sorted(urls)
+        query = select(Alert).where(Alert._urls == sorted_urls)
+        return db.session.execute(query).scalars().first()
 
-        sep = "\u001F"
-        normalized = sorted(urls)
-        joined = sep.join(normalized)
+    @staticmethod
+    def update(alert: Alert) -> Alert:
+        merged = db.session.merge(alert)
+        db.session.commit()
+        return merged
 
-        with get_session() as session:
-            query = (
-                select(Alert)
-                .where(
-                    func.array_length(Alert._urls) == len(normalized),
-                    func.array_to_string(Alert._urls, sep) == joined
-                )
+    @staticmethod
+    def list_by_month_year(month: int, year: int) -> List[Alert]:
+        query = (
+            select(Alert)
+            .where(
+                extract("month", Alert._delivery_datetime) == month,
+                extract("year", Alert._delivery_datetime) == year
             )
-            result = session.execute(query).scalars().first()
-            return result
-
-
-    @staticmethod
-    def delete_by_id(alert_id: str) -> None:
-        with get_session() as session:
-            session.query(Alert).filter_by(id=alert_id).delete()
-            session.commit()
+            .order_by(Alert._delivery_datetime.asc())
+        )
+        return db.session.execute(query).scalars().all()
 
     @staticmethod
-    def get_by_id(alert_id: str) -> Alert | None:
-        with get_session() as session:
-            return session.query(Alert).filter_by(id=alert_id).first()
-
-    @staticmethod
-    def update(alert: Alert) -> Alert | None:
-        with get_session() as session:
-            merged = session.merge(alert)
-            session.commit()
-            session.refresh(merged)
-            return merged
-
-    @staticmethod
-    def list_by_month_year(month: int, year: int) -> list[Alert]:
-        with get_session() as session:
-            query = (
-                select(Alert)
-                .where(
-                    func.extract("month", Alert._delivery_datetime) == month,
-                    func.extract("year", Alert._delivery_datetime) == year
-                )
-                .order_by(Alert._delivery_datetime.asc())
+    def exists_by_any_url_within(urls: List[str], since: datetime) -> bool:
+        query = (
+            select(Alert.id)
+            .where(
+                Alert._delivery_datetime >= since,
+                Alert._urls.overlap(urls)
             )
-            return session.execute(query).scalars().all()
+            .limit(1)
+        )
+        return db.session.execute(query).first() is not None
 
     @staticmethod
-    def exists_by_any_url_within(urls: list[str], since: datetime) -> bool:
-        with get_session() as session:
-            query = (
-                select(func.count())
-                .select_from(Alert)
-                .where(
-                    Alert._delivery_datetime >= since,
-                    func.exists(
-                        select(literal_column("1"))
-                        .select_from(func.unnest(Alert._urls).alias("url"))
-                        .where(literal_column("url").in_(urls))
-                    )
-                )
-            )
-            result = session.execute(query).scalar()
-            return result > 0
-
-    @staticmethod
-    def list_by_ids(alert_ids: list[str]) -> list[Alert]:
-        with get_session() as session:
-            query = (
-                select(Alert)
-                .where(Alert.id.in_(alert_ids))
-                .order_by(Alert._delivery_datetime.asc())
-            )
-            return session.execute(query).scalars().all()
+    def list_by_ids(alert_ids: List[str]) -> List[Alert]:
+        query = (
+            select(Alert)
+            .where(Alert.id.in_(alert_ids))
+            .order_by(Alert._delivery_datetime.asc())
+        )
+        return db.session.execute(query).scalars().all()

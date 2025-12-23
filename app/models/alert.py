@@ -1,5 +1,5 @@
-from sqlalchemy import Column, String, ARRAY, Text, Boolean
-from sqlalchemy_bigquery import TIMESTAMP
+from app.infra.database import db
+from sqlalchemy.dialects.postgresql import ARRAY
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.ext.declarative import declarative_base
 from zoneinfo import ZoneInfo
@@ -19,32 +19,30 @@ from app.enums.alert_category import AlertCategory
 from app.enums.alert_subcategory import AlertSubcategory
 from app.enums.repercussion import Repercussion
 
-Base = declarative_base()
-
-class Alert(Base):
+class Alert(db.Model):
     __tablename__ = "alert"
     __table_args__ = {"schema": "bb_monitor"}
 
-    id = Column(String(64), primary_key=True, default=lambda: str(uuid.uuid4()))
-    _mailing_status = Column("mailing_status", String(255), nullable=False)
-    _delivery_datetime = Column("delivery_datetime", TIMESTAMP, nullable=False)
-    _alert_types = Column("alert_types", ARRAY(String), nullable=False)
-    _profiles_or_portals = Column("profiles_or_portals", ARRAY(String), nullable=False)
-    _urls = Column("urls", ARRAY(Text), nullable=False)
-    title = Column(Text, nullable=False)
-    alert_text = Column(Text, nullable=False)
-    _criticality_level = Column("criticality_level", String(255), nullable=False)
-    _critical_topic = Column("critical_topic", ARRAY(String), nullable=False)
-    _press_sources = Column("press_sources", ARRAY(String), nullable=True)
-    _social_media_sources = Column("social_media_sources", ARRAY(String), nullable=True)
-    _stakeholders = Column("stakeholders", ARRAY(String), nullable=True)
-    _social_media_engagements = Column("social_media_engagements", ARRAY(String), nullable=True)
-    _categories = Column("categories", ARRAY(String), nullable=True)
-    _subcategories = Column("subcategories", ARRAY(String), nullable=True)
-    history = Column(Text, nullable=True)
-    _repercussions = Column("repercussions", ARRAY(String), nullable=True)
-    is_repercussion = Column(Boolean, nullable=False, default=False)
-    previous_alerts_ids = Column(ARRAY(String), nullable=True)
+    id = db.Column(db.String(64), primary_key=True, default=lambda: str(uuid.uuid4()))
+    _mailing_status = db.Column("mailing_status", db.String(255), nullable=False)
+    _delivery_datetime = db.Column("delivery_datetime", db.DateTime(timezone=True), nullable=False)
+    _alert_types = db.Column("alert_types", ARRAY(db.String), nullable=False)
+    _profiles_or_portals = db.Column("profiles_or_portals", ARRAY(db.String), nullable=False)
+    _urls = db.Column("urls", ARRAY(db.Text), nullable=False)
+    title = db.Column(db.Text, nullable=False)
+    alert_text = db.Column(db.Text, nullable=False)
+    _criticality_level = db.Column("criticality_level", db.String(255), nullable=False)
+    _critical_topic = db.Column("critical_topic", ARRAY(db.String), nullable=False)
+    _press_sources = db.Column("press_sources", ARRAY(db.String), nullable=True)
+    _social_media_sources = db.Column("social_media_sources", ARRAY(db.String), nullable=True)
+    _stakeholders = db.Column("stakeholders", ARRAY(db.String), nullable=True)
+    _social_media_engagements = db.Column("social_media_engagements", ARRAY(db.String), nullable=True)
+    _categories = db.Column("categories", ARRAY(db.String), nullable=True)
+    _subcategories = db.Column("subcategories", ARRAY(db.String), nullable=True)
+    history = db.Column(db.Text, nullable=True)
+    _repercussions = db.Column("repercussions", ARRAY(db.String), nullable=True)
+    is_repercussion = db.Column(db.Boolean, nullable=False, default=False)
+    previous_alerts_ids = db.Column(ARRAY(db.String), nullable=True)
 
     SP_TZ = ZoneInfo(DateUtils.BRAZIL_TZ)
     UTC_TZ = ZoneInfo(DateUtils.UTC_TZ)
