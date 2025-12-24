@@ -29,7 +29,6 @@ class TestAlertService(unittest.TestCase):
     def tearDown(self):
         with self.app_context:
             db.session.remove()
-            db.drop_all()
         self.app_context.pop()
 
     def test_save_alert_success(self):
