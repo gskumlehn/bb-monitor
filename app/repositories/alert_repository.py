@@ -36,18 +36,6 @@ class AlertRepository(BaseRepository[Alert]):
         return db.session.execute(query).scalars().all()
 
     @staticmethod
-    def exists_by_any_url_within(urls: List[str], since: datetime) -> bool:
-        query = (
-            select(Alert.id)
-            .where(
-                Alert._delivery_datetime >= since,
-                Alert._urls.overlap(urls)
-            )
-            .limit(1)
-        )
-        return db.session.execute(query).first() is not None
-
-    @staticmethod
     def list_by_ids(alert_ids: List[str]) -> List[Alert]:
         query = (
             select(Alert)
