@@ -1,4 +1,6 @@
 .env
+.env_prod
+.env_dev
 mention.json
 /.venv
 /.idea
