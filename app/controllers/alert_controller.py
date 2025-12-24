@@ -1,8 +1,7 @@
-import os
-from flask_login import login_required
 from app.services.alert_service import AlertService
 from app.services.mailing_history_service import MailingHistoryService
 from flask import Blueprint, jsonify, render_template, request
+from flask_login import login_required
 import os
 
 alert_bp = Blueprint("alert", __name__)
@@ -30,7 +29,7 @@ def list():
             return jsonify({"error": "Mês e ano são obrigatórios"}), 400
 
         alerts = alert_service.list_by_month_year(month, year)
-        return jsonify([alert.to_dict_list() for alert in alerts])
+        return jsonify([alert.to_dict() for alert in alerts])
     except Exception as e:
         return jsonify({"error": "Erro ao listar alertas", "detail": str(e)}), 500
 
