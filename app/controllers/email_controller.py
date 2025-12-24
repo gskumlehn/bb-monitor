@@ -1,14 +1,17 @@
 from app.controllers.decorators import role_required
 from app.enums.directorate_codes import DirectorateCode
 from app.services.alert_service import AlertService
+from app.services.directorate_service import DirectorateService
 from app.services.email_service import EmailService
 from datetime import datetime
 from flask import Blueprint, abort, jsonify, request
+import os
 
 email_bp = Blueprint("email", __name__)
 
 alert_service = AlertService()
 email_service = EmailService()
+directorate_service = DirectorateService()
 
 @email_bp.route("/render/<alert_id>", methods=["GET"])
 def render_alert_email(alert_id):
@@ -29,7 +32,12 @@ def send_alert_email(alert_id):
         alert = alert_service.assign_sequential_code(alert)
 
     try:
-        result = email_service.send_alert_email(alert)
+        automatic_mailing = os.getenv("AUTOMATIC_MAILING") == "true"
+        if automatic_mailing:
+            directorates = [DirectorateCode.from_name(directorate) for directorate in directorate_service.get_directorates_by_subcategories(alert.subcategories)]
+            result = email_service.send_alert_to_directorates(alert, directorates)
+        else:
+            result = email_service.send_alert_email(alert)
         return jsonify(result), 200
     except Exception:
         abort(500, description="Falha ao enviar e-mail.")

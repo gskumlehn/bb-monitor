@@ -111,7 +111,7 @@ class EmailService:
                     "bcc_directorates": directorates,
                 }
                 MailingHistoryService().save(history_data)
-            return {"directorates": [d.value for d in directorates], "to": to_list, "cc": cc_list, "bcc": bcc_list, "status": "sent"}
+            return {"message": "Email enviado com sucesso", "directorates": [d.value for d in directorates], "to": to_list, "cc": cc_list, "bcc": bcc_list, "status": "sent"}
         except Exception as e:
             return {"directorates": [d.value for d in directorates], "to": to_list, "cc": cc_list, "bcc": bcc_list, "status": "error", "error": str(e)}
 
