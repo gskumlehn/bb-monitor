@@ -1,23 +1,21 @@
-from app.infra.database import db
-from sqlalchemy.dialects.postgresql import ARRAY
-from sqlalchemy.ext.hybrid import hybrid_property
-from sqlalchemy.ext.declarative import declarative_base
-from zoneinfo import ZoneInfo
-from datetime import datetime
-import uuid
-
-from app.enums.alert_type import AlertType
-from app.enums.criticality_level import CriticalityLevel
-from app.enums.mailing_status import MailingStatus
 from app.custom_utils.date_utils import DateUtils
-from app.enums.stakeholders import Stakeholders
-from app.enums.press_source import PressSource
-from app.enums.social_media_source import SocialMediaSource
-from app.enums.critical_topic import CriticalTopic
-from app.enums.social_media_engagement import SocialMediaEngagement
 from app.enums.alert_category import AlertCategory
 from app.enums.alert_subcategory import AlertSubcategory
+from app.enums.alert_type import AlertType
+from app.enums.critical_topic import CriticalTopic
+from app.enums.criticality_level import CriticalityLevel
+from app.enums.mailing_status import MailingStatus
+from app.enums.press_source import PressSource
 from app.enums.repercussion import Repercussion
+from app.enums.social_media_engagement import SocialMediaEngagement
+from app.enums.social_media_source import SocialMediaSource
+from app.enums.stakeholders import Stakeholders
+from app.infra.database import db
+from datetime import datetime
+from sqlalchemy.dialects.postgresql import ARRAY
+from sqlalchemy.ext.hybrid import hybrid_property
+from zoneinfo import ZoneInfo
+import uuid
 
 class Alert(db.Model):
     __tablename__ = "alert"
@@ -43,9 +41,19 @@ class Alert(db.Model):
     _repercussions = db.Column("repercussions", ARRAY(db.String), nullable=True)
     is_repercussion = db.Column(db.Boolean, nullable=False, default=False)
     previous_alerts_ids = db.Column(ARRAY(db.String), nullable=True)
+    
+    sequential_id = db.Column(db.Integer, nullable=True)
+    sequential_version = db.Column(db.Integer, nullable=True)
+    code_year = db.Column(db.Integer, nullable=True)
 
     SP_TZ = ZoneInfo(DateUtils.BRAZIL_TZ)
     UTC_TZ = ZoneInfo(DateUtils.UTC_TZ)
+
+    @hybrid_property
+    def sequential_code(self) -> str | None:
+        if self.sequential_id is None or self.sequential_version is None or self.code_year is None:
+            return None
+        return f"{self.sequential_id:04d}.{self.sequential_version}/{self.code_year}"
 
     @hybrid_property
     def delivery_datetime(self) -> datetime:
@@ -222,11 +230,12 @@ class Alert(db.Model):
     def subcategories(cls):
         return cls._subcategories
 
-    def to_dict_list(self):
+    def to_dict(self):
         return {
             "id": self.id,
             "title": self.title,
             "delivery_datetime": self.delivery_datetime.isoformat() if self.delivery_datetime else None,
             "mailing_status": self.mailing_status.value,
-            "criticality_level": self.criticality_level.value
+            "criticality_level": self.criticality_level.value,
+            "sequential_code": self.sequential_code
         }

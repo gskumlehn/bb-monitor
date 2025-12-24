@@ -1,8 +1,9 @@
-from flask import Blueprint, abort, jsonify, request
+from app.controllers.decorators import role_required
 from app.enums.directorate_codes import DirectorateCode
 from app.services.alert_service import AlertService
 from app.services.email_service import EmailService
-from app.controllers.decorators import role_required
+from datetime import datetime
+from flask import Blueprint, abort, jsonify, request
 
 email_bp = Blueprint("email", __name__)
 
@@ -23,6 +24,9 @@ def send_alert_email(alert_id):
     alert = alert_service.get_by_id(alert_id)
     if not alert:
         abort(404, description="Alerta não encontrado.")
+
+    if datetime.now().year > 2025:
+        alert = alert_service.assign_sequential_code(alert)
 
     try:
         result = email_service.send_alert_email(alert)

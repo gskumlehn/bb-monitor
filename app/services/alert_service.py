@@ -1,5 +1,3 @@
-import uuid
-from typing import Optional
 from app.constants.error_messages import ErrorMessages
 from app.enums.alert_category import AlertCategory
 from app.enums.alert_type import AlertType
@@ -13,8 +11,11 @@ from app.enums.social_media_source import SocialMediaSource
 from app.enums.stakeholders import Stakeholders
 from app.models.alert import Alert
 from app.repositories.alert_repository import AlertRepository
+from typing import Optional
+import uuid
 
 class AlertService:
+
     def save(self, alert_data: dict, previous_alerts_ids: list = []) -> Alert:
         self.validate_alert_data(alert_data, check_duplicate=True)
         alert = self.create(alert_data, previous_alerts_ids)
@@ -50,6 +51,31 @@ class AlertService:
                 return updated if updated is not None else existing_alert
 
         return self.save(alert_data, previous_alerts_ids)
+
+    def assign_sequential_code(self, alert: Alert) -> Alert:
+        if alert.sequential_id is not None:
+            return alert
+
+        if alert.is_repercussion and alert.previous_alerts_ids:
+            original_alert = AlertRepository.get_by_id(alert.previous_alerts_ids[0])
+            if not original_alert:
+                raise ValueError("Alerta original repercutido não encontrado.")
+
+            alert.sequential_id = original_alert.sequential_id
+            alert.code_year = original_alert.code_year
+
+            max_version = AlertRepository.get_max_sequential_version(alert.sequential_id, alert.code_year)
+            alert.sequential_version = max_version + 1
+        else:
+            code_year =  int(alert.delivery_datetime.strftime('%y'))
+            alert.code_year =  code_year
+
+            max_id = AlertRepository.get_max_sequential_id(code_year)
+            alert.sequential_id = max_id + 1 if max_id else 1
+            alert.sequential_version = 1
+        
+        AlertRepository.update(alert)
+        return alert
 
     def validate_alert_data(self, alert_data: dict, check_duplicate: bool = True):
         self._validate_required_fields(alert_data)

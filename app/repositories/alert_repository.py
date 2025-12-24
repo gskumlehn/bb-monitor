@@ -1,12 +1,26 @@
-from sqlalchemy import select, extract
+from app.infra.database import db
 from app.models.alert import Alert
 from app.repositories.base_repository import BaseRepository
-from app.infra.database import db
-from datetime import datetime
+from sqlalchemy import select, func, extract
 from typing import List, Optional
 
 class AlertRepository(BaseRepository[Alert]):
     model = Alert
+
+    @staticmethod
+    def get_max_sequential_id(code_year: int) -> Optional[int]:
+        query = select(func.max(Alert.sequential_id)).where(Alert.code_year == code_year)
+        max_id = db.session.execute(query).scalar_one_or_none()
+        return max_id
+
+    @staticmethod
+    def get_max_sequential_version(sequential_id: int, code_year: int) -> Optional[int]:
+        query = select(func.max(Alert.sequential_version)).where(
+            Alert.sequential_id == sequential_id,
+            Alert.code_year == code_year
+        )
+        max_version = db.session.execute(query).scalar_one_or_none()
+        return max_version
 
     @staticmethod
     def get_by_urls(urls: List[str]) -> Optional[Alert]:
