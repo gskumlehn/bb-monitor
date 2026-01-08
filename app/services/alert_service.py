@@ -67,8 +67,8 @@ class AlertService:
             max_version = AlertRepository.get_max_sequential_version(alert.sequential_id, alert.code_year)
             alert.sequential_version = max_version + 1
         else:
-            code_year =  int(alert.delivery_datetime.strftime('%y'))
-            alert.code_year =  code_year
+            code_year = int(alert.delivery_datetime.strftime('%y'))
+            alert.code_year = code_year
 
             max_id = AlertRepository.get_max_sequential_id(code_year)
             alert.sequential_id = max_id + 1 if max_id else 1

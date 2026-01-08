@@ -28,8 +28,7 @@ def send_alert_email(alert_id):
     if not alert:
         abort(404, description="Alerta não encontrado.")
 
-    if datetime.now().year > 2025:
-        alert = alert_service.assign_sequential_code(alert)
+    alert = alert_service.assign_sequential_code(alert)
 
     try:
         automatic_mailing = os.getenv("AUTOMATIC_MAILING") == "true"
