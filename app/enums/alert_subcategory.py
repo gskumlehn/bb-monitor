@@ -43,6 +43,7 @@ class AlertSubcategory(EnumInterface):
     CUSTOMER_RELATIONS_GENERAL_OPERATIONAL = "Relacionamento e Atendimento :: Geral (operacional)"
     CUSTOMER_RELATIONS_ACCESSIBILITY = "Relacionamento e Atendimento :: Acessibilidade"
     SECURITY_EXTERNAL_SCAMS_AND_FRAUDS = "Segurança :: Golpes e Fraudes (Externas)"
+    SECURITY_INTERNAL_SCAMS_AND_FRAUDS = "Segurança :: Golpes e Fraudes (Internas)"
     SECURITY_ROBBERIES_AND_PHYSICAL_SECURITY = "Segurança :: Assaltos e Segurança física"
     SECURITY_CORRUPTION = "Segurança :: Corrupção"
     SECURITY_DATA_LEAKS = "Segurança :: Vazamentos de dados"

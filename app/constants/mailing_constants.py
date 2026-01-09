@@ -157,6 +157,10 @@ class MailingConstants:
             DirectorateCode.USD,
             DirectorateCode.USI
         ],
+        AlertSubcategory.SECURITY_INTERNAL_SCAMS_AND_FRAUDS: [
+            DirectorateCode.DIPES,
+            DirectorateCode.USI
+        ],
         AlertSubcategory.SECURITY_ROBBERIES_AND_PHYSICAL_SECURITY: [
             DirectorateCode.DIVAR,
             DirectorateCode.USI

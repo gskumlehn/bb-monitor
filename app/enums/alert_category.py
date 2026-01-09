@@ -67,6 +67,7 @@ class AlertCategory(EnumInterface):
             AlertSubcategory.CUSTOMER_RELATIONS_GENERAL_OPERATIONAL: AlertCategory.CUSTOMER_RELATIONS,
             AlertSubcategory.CUSTOMER_RELATIONS_ACCESSIBILITY: AlertCategory.CUSTOMER_RELATIONS,
             AlertSubcategory.SECURITY_EXTERNAL_SCAMS_AND_FRAUDS: AlertCategory.SECURITY,
+            AlertSubcategory.SECURITY_INTERNAL_SCAMS_AND_FRAUDS: AlertCategory.SECURITY,
             AlertSubcategory.SECURITY_ROBBERIES_AND_PHYSICAL_SECURITY: AlertCategory.SECURITY,
             AlertSubcategory.SECURITY_CORRUPTION: AlertCategory.SECURITY,
             AlertSubcategory.SECURITY_DATA_LEAKS: AlertCategory.SECURITY,
