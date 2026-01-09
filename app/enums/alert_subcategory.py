@@ -26,7 +26,7 @@ class AlertSubcategory(EnumInterface):
     MARKETING_CCBB = "Comunicação e Marketing :: CCBB"
     MARKETING_CAMPAIGN_CONTENT = "Comunicação e Marketing :: Conteúdo de Campanha"
     MARKETING_INVESTMENT = "Comunicação e Marketing :: Investimento (Investtalk)"
-    MARKETING_EVENTS_PROMOTIONS = "Comunicação e Marketing :: Eventos, promoções e patrocínios"
+    MARKETING_EVENTS_PROMOTIONS = "Comunicação e Marketing :: Eventos promoções e patrocínios"
     SYSTEM_INSTABILITY_GENERAL = "Instabilidade de Sistema :: Geral"
     POLITICAL_AGENDAS_GENERAL = "Pautas Políticas :: Geral"
     PEOPLE_PUBLIC_CONTESTS = "Pessoas :: Concursos Públicos"
