@@ -46,7 +46,7 @@ class DirectorateCode(EnumInterface):
     URI = "URI – Unidade Relacionamento com Investidores"
     USD = "USD – Unidade Segurança Digital e da Informação"
     USI = "USI – Unidade Segurança Institucional"
-    RESTRITO = "Pautas Políticas Sensíveis"
+    RESTRITO = "Restrito"
     DIMAC_PRIORITARIO = "DIMAC Prioritário – Equipe Risco de Reputação"
 
     @classmethod
