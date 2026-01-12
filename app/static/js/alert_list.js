@@ -42,6 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     row.dataset.alertId = alert.id;
                     row.innerHTML = `
                         <td>${new Date(alert.delivery_datetime).toLocaleString('pt-BR')}</td>
+                        <td>${alert.sequential_code}</td>
                         <td>${alert.title}</td>
                         <td>${alert.mailing_status}</td>
                         <td>${alert.criticality_level}</td>
@@ -86,7 +87,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const cells = Array.from(row.querySelectorAll('td'));
             const rowData = cells.map((cell, index) => {
                 if (index === 5) {
-                    // Extract only the href from the link in the last column
                     const link = cell.querySelector('a');
                     return link ? `"${link.getAttribute('href')}"` : '""';
                 }

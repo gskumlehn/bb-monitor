@@ -49,6 +49,7 @@
                     <thead>
                         <tr>
                             <th>Data de Entrega</th>
+                            <th>Código</th>
                             <th>Título</th>
                             <th>Status</th>
                             <th>Nível de Criticidade</th>
@@ -60,6 +61,7 @@
                         {% for alerta in alertas %}
                         <tr onclick="window.location.href='{{ url_for('alert_detail', id=alerta.id) }}'">
                             <td>{{ alerta.data_entrega }}</td>
+                            <td>{{ alerta.sequential_code }}</td>
                             <td>{{ alerta.titulo }}</td>
                             <td>{{ alerta.status }}</td>
                             <td>{{ alerta.nivel_criticidade }}</td>
