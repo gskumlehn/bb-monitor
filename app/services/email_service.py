@@ -60,12 +60,15 @@ class EmailService:
 
         return render_template("email-template.html", **context)
 
+    def get_subject(self, alert) -> str:
+        return f"[RISCO DE REPUTAÇÃO BB] – Alerta{' de Repercussão' if alert.is_repercussion else ''} {alert.sequential_code} Nível {str(alert.criticality_level.number)} - {alert.title}"
+
     def send_alert_email(self, alert) -> dict:
         recipients = self.get_recipients_for_alert()
         to_list = recipients["to"]
         cc_list = recipients["cc"]
 
-        subject = f"[RISCO DE REPUTAÇÃO BB] – Alerta{' de Repercussão' if alert.is_repercussion else ''} Nível {str(alert.criticality_level.number)} - {alert.title}"
+        subject = self.get_subject(alert)
         rendered_html = self.render_alert_html(alert, True)
 
         email_manager = EmailManager()
@@ -86,7 +89,7 @@ class EmailService:
         email_manager = EmailManager()
 
         rendered_html = self.render_alert_html(alert)
-        subject = f"[RISCO DE REPUTAÇÃO BB] – Alerta{' de Repercussão' if alert.is_repercussion else ''} Nível {str(alert.criticality_level.number)} - {alert.title}"
+        subject = self.get_subject(alert)
 
         recipients = self.get_recipients_for_alert(directorates=directorates)
         to_list = recipients["to"]
