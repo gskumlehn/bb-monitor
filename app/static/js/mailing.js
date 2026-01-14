@@ -217,8 +217,16 @@ function openDeleteModal(email, code) {
     emailToDelete = email;
     codeToDelete = code;
 
+    let directorateLabel = code;
+    if (filterSelect) {
+        const option = Array.from(filterSelect.options).find(opt => opt.value === code);
+        if (option) {
+            directorateLabel = option.text;
+        }
+    }
+
     modalTitle.textContent = 'Confirmar exclusão';
-    modalMessage.textContent = `Tem certeza que deseja remover o e-mail "${email}" da diretoria "${code}"?`;
+    modalMessage.textContent = `Remover "${email}" da diretoria "${directorateLabel}"?`;
     confirmBtn.textContent = 'Remover';
     confirmBtn.disabled = false;
 
