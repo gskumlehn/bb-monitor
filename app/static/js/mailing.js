@@ -8,12 +8,39 @@ const directorateCodeInput = document.getElementById('directorate_code');
 const submitBtn = document.getElementById('submitBtn');
 const toast = document.getElementById('toast');
 
+const filterForm = document.getElementById('filterForm');
+const filterSelect = document.getElementById('filter_directorate_code');
+const listContainer = document.getElementById('emailListContainer');
+const emailTable = document.getElementById('emailTable');
+const emailTableBody = emailTable.querySelector('tbody');
+const noEmailsMessage = document.getElementById('noEmailsMessage');
+const loadingMessage = document.getElementById('loadingMessage');
+const errorMessage = document.getElementById('errorMessage');
+
+// Modal Elements
+const modal = document.getElementById('deleteMailingConfirmModal');
+const modalTitle = document.getElementById('deleteMailingConfirmTitle');
+const modalMessage = document.getElementById('deleteMailingConfirmMessage');
+const confirmBtn = document.getElementById('confirmDeleteMailingBtn');
+const cancelBtn = document.getElementById('cancelDeleteMailingBtn');
+const modalOverlay = document.querySelector('.modal-overlay');
+
 // State
 let isLoading = false;
+let emailToDelete = null;
+let codeToDelete = null;
 
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
     saveForm.addEventListener('submit', handleSubmit);
+
+    if (filterForm) {
+        filterForm.addEventListener('submit', handleFilterSubmit);
+    }
+
+    if (cancelBtn) cancelBtn.addEventListener('click', closeModal);
+    if (modalOverlay) modalOverlay.addEventListener('click', closeModal);
+    if (confirmBtn) confirmBtn.addEventListener('click', handleConfirmDelete);
 });
 
 // Handle form submission
@@ -46,7 +73,7 @@ async function handleSubmit(e) {
     submitBtn.textContent = 'Adicionando...';
 
     try {
-        const response = await fetch(API_BASE, {
+        const response = await fetch(API_BASE + '/', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -56,8 +83,17 @@ async function handleSubmit(e) {
 
         if (response.ok) {
             showToast('E-mail adicionado com sucesso!', 'success');
+
+            // Update filter with the directorate used in save
+            if (filterSelect) {
+                filterSelect.value = directorate_code;
+                // Only fetch if the value was successfully set (exists in options)
+                if (filterSelect.value === directorate_code) {
+                    fetchEmails(directorate_code);
+                }
+            }
+
             emailInput.value = '';
-            directorateCodeInput.value = '';
         } else {
             const error = await response.json();
             showToast(error.error || 'Erro ao adicionar e-mail', 'error');
@@ -75,6 +111,161 @@ async function handleSubmit(e) {
             </svg>
             Adicionar à Lista
         `;
+    }
+}
+
+// Handle filter submit
+function handleFilterSubmit(e) {
+    e.preventDefault();
+    const code = filterSelect.value;
+    console.log('Selected code for filter:', code);
+
+    if (code && code !== 'null') {
+        fetchEmails(code);
+    } else {
+        showToast('Selecione uma diretoria para filtrar', 'error');
+        hideAllListElements();
+    }
+}
+
+function hideAllListElements() {
+    listContainer.style.display = 'none';
+    emailTable.style.display = 'none';
+    noEmailsMessage.style.display = 'none';
+    loadingMessage.style.display = 'none';
+    errorMessage.style.display = 'none';
+}
+
+// Fetch emails
+async function fetchEmails(code) {
+    console.log('fetchEmails called with:', code);
+
+    if (!code || code === 'null') {
+        console.error('Invalid code passed to fetchEmails:', code);
+        return;
+    }
+
+    hideAllListElements();
+    listContainer.style.display = 'block';
+    loadingMessage.style.display = 'block';
+
+    const url = `${API_BASE}/list?directorate_code=${code}`;
+    console.log('Fetching URL:', url);
+
+    try {
+        const response = await fetch(url);
+        console.log('Response status:', response.status);
+
+        if (response.ok) {
+            const data = await response.json();
+            console.log('Data received:', data);
+            renderList(data.emails, code);
+        } else {
+            const errorText = await response.text();
+            console.error('Server error:', errorText);
+            loadingMessage.style.display = 'none';
+            errorMessage.style.display = 'block';
+        }
+    } catch (error) {
+        console.error('Network error:', error);
+        loadingMessage.style.display = 'none';
+        errorMessage.style.display = 'block';
+    }
+}
+
+// Render email list
+function renderList(emails, code) {
+    loadingMessage.style.display = 'none';
+
+    if (!emails || emails.length === 0) {
+        noEmailsMessage.style.display = 'block';
+        return;
+    }
+
+    emailTable.style.display = 'table';
+    emailTableBody.innerHTML = '';
+
+    emails.forEach(email => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td>${email}</td>
+            <td class="actions-cell">
+                <div class="btn-action-container">
+                    <button class="btn btn-danger btn-sm delete-btn" data-email="${email}" data-code="${code}" style="padding: 6px 12px; background-color: #ef4444; color: white; border: none; border-radius: 4px; cursor: pointer; display: inline-flex; align-items: center; justify-content: center;">
+                        <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="3 6 5 6 21 6"></polyline>
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                        </svg>
+                    </button>
+                </div>
+            </td>
+        `;
+        emailTableBody.appendChild(tr);
+    });
+
+    // Add event listeners to delete buttons
+    document.querySelectorAll('.delete-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const btn = e.currentTarget;
+            openDeleteModal(btn.dataset.email, btn.dataset.code);
+        });
+    });
+}
+
+// Open delete modal
+function openDeleteModal(email, code) {
+    emailToDelete = email;
+    codeToDelete = code;
+
+    modalTitle.textContent = 'Confirmar exclusão';
+    modalMessage.textContent = `Tem certeza que deseja remover o e-mail "${email}" da diretoria "${code}"?`;
+    confirmBtn.textContent = 'Remover';
+    confirmBtn.disabled = false;
+
+    modal.style.display = 'flex';
+}
+
+// Close modal
+function closeModal() {
+    modal.style.display = 'none';
+    emailToDelete = null;
+    codeToDelete = null;
+}
+
+// Handle confirm delete
+async function handleConfirmDelete() {
+    if (!emailToDelete || !codeToDelete) return;
+
+    const currentCode = codeToDelete; // Capture code before closing modal
+    confirmBtn.disabled = true;
+    confirmBtn.textContent = 'Removendo...';
+
+    try {
+        const response = await fetch(API_BASE + '/', {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ email: emailToDelete, directorate_code: codeToDelete }),
+        });
+
+        if (response.ok) {
+            showToast('E-mail removido com sucesso!', 'success');
+            closeModal();
+            setTimeout(() => {
+                fetchEmails(currentCode); // Use captured code
+            }, 500);
+        } else {
+            const error = await response.json();
+            showToast(error.error || 'Erro ao remover e-mail', 'error');
+            confirmBtn.disabled = false;
+            confirmBtn.textContent = 'Remover';
+        }
+    } catch (error) {
+        showToast('Erro ao remover e-mail', 'error');
+        console.error('Erro:', error);
+        confirmBtn.disabled = false;
+        confirmBtn.textContent = 'Remover';
     }
 }
 

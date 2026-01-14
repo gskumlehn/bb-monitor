@@ -38,8 +38,6 @@ document.addEventListener('DOMContentLoaded', () => {
             if (alerts.length > 0) {
                 alerts.forEach(alert => {
                     const row = document.createElement('tr');
-                    row.classList.add('clickable-row');
-                    row.dataset.alertId = alert.id;
                     row.innerHTML = `
                         <td>${new Date(alert.delivery_datetime).toLocaleString('pt-BR')}</td>
                         <td>${alert.sequential_code}</td>
@@ -52,13 +50,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     alertTableBody.appendChild(row);
                 });
                 alertTableContainer.style.display = 'block';
-
-                document.querySelectorAll('.clickable-row').forEach(row => {
-                    row.addEventListener('click', () => {
-                        const alertId = row.dataset.alertId;
-                        window.location.href = `${baseUrl}/email/render/${alertId}`;
-                    });
-                });
             } else {
                 alertTableContainer.style.display = 'none';
                 alert('Nenhum alerta encontrado para o período selecionado.');

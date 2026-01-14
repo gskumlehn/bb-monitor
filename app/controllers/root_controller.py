@@ -12,5 +12,5 @@ def index():
     if role == "monitoring":
         return redirect(url_for("ingestion.index"))
     if role == "admin":
-        return redirect(url_for("auth.admin"))
+        return redirect(url_for("mailing.index"))
     return redirect(url_for("alert.index"))

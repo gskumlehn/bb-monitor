@@ -4,8 +4,11 @@ const ingestForm = document.getElementById('ingestForm');
 const startRowInput = document.getElementById('start_row');
 const submitBtn = document.getElementById('submitBtn');
 const toast = document.getElementById('toast');
+
+const previewCard = document.getElementById('emailPreviewCard');
 const previewContainer = document.getElementById('emailPreviewContainer');
 const sendBtnHeader = document.getElementById('sendEmailBtnHeader');
+const previewTitle = document.getElementById('previewTitle');
 
 let isLoading = false;
 
@@ -18,7 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 async function handleSendClick() {
-    const alertId = previewContainer ? previewContainer.dataset.alertId : null;
+    const alertId = previewCard ? previewCard.dataset.alertId : null;
     if (!alertId) {
         showToast('Nenhum alerta selecionado para envio.', 'error');
         return;
@@ -38,14 +41,11 @@ async function handleSendClick() {
             ? String(data.status).toUpperCase().trim()
             : null;
 
-        // collect both primary recipients and cc (backend returns "recipients" and "cc")
         const toList = Array.isArray(data.recipients) ? data.recipients : [];
         const ccList = Array.isArray(data.cc) ? data.cc : [];
 
         if (typeof openConfirmModal === 'function') {
             openConfirmModal({ status, recipients: toList, cc: ccList }, alertId);
-        } else {
-            console.warn('openConfirmModal não encontrado: verifique se email_confirm.js foi carregado.');
         }
     } catch (err) {
         if (sendBtnHeader) {
@@ -53,7 +53,6 @@ async function handleSendClick() {
             sendBtnHeader.textContent = 'Enviar email';
         }
         showToast('Erro ao consultar dados de validação.', 'error');
-        console.error(err);
     }
 }
 
@@ -62,22 +61,19 @@ async function handleSubmit(e) {
 
     const startRow = startRowInput.value.trim();
 
+    // Reset preview area
+    if (previewCard) {
+        previewCard.style.display = 'none';
+        delete previewCard.dataset.alertId;
+    }
     if (previewContainer) {
         previewContainer.innerHTML = '';
-        delete previewContainer.dataset.startRow;
-        delete previewContainer.dataset.alertId;
     }
-    const previewHeader = document.getElementById('emailPreviewHeader');
-    const previewStartRowEl = document.getElementById('previewStartRow');
-    const previewAlertIdEl = document.getElementById('previewAlertId');
-    if (previewHeader) {
-        previewHeader.style.display = 'none';
-    }
-    if (previewStartRowEl) previewStartRowEl.textContent = '';
-    if (previewAlertIdEl) previewAlertIdEl.textContent = '';
     if (sendBtnHeader) {
-        sendBtnHeader.style.display = 'none';
         sendBtnHeader.disabled = true;
+    }
+    if (previewTitle) {
+        previewTitle.textContent = 'Preview do Email';
     }
 
     if (!startRow || isNaN(startRow) || startRow < 1) {
@@ -105,56 +101,43 @@ async function handleSubmit(e) {
             showToast(data.message || 'Ingestão iniciada com sucesso!', 'success');
 
             if (data.alerts && data.alerts.length > 0) {
-                const alertId = data.alerts[0];
+                const alertId = String(data.alerts[0]);
+
+                if (!alertId) {
+                    showToast('ID do alerta inválido retornado pelo servidor.', 'error');
+                    return;
+                }
+
                 try {
                     const tplResp = await fetch(`/email/render/${encodeURIComponent(alertId)}`);
                     if (tplResp.ok) {
                         const html = await tplResp.text();
 
-                        if (!previewContainer) {
-                            showToast('Preview container não encontrado.', 'error');
-                            return;
-                        }
+                        if (previewCard && previewContainer) {
+                            previewContainer.innerHTML = html;
+                            previewCard.dataset.alertId = alertId;
 
-                        if (previewHeader && previewStartRowEl && previewAlertIdEl) {
-                            previewStartRowEl.textContent = startRow;
-                            previewAlertIdEl.textContent = alertId;
-                            previewHeader.style.display = '';
-                        }
+                            if (previewTitle) {
+                                previewTitle.textContent = 'Preview do Email';
+                            }
 
-                        previewContainer.dataset.startRow = startRow;
-                        previewContainer.dataset.alertId = alertId;
-                        previewContainer.innerHTML = html;
+                            const btnInPreview = previewContainer.querySelector('#sendEmailBtn');
+                            if (btnInPreview) btnInPreview.remove();
 
-                        const btnInPreview = previewContainer.querySelector('#sendEmailBtn');
-                        if (btnInPreview) btnInPreview.remove();
+                            previewCard.style.display = 'block';
 
-                        if (sendBtnHeader) {
-                            sendBtnHeader.style.display = '';
-                            sendBtnHeader.disabled = false;
-                            sendBtnHeader.textContent = 'Enviar email';
+                            if (sendBtnHeader) {
+                                sendBtnHeader.disabled = false;
+                            }
                         }
                     } else {
                         showToast('Alerta salvo, mas falha ao gerar preview do e-mail.', 'error');
-                        if (sendBtnHeader) {
-                            sendBtnHeader.style.display = 'none';
-                            sendBtnHeader.disabled = true;
-                        }
-                        if (previewHeader) previewHeader.style.display = 'none';
                     }
                 } catch (err) {
                     showToast('Alerta salvo, mas falha ao gerar preview do e-mail.', 'error');
-                    if (sendBtnHeader) {
-                        sendBtnHeader.style.display = 'none';
-                        sendBtnHeader.disabled = true;
-                    }
-                    if (previewHeader) previewHeader.style.display = 'none';
                 }
             } else {
-                if (sendBtnHeader) {
-                    sendBtnHeader.style.display = 'none';
-                    sendBtnHeader.disabled = true;
-                }
+                showToast('Nenhum alerta foi gerado ou retornado.', 'warning');
             }
         } else {
             const contentType = response.headers.get('Content-Type');
@@ -163,22 +146,14 @@ async function handleSubmit(e) {
                 showToast(error.error || 'Erro ao realizar a ingestão.', 'error');
             } else {
                 showToast('Erro inesperado: resposta inválida do servidor.', 'error');
-                console.error('Resposta inválida:', await response.text());
             }
         }
     } catch (error) {
         showToast('Erro ao realizar a ingestão.', 'error');
-        console.error('Erro:', error);
-        const previewHeader = document.getElementById('emailPreviewHeader');
-        if (previewHeader) previewHeader.style.display = 'none';
-        if (sendBtnHeader) {
-            sendBtnHeader.style.display = 'none';
-            sendBtnHeader.disabled = true;
-        }
     } finally {
         isLoading = false;
         submitBtn.disabled = false;
-        submitBtn.textContent = 'Iniciar Ingestão';
+        submitBtn.textContent = 'Gerar email';
     }
 }
 
