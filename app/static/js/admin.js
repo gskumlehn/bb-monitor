@@ -2,7 +2,6 @@ document.addEventListener('DOMContentLoaded', function () {
     const form = document.getElementById('createUserForm');
 
     if (!form) {
-        console.error('Formulário de criação de usuário não encontrado.');
         return;
     }
 
@@ -41,7 +40,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 showToast(data.message || 'Erro ao criar usuário.', 'error');
             }
         } catch (err) {
-            console.error('Erro inesperado ao criar usuário:', err);
             showToast('Erro inesperado. Tente novamente mais tarde.', 'error');
         }
     });
@@ -49,7 +47,6 @@ document.addEventListener('DOMContentLoaded', function () {
     function showToast(message, type = 'success') {
         const toast = document.getElementById('toast');
         if (!toast) {
-            console.error('Elemento de toast não encontrado.');
             return;
         }
 

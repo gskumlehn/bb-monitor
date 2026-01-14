@@ -35,6 +35,9 @@ document.addEventListener('DOMContentLoaded', function () {
             if (response.ok && data.status === 'success') {
                 showToast(data.message, 'success');
                 form.reset();
+                setTimeout(() => {
+                    window.location.href = '/';
+                }, 1500);
             } else {
                 showToast(data.message || 'Erro ao alterar senha.', 'error');
             }
@@ -59,4 +62,3 @@ document.addEventListener('DOMContentLoaded', function () {
         }, 3000);
     }
 });
-
