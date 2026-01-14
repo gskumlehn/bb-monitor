@@ -1,7 +1,6 @@
 function showToast(message, type = 'success') {
     const toast = document.getElementById('toast');
     if (!toast) {
-        console.error('Elemento de toast não encontrado.');
         return;
     }
 
@@ -23,12 +22,10 @@ document.addEventListener('DOMContentLoaded', function () {
     const submitBtn = document.getElementById('submitBtn');
 
     if (!form) {
-        console.error('Formulário assignForm não encontrado.');
         return;
     }
 
     if (!ASSIGN_API.VALIDATE_SENT_MAILING || !ASSIGN_API.SEND_MAILING) {
-        console.error('URLs de validação ou envio não definidas no formulário.');
         return;
     }
 
@@ -42,10 +39,10 @@ document.addEventListener('DOMContentLoaded', function () {
                 const directorates = await response.json();
                 updateCheckboxes(directorates);
             } else {
-                console.error('Erro ao buscar diretorias alertadas:', await response.text());
+                // Erro silencioso ou tratado de outra forma se necessário
             }
         } catch (err) {
-            console.error('Erro ao buscar diretorias alertadas:', err);
+            // Erro silencioso ou tratado de outra forma se necessário
         }
     }
 
@@ -89,7 +86,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
             if (!response.ok) {
                 const errorText = await response.text();
-                console.error('Erro ao enviar mailing:', errorText);
                 showToast(`Erro ao enviar mailing: ${errorText}`, 'error');
                 return;
             }
@@ -98,13 +94,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
             if (data.status === "error") {
                 const errorText = data.error || 'Erro desconhecido.';
-                console.error('Erro ao enviar mailing:', errorText);
                 showToast(`Erro ao enviar mailing: ${errorText}`, 'error');
             } else {
                 showToast('Mailing enviado com sucesso!', 'success');
             }
         } catch (err) {
-            console.error('Erro ao enviar mailing:', err);
             showToast('Erro ao enviar mailing. Tente novamente mais tarde.', 'error');
         } finally {
             setLoading(false); // Garantir que o botão volte ao estado normal
@@ -120,7 +114,6 @@ document.addEventListener('DOMContentLoaded', function () {
         const confirmBtn = document.getElementById('confirmSendBtn');
 
         if (!modal || !listEl || !confirmBtn) {
-            console.warn('Elementos da modal não encontrados.');
             return;
         }
 
@@ -172,13 +165,10 @@ document.addEventListener('DOMContentLoaded', function () {
                 const data = await response.json();
                 return data;
             } else {
-                const errorText = await response.text();
-                console.error('Erro ao validar envio anterior:', errorText);
                 showToast('Erro ao validar envio anterior.', 'error');
                 return null;
             }
         } catch (err) {
-            console.error('Erro ao validar envio anterior:', err);
             showToast('Erro ao validar envio anterior.', 'error');
             return null;
         }

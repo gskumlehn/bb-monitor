@@ -43,7 +43,6 @@ function openConfirmModal(data, alertId) {
     const messageSpan = document.getElementById('confirmSendCheckboxMessage');
 
     if (!recipientsList || !recipientsContainer || !emailConfirmModal || !wrapper || !checkboxInput || !messageSpan) {
-        console.warn('Elemento de modal/recipients/checkbox não encontrado no DOM.');
         showConfirmModal();
         return;
     }
@@ -144,9 +143,7 @@ async function handleConfirmSend(passedAlertId) {
                 const err = await resp.json();
                 showToast(err.description || err.error || 'Falha ao enviar email', 'error');
             } else {
-                const txt = await resp.text();
                 showToast('Falha ao enviar email', 'error');
-                console.error('Erro envio email:', txt);
             }
             if (sendBtnHeader) {
                 sendBtnHeader.disabled = false;
@@ -155,7 +152,6 @@ async function handleConfirmSend(passedAlertId) {
         }
     } catch (err) {
         showToast('Erro ao enviar email.', 'error');
-        console.error(err);
         if (sendBtnHeader) {
             sendBtnHeader.disabled = false;
             sendBtnHeader.textContent = 'Enviar email';

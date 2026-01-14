@@ -55,7 +55,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 alert('Nenhum alerta encontrado para o período selecionado.');
             }
         } catch (error) {
-            console.error('Erro ao buscar alertas:', error);
             alert('Erro ao buscar alertas.');
         }
     });
