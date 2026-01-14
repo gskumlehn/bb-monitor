@@ -100,7 +100,6 @@ async function handleSubmit(e) {
         }
     } catch (error) {
         showToast('Erro ao adicionar e-mail', 'error');
-        console.error('Erro:', error);
     } finally {
         isLoading = false;
         submitBtn.disabled = false;
@@ -118,7 +117,6 @@ async function handleSubmit(e) {
 function handleFilterSubmit(e) {
     e.preventDefault();
     const code = filterSelect.value;
-    console.log('Selected code for filter:', code);
 
     if (code && code !== 'null') {
         fetchEmails(code);
@@ -138,10 +136,8 @@ function hideAllListElements() {
 
 // Fetch emails
 async function fetchEmails(code) {
-    console.log('fetchEmails called with:', code);
 
     if (!code || code === 'null') {
-        console.error('Invalid code passed to fetchEmails:', code);
         return;
     }
 
@@ -150,24 +146,19 @@ async function fetchEmails(code) {
     loadingMessage.style.display = 'block';
 
     const url = `${API_BASE}/list?directorate_code=${code}`;
-    console.log('Fetching URL:', url);
 
     try {
         const response = await fetch(url);
-        console.log('Response status:', response.status);
 
         if (response.ok) {
             const data = await response.json();
-            console.log('Data received:', data);
             renderList(data.emails, code);
         } else {
             const errorText = await response.text();
-            console.error('Server error:', errorText);
             loadingMessage.style.display = 'none';
             errorMessage.style.display = 'block';
         }
     } catch (error) {
-        console.error('Network error:', error);
         loadingMessage.style.display = 'none';
         errorMessage.style.display = 'block';
     }
@@ -271,7 +262,6 @@ async function handleConfirmDelete() {
         }
     } catch (error) {
         showToast('Erro ao remover e-mail', 'error');
-        console.error('Erro:', error);
         confirmBtn.disabled = false;
         confirmBtn.textContent = 'Remover';
     }
