@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     async function fetchAlertedDirectorates() {
-        const alertId = form.dataset.sendUrl.split('/').pop(); // Extrair alert_id da URL
+        const alertId = form.dataset.sendUrl.split('/').pop();
         const endpoint = `/directorate/list_alerted_directorates/${alertId}`;
 
         try {
@@ -39,10 +39,10 @@ document.addEventListener('DOMContentLoaded', function () {
                 const directorates = await response.json();
                 updateCheckboxes(directorates);
             } else {
-                // Erro silencioso ou tratado de outra forma se necessário
+                showToast('Erro ao buscar diretorias alertadas.', 'error');
             }
         } catch (err) {
-            // Erro silencioso ou tratado de outra forma se necessário
+            showToast('Erro ao buscar diretorias alertadas.', 'error');
         }
     }
 
@@ -101,7 +101,7 @@ document.addEventListener('DOMContentLoaded', function () {
         } catch (err) {
             showToast('Erro ao enviar mailing. Tente novamente mais tarde.', 'error');
         } finally {
-            setLoading(false); // Garantir que o botão volte ao estado normal
+            setLoading(false);
         }
     }
 
@@ -119,7 +119,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const list = Array.isArray(alertedDirectorates) ? alertedDirectorates : [];
 
-        // Preencher a lista de diretorias alertadas, se houver
         if (list.length > 0) {
             listEl.innerHTML = list.map(d => `<li>${d}</li>`).join('');
             listContainer.style.display = 'block';
@@ -127,22 +126,18 @@ document.addEventListener('DOMContentLoaded', function () {
             checkboxInput.checked = false;
             confirmBtn.disabled = true;
 
-            // Adicionar evento para habilitar o botão de confirmação
             checkboxInput.addEventListener('change', function () {
                 confirmBtn.disabled = !this.checked;
             });
         } else {
-            // Caso não haja diretorias alertadas, esconder lista e checkbox
             listContainer.style.display = 'none';
             listEl.innerHTML = '';
             checkboxContainer.style.display = 'none';
             confirmBtn.disabled = false;
         }
 
-        // Mostrar a modal
         modal.style.display = 'flex';
 
-        // Configurar o botão de confirmação
         confirmBtn.onclick = async function () {
             if (checkboxContainer.style.display !== 'none' && !checkboxInput.checked) {
                 return;
@@ -151,10 +146,9 @@ document.addEventListener('DOMContentLoaded', function () {
             await sendMailing();
         };
 
-        // Configurar o botão de cancelamento
         document.getElementById('cancelSendBtn').onclick = function () {
             modal.style.display = 'none';
-            setLoading(false); // Garantir que o botão volte ao estado normal
+            setLoading(false);
         };
     }
 
