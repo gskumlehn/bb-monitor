@@ -72,12 +72,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const fileName = `alertas-bb-${month}-${year}.csv`;
 
         const csvContent = [];
-        csvContent.push(['Data de Entrega', 'Título', 'Status', 'Nível de Criticidade', 'Id', 'Link'].join(','));
+        csvContent.push(['Data de Entrega', 'Código', 'Título', 'Status', 'Nível de Criticidade', 'Id', 'Link'].join(','));
 
         rows.forEach(row => {
             const cells = Array.from(row.querySelectorAll('td'));
             const rowData = cells.map((cell, index) => {
-                if (index === 5) {
+                if (index === 6) {
                     const link = cell.querySelector('a');
                     return link ? `"${link.getAttribute('href')}"` : '""';
                 }
