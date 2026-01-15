@@ -6,7 +6,7 @@
 
 {% block content %}
     <div class="content-wrapper">
-        <div class="card form-card">
+        <div class="card small-card form-card">
             <div class="card-header">
                 <h2>Adicionar Novo E-mail</h2>
             </div>
@@ -14,10 +14,6 @@
                 <form id="saveForm" class="form">
                     <div class="form-group">
                         <label for="email" class="label">
-                            <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <rect x="2" y="4" width="20" height="16" rx="2"/>
-                                <path d="m2 7 10 7 10-7"/>
-                            </svg>
                             E-mail
                         </label>
                         <input
@@ -31,11 +27,7 @@
 
                     <div class="form-group">
                         <label for="directorate_code" class="label">
-                            <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-                                <polyline points="9 22 9 12 15 12 15 22"/>
-                            </svg>
-                            Código da Diretoria
+                            Diretoria
                         </label>
                         <select
                             id="directorate_code"
@@ -54,12 +46,62 @@
                             <line x1="12" y1="5" x2="12" y2="19"/>
                             <line x1="5" y1="12" x2="19" y2="12"/>
                         </svg>
-                        Adicionar à Lista
+                        Adicionar
                     </button>
                 </form>
             </div>
         </div>
+
+        <div class="card form-card">
+            <div class="card-header">
+                <h2>Listagem de E-mails</h2>
+            </div>
+            <div class="card-content">
+                <form id="filterForm" class="form">
+                    <div class="form-group">
+                        <label for="filter_directorate_code" class="label">
+                            Diretoria
+                        </label>
+                        <select
+                            id="filter_directorate_code"
+                            class="input"
+                        >
+                            {% for code, label in directorate_codes.items() %}
+                                <option value="{{ code }}">{{ label }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <button type="submit" id="filterBtn" class="btn btn-primary">
+                        <svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        </svg>
+                        Listar
+                    </button>
+                </form>
+
+                <div id="emailListContainer" style="margin-top: 20px; display: none;">
+                    <table id="emailTable" class="table card-table">
+                        <thead>
+                            <tr>
+                                <th>E-mail</th>
+                                <th class="actions-cell">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Rows will be injected here -->
+                        </tbody>
+                    </table>
+                    <p id="noEmailsMessage" class="text-muted" style="text-align: center; padding: 20px; display: none;">Nenhum e-mail encontrado para esta diretoria.</p>
+                    <p id="loadingMessage" class="text-muted" style="text-align: center; padding: 20px; display: none;">Carregando...</p>
+                    <p id="errorMessage" class="text-danger" style="text-align: center; padding: 20px; display: none;">Erro ao carregar e-mails.</p>
+                </div>
+            </div>
+        </div>
     </div>
+
+    {% include "_delete_mailing_confirm_modal.html" %}
 {% endblock %}
 
 {% block scripts %}

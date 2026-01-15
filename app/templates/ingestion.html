@@ -6,7 +6,7 @@
 
 {% block content %}
     <div class="content-wrapper">
-        <div class="card form-card">
+        <div class="card small-card form-card">
             <div class="card-header">
                 <h2>Gerar email</h2>
             </div>
@@ -21,7 +21,6 @@
                             required
                             class="input"
                             min="2"
-                            placeholder="Digite a linha de início"
                         >
                     </div>
                     <button type="submit" class="btn btn-primary" id="submitBtn">
@@ -31,21 +30,14 @@
             </div>
         </div>
 
-        <div id="emailPreviewArea" style="margin-top:20px;">
-            <div id="emailPreviewHeader" class="email-preview-header" style="display:none;">
-                <div class="preview-meta">
-                    Preview de email gerado pela linha: <strong id="previewStartRow"></strong>
-                    <span class="meta-sep">•</span>
-                    Alerta ID: <span id="previewAlertId"></span>
-                </div>
-                <div class="preview-actions">
-                    <button id="sendEmailBtnHeader" type="button" class="btn btn-primary" style="display:none;" disabled>
-                        Enviar email
-                    </button>
-                </div>
+        <div id="emailPreviewCard" class="card" style="margin-top: 20px; display: none;">
+            <div class="card-header card-header-with-actions">
+                <h2 id="previewTitle">Preview do Email</h2>
+                <button id="sendEmailBtnHeader" type="button" class="btn btn-secondary btn-card-action" disabled>
+                    Enviar email
+                </button>
             </div>
-
-            <div id="emailPreviewContainer"></div>
+            <div class="card-content card-content-no-padding" id="emailPreviewContainer"></div>
         </div>
 
         {% include '_email_confirm_modal.html' %}

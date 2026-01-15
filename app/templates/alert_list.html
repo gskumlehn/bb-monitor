@@ -7,9 +7,9 @@
 {% block content %}
     <div class="content-wrapper">
         <input type="hidden" id="baseUrl" value="{{ base_url }}">
-        <div class="card form-card">
+        <div class="card small-card form-card">
             <div class="card-header">
-                <h2>Filtrar Alertas</h2>
+                <h2>Listar Alertas</h2>
             </div>
             <div class="card-content">
                 <form id="filterForm" class="form">
@@ -34,18 +34,24 @@
                         <label for="year" class="label">Ano</label>
                         <input type="number" id="year" name="year" class="input" min="2025" required>
                     </div>
-                    <button type="submit" class="btn btn-primary">Filtrar</button>
+                    <button type="submit" class="btn btn-primary">
+                         <svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        </svg>
+                        Listar
+                    </button>
                 </form>
             </div>
         </div>
 
         <div id="alertTableContainer" class="card" style="margin-top: 20px; display: none;">
-            <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
+            <div class="card-header card-header-with-actions">
                 <h2>Alertas</h2>
-                <button id="exportCsvButton" class="btn btn-secondary">Exportar para CSV</button>
+                <button id="exportCsvButton" class="btn btn-secondary btn-card-action">Exportar para CSV</button>
             </div>
             <div class="card-content">
-                <table id="alertTable" class="table">
+                <table id="alertTable" class="table card-table">
                     <thead>
                         <tr>
                             <th>Data de Entrega</th>
@@ -59,7 +65,7 @@
                     </thead>
                     <tbody>
                         {% for alerta in alertas %}
-                        <tr onclick="window.location.href='{{ url_for('alert_detail', id=alerta.id) }}'">
+                        <tr>
                             <td>{{ alerta.data_entrega }}</td>
                             <td>{{ alerta.sequential_code }}</td>
                             <td>{{ alerta.titulo }}</td>

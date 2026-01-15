@@ -2,7 +2,6 @@ document.addEventListener('DOMContentLoaded', function () {
     const form = document.getElementById('changePasswordForm');
 
     if (!form) {
-        console.error('Formulário de alteração de senha não encontrado.');
         return;
     }
 
@@ -35,11 +34,13 @@ document.addEventListener('DOMContentLoaded', function () {
             if (response.ok && data.status === 'success') {
                 showToast(data.message, 'success');
                 form.reset();
+                setTimeout(() => {
+                    window.location.href = '/';
+                }, 1500);
             } else {
                 showToast(data.message || 'Erro ao alterar senha.', 'error');
             }
         } catch (err) {
-            console.error('Erro inesperado ao alterar senha:', err);
             showToast('Erro inesperado. Tente novamente mais tarde.', 'error');
         }
     });
@@ -47,7 +48,6 @@ document.addEventListener('DOMContentLoaded', function () {
     function showToast(message, type = 'success') {
         const toast = document.getElementById('toast');
         if (!toast) {
-            console.error('Elemento de toast não encontrado.');
             return;
         }
 
@@ -59,4 +59,3 @@ document.addEventListener('DOMContentLoaded', function () {
         }, 3000);
     }
 });
-

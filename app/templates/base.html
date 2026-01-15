@@ -21,12 +21,12 @@
                         <a href="{{ url_for('alert.index') }}" class="header-link">Alertas</a>
                         {% if current_user.role == 'admin' %}
                             <a href="{{ url_for('ingestion.index') }}" class="header-link">Ingestão</a>
-                            <a href="{{ url_for('root.index') }}" class="header-link">Mailing</a>
+                            <a href="{{ url_for('mailing.index') }}" class="header-link">Mailing</a>
                             <a href="{{ url_for('auth.admin') }}" class="header-link">Admin</a>
                         {% elif current_user.role == 'monitoring' %}
                             <a href="{{ url_for('ingestion.index') }}" class="header-link">Ingestão</a>
                         {% elif current_user.role == 'client' %}
-                            <a href="{{ url_for('root.index') }}" class="header-link">Mailing</a>
+                            <a href="{{ url_for('mailing.index') }}" class="header-link">Mailing</a>
                         {% endif %}
                         <a href="{{ url_for('auth.logout') }}" class="header-link logout-link">Logout</a>
                     </nav>

@@ -27,7 +27,7 @@ class IngestionService:
         alert_dicts = self.fetchParsedData(start_row, end_row)
         alerts = self.saveOrUpdateAlerts(alert_dicts)
 
-        return {"message": "Alerta(s) ingerido(s) com sucesso.", "alerts": [alert.id for alert in alerts]}
+        return {"message": "Alerta ingerido com sucesso.", "alerts": [alert.id for alert in alerts]}
 
     def fetchParsedData(self, start_row: int, end_row: int) -> List[dict]:
         table_data = self.fetchTableData(start_row, end_row)

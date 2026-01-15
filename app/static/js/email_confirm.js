@@ -43,7 +43,6 @@ function openConfirmModal(data, alertId) {
     const messageSpan = document.getElementById('confirmSendCheckboxMessage');
 
     if (!recipientsList || !recipientsContainer || !emailConfirmModal || !wrapper || !checkboxInput || !messageSpan) {
-        console.warn('Elemento de modal/recipients/checkbox não encontrado no DOM.');
         showConfirmModal();
         return;
     }
@@ -144,9 +143,7 @@ async function handleConfirmSend(passedAlertId) {
                 const err = await resp.json();
                 showToast(err.description || err.error || 'Falha ao enviar email', 'error');
             } else {
-                const txt = await resp.text();
                 showToast('Falha ao enviar email', 'error');
-                console.error('Erro envio email:', txt);
             }
             if (sendBtnHeader) {
                 sendBtnHeader.disabled = false;
@@ -155,7 +152,6 @@ async function handleConfirmSend(passedAlertId) {
         }
     } catch (err) {
         showToast('Erro ao enviar email.', 'error');
-        console.error(err);
         if (sendBtnHeader) {
             sendBtnHeader.disabled = false;
             sendBtnHeader.textContent = 'Enviar email';
@@ -169,23 +165,20 @@ async function handleConfirmSend(passedAlertId) {
 }
 
 function cleanupAfterSend() {
+    const previewCard = document.getElementById('emailPreviewCard');
     const previewContainer = document.getElementById('emailPreviewContainer');
-    const previewHeader = document.getElementById('emailPreviewHeader');
+
     if (previewContainer) {
         previewContainer.innerHTML = '';
-        delete previewContainer.dataset.startRow;
-        delete previewContainer.dataset.alertId;
     }
-    if (previewHeader) {
-        previewHeader.style.display = 'none';
-        const previewStartRowEl = document.getElementById('previewStartRow');
-        const previewAlertIdEl = document.getElementById('previewAlertId');
-        if (previewStartRowEl) previewStartRowEl.textContent = '';
-        if (previewAlertIdEl) previewAlertIdEl.textContent = '';
+
+    if (previewCard) {
+        previewCard.style.display = 'none';
+        delete previewCard.dataset.alertId;
     }
+
     const sendBtnHeader = document.getElementById('sendEmailBtnHeader');
     if (sendBtnHeader) {
-        sendBtnHeader.style.display = 'none';
         sendBtnHeader.disabled = true;
     }
 }
@@ -205,8 +198,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if (confirmBtn) {
         confirmBtn.addEventListener('click', (e) => {
             e.preventDefault();
-            const previewContainer = document.getElementById('emailPreviewContainer');
-            const alertId = previewContainer ? previewContainer.dataset.alertId : null;
+            const previewCard = document.getElementById('emailPreviewCard');
+            const alertId = previewCard ? previewCard.dataset.alertId : null;
             handleConfirmSend(alertId);
         });
     }

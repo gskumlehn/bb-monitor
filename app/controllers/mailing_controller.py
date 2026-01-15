@@ -9,7 +9,7 @@ mailing_service = MailingService()
 
 @mailing_bp.get("/ui")
 @role_required(["client"])
-def ui():
+def index():
     directorate_codes = {code.name: code.value for code in DirectorateCode}
     return render_template("mailing.html", directorate_codes=directorate_codes)
 
@@ -28,17 +28,28 @@ def save():
     except Exception as e:
         return jsonify({"error": "Falha ao salvar e-mail", "detail": str(e)}), 500
 
-@mailing_bp.get("/delete-ui")
+@mailing_bp.delete("/")
 @role_required(["client"])
-def delete_ui():
+def delete():
     try:
-        email = request.args.get("email", "")
-        code = request.args.get("directorate_code", "")
+        payload = request.get_json(silent=True) or {}
+        email = payload.get("email", "")
+        code = payload.get("directorate_code", "")
 
         deleted = mailing_service.delete(email, code)
         if deleted:
-            return render_template("message.html", message=f"O e-mail '{email}' foi removido com sucesso do diretório '{code}'.")
+            return jsonify({"ok": True})
         else:
-            return render_template("message.html", message=f"O e-mail '{email}' não foi encontrado no diretório '{code}'.")
+            return jsonify({"error": "E-mail não encontrado"}), 404
     except Exception as e:
-        return render_template("message.html", message=f"Erro ao remover o e-mail: {str(e)}"), 500
+        return jsonify({"error": "Erro ao remover o e-mail", "detail": str(e)}), 500
+
+@mailing_bp.get("/list")
+@role_required(["client"])
+def list_emails():
+    try:
+        code = request.args.get("directorate_code", "")
+        emails = mailing_service.list_by_directorate(code)
+        return jsonify({"emails": emails})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500

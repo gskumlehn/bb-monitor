@@ -4,6 +4,15 @@
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     border: 2px solid rgba(72, 94, 253, 0.1);
     overflow: hidden;
+    margin-bottom: 1.5rem;
+}
+
+@media (min-width: 768px) {
+    .small-card {
+        max-width: 50%;
+        margin-left: auto;
+        margin-right: auto;
+    }
 }
 
 .card-header {
@@ -13,6 +22,10 @@
     display: flex;
     align-items: center;
     gap: 0.5rem;
+}
+
+.card-header-with-actions {
+    justify-content: space-between;
 }
 
 .card-header-yellow {
@@ -30,3 +43,24 @@
     padding: 1.5rem;
 }
 
+.card-content-no-padding {
+    padding: 0 !important;
+}
+
+.card-table {
+    margin-top: 0;
+}
+
+.card-table th,
+.card-table td {
+    border: none;
+    border-bottom: 1px solid var(--border);
+}
+
+.btn-card-action {
+    padding: 0.5rem 1rem !important;
+    font-size: 0.875rem !important;
+    line-height: 1.25rem !important;
+    height: auto !important;
+    width: auto !important;
+}

@@ -1,7 +1,6 @@
 function showToast(message, type = 'success') {
     const toast = document.getElementById('toast');
     if (!toast) {
-        console.error('Elemento de toast não encontrado.');
         return;
     }
 
@@ -23,17 +22,15 @@ document.addEventListener('DOMContentLoaded', function () {
     const submitBtn = document.getElementById('submitBtn');
 
     if (!form) {
-        console.error('Formulário assignForm não encontrado.');
         return;
     }
 
     if (!ASSIGN_API.VALIDATE_SENT_MAILING || !ASSIGN_API.SEND_MAILING) {
-        console.error('URLs de validação ou envio não definidas no formulário.');
         return;
     }
 
     async function fetchAlertedDirectorates() {
-        const alertId = form.dataset.sendUrl.split('/').pop(); // Extrair alert_id da URL
+        const alertId = form.dataset.sendUrl.split('/').pop();
         const endpoint = `/directorate/list_alerted_directorates/${alertId}`;
 
         try {
@@ -42,10 +39,10 @@ document.addEventListener('DOMContentLoaded', function () {
                 const directorates = await response.json();
                 updateCheckboxes(directorates);
             } else {
-                console.error('Erro ao buscar diretorias alertadas:', await response.text());
+                showToast('Erro ao buscar diretorias alertadas.', 'error');
             }
         } catch (err) {
-            console.error('Erro ao buscar diretorias alertadas:', err);
+            showToast('Erro ao buscar diretorias alertadas.', 'error');
         }
     }
 
@@ -89,7 +86,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
             if (!response.ok) {
                 const errorText = await response.text();
-                console.error('Erro ao enviar mailing:', errorText);
                 showToast(`Erro ao enviar mailing: ${errorText}`, 'error');
                 return;
             }
@@ -98,16 +94,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
             if (data.status === "error") {
                 const errorText = data.error || 'Erro desconhecido.';
-                console.error('Erro ao enviar mailing:', errorText);
                 showToast(`Erro ao enviar mailing: ${errorText}`, 'error');
             } else {
                 showToast('Mailing enviado com sucesso!', 'success');
             }
         } catch (err) {
-            console.error('Erro ao enviar mailing:', err);
             showToast('Erro ao enviar mailing. Tente novamente mais tarde.', 'error');
         } finally {
-            setLoading(false); // Garantir que o botão volte ao estado normal
+            setLoading(false);
         }
     }
 
@@ -120,13 +114,11 @@ document.addEventListener('DOMContentLoaded', function () {
         const confirmBtn = document.getElementById('confirmSendBtn');
 
         if (!modal || !listEl || !confirmBtn) {
-            console.warn('Elementos da modal não encontrados.');
             return;
         }
 
         const list = Array.isArray(alertedDirectorates) ? alertedDirectorates : [];
 
-        // Preencher a lista de diretorias alertadas, se houver
         if (list.length > 0) {
             listEl.innerHTML = list.map(d => `<li>${d}</li>`).join('');
             listContainer.style.display = 'block';
@@ -134,22 +126,18 @@ document.addEventListener('DOMContentLoaded', function () {
             checkboxInput.checked = false;
             confirmBtn.disabled = true;
 
-            // Adicionar evento para habilitar o botão de confirmação
             checkboxInput.addEventListener('change', function () {
                 confirmBtn.disabled = !this.checked;
             });
         } else {
-            // Caso não haja diretorias alertadas, esconder lista e checkbox
             listContainer.style.display = 'none';
             listEl.innerHTML = '';
             checkboxContainer.style.display = 'none';
             confirmBtn.disabled = false;
         }
 
-        // Mostrar a modal
         modal.style.display = 'flex';
 
-        // Configurar o botão de confirmação
         confirmBtn.onclick = async function () {
             if (checkboxContainer.style.display !== 'none' && !checkboxInput.checked) {
                 return;
@@ -158,10 +146,9 @@ document.addEventListener('DOMContentLoaded', function () {
             await sendMailing();
         };
 
-        // Configurar o botão de cancelamento
         document.getElementById('cancelSendBtn').onclick = function () {
             modal.style.display = 'none';
-            setLoading(false); // Garantir que o botão volte ao estado normal
+            setLoading(false);
         };
     }
 
@@ -172,13 +159,10 @@ document.addEventListener('DOMContentLoaded', function () {
                 const data = await response.json();
                 return data;
             } else {
-                const errorText = await response.text();
-                console.error('Erro ao validar envio anterior:', errorText);
                 showToast('Erro ao validar envio anterior.', 'error');
                 return null;
             }
         } catch (err) {
-            console.error('Erro ao validar envio anterior:', err);
             showToast('Erro ao validar envio anterior.', 'error');
             return null;
         }

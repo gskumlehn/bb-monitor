@@ -4,7 +4,7 @@ from app.custom_utils.email_utils import EmailUtils
 from app.enums.directorate_codes import DirectorateCode
 from app.models.mailing import Mailing
 from app.repositories.mailing_repository import MailingRepository
-from typing import Union, Tuple
+from typing import Union, Tuple, List
 
 class MailingService:
 
@@ -41,3 +41,7 @@ class MailingService:
 
     def delete(self, email: str, directorate_code: str) -> int:
         return MailingRepository.delete(EmailUtils.normalize_email(email), DirectorateCode.from_name(directorate_code))
+
+    def list_by_directorate(self, directorate_code: str) -> List[str]:
+        code = DirectorateCode.from_name(directorate_code)
+        return MailingRepository.get_emails_by_directorates([code])

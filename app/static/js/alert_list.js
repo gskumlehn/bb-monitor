@@ -38,8 +38,6 @@ document.addEventListener('DOMContentLoaded', () => {
             if (alerts.length > 0) {
                 alerts.forEach(alert => {
                     const row = document.createElement('tr');
-                    row.classList.add('clickable-row');
-                    row.dataset.alertId = alert.id;
                     row.innerHTML = `
                         <td>${new Date(alert.delivery_datetime).toLocaleString('pt-BR')}</td>
                         <td>${alert.sequential_code}</td>
@@ -52,19 +50,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     alertTableBody.appendChild(row);
                 });
                 alertTableContainer.style.display = 'block';
-
-                document.querySelectorAll('.clickable-row').forEach(row => {
-                    row.addEventListener('click', () => {
-                        const alertId = row.dataset.alertId;
-                        window.location.href = `${baseUrl}/email/render/${alertId}`;
-                    });
-                });
             } else {
                 alertTableContainer.style.display = 'none';
                 alert('Nenhum alerta encontrado para o período selecionado.');
             }
         } catch (error) {
-            console.error('Erro ao buscar alertas:', error);
             alert('Erro ao buscar alertas.');
         }
     });
@@ -81,12 +71,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const fileName = `alertas-bb-${month}-${year}.csv`;
 
         const csvContent = [];
-        csvContent.push(['Data de Entrega', 'Título', 'Status', 'Nível de Criticidade', 'Id', 'Link'].join(','));
+        csvContent.push(['Data de Entrega', 'Código', 'Título', 'Status', 'Nível de Criticidade', 'Id', 'Link'].join(','));
 
         rows.forEach(row => {
             const cells = Array.from(row.querySelectorAll('td'));
             const rowData = cells.map((cell, index) => {
-                if (index === 5) {
+                if (index === 6) {
                     const link = cell.querySelector('a');
                     return link ? `"${link.getAttribute('href')}"` : '""';
                 }

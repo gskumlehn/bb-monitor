@@ -7,7 +7,6 @@ document.addEventListener('DOMContentLoaded', function () {
     const forgotPasswordEmail = document.getElementById('forgotPasswordEmail');
 
     if (!form) {
-        console.error('Formulário de login não encontrado.');
         return;
     }
 
@@ -30,8 +29,6 @@ document.addEventListener('DOMContentLoaded', function () {
             });
 
             if (!response.ok) {
-                const errorText = await response.text();
-                console.error('Erro ao fazer login:', errorText);
                 showToast('Erro ao fazer login. Verifique suas credenciais.', 'error');
                 persistFormData(email, password);
                 return;
@@ -40,7 +37,6 @@ document.addEventListener('DOMContentLoaded', function () {
             const data = await response.json();
             if (data.status === 'error') {
                 const errorMessage = data.message || 'Erro desconhecido.';
-                console.error('Erro ao fazer login:', errorMessage);
                 showToast(errorMessage, 'error');
                 persistFormData(email, password);
             } else {
@@ -48,7 +44,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 window.location.href = data.redirect || '/';
             }
         } catch (err) {
-            console.error('Erro inesperado ao fazer login:', err);
             showToast('Erro inesperado. Tente novamente mais tarde.', 'error');
             persistFormData(email, password);
         }
@@ -84,8 +79,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 });
 
                 if (!response.ok) {
-                    const errorText = await response.text();
-                    console.error('Erro ao enviar email de redefinição:', errorText);
                     showToast('Erro ao enviar email. Tente novamente mais tarde.', 'error');
                     return;
                 }
@@ -98,7 +91,6 @@ document.addEventListener('DOMContentLoaded', function () {
                     showToast(data.message || 'Erro desconhecido.', 'error');
                 }
             } catch (err) {
-                console.error('Erro inesperado ao enviar email:', err);
                 showToast('Erro inesperado. Tente novamente mais tarde.', 'error');
             }
         });
@@ -112,7 +104,6 @@ document.addEventListener('DOMContentLoaded', function () {
     function showToast(message, type = 'success') {
         const toast = document.getElementById('toast');
         if (!toast) {
-            console.error('Elemento de toast não encontrado.');
             return;
         }
 

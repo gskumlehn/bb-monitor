@@ -14,6 +14,7 @@
     background-color: var(--bb-blue);
     color: white;
     font-weight: bold;
+    text-align: center;
 }
 
 .table tr:nth-child(even) {
@@ -24,3 +25,18 @@
     background-color: #f1f1f1;
 }
 
+.table td.text-center {
+    text-align: center;
+}
+
+.table td.actions-cell {
+    text-align: center;
+    vertical-align: middle;
+    width: 150px;
+}
+
+.table .btn-action-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}

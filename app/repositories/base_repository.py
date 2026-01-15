@@ -7,9 +7,10 @@ class BaseRepository(Generic[T]):
     model: Type[T]
 
     @classmethod
-    def save(cls, instance: T) -> None:
+    def save(cls, instance: T) -> T:
         db.session.add(instance)
         db.session.commit()
+        return instance
 
     @classmethod
     def get_by_id(cls, id: Any) -> Optional[T]:
