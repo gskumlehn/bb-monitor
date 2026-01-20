@@ -53,12 +53,18 @@
         </div>
 
         <div class="card form-card">
-            <div class="card-header">
-                <h2>Listagem de E-mails</h2>
+            <div class="card-header card-header-tabs">
+                <div class="card-header-tab active" id="tabListEmails">
+                    <h2>Listagem de E-mails</h2>
+                </div>
+                <div class="card-header-tab" id="tabListDirectorates">
+                    <h2>Listagem de Diretorias</h2>
+                </div>
             </div>
             <div class="card-content">
                 <form id="filterForm" class="form">
-                    <div class="form-group">
+                    <!-- Modo Listagem de E-mails: Filtro por Diretoria -->
+                    <div class="form-group" id="filterByDirectorateGroup">
                         <label for="filter_directorate_code" class="label">
                             Diretoria
                         </label>
@@ -72,6 +78,19 @@
                         </select>
                     </div>
 
+                    <!-- Modo Listagem de Diretorias: Filtro por E-mail -->
+                    <div class="form-group" id="filterByEmailGroup" style="display: none;">
+                        <label for="filter_email" class="label">
+                            E-mail
+                        </label>
+                        <input
+                            type="email"
+                            id="filter_email"
+                            class="input"
+                            placeholder="Digite o e-mail"
+                        >
+                    </div>
+
                     <button type="submit" id="filterBtn" class="btn btn-primary">
                         <svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <circle cx="11" cy="11" r="8"></circle>
@@ -81,11 +100,11 @@
                     </button>
                 </form>
 
-                <div id="emailListContainer" style="margin-top: 20px; display: none;">
-                    <table id="emailTable" class="table card-table">
+                <div id="listContainer" style="margin-top: 20px; display: none;">
+                    <table id="resultsTable" class="table card-table">
                         <thead>
                             <tr>
-                                <th>E-mail</th>
+                                <th id="resultHeaderMain">E-mail</th>
                                 <th class="actions-cell">Ações</th>
                             </tr>
                         </thead>
@@ -93,9 +112,9 @@
                             <!-- Rows will be injected here -->
                         </tbody>
                     </table>
-                    <p id="noEmailsMessage" class="text-muted" style="text-align: center; padding: 20px; display: none;">Nenhum e-mail encontrado para esta diretoria.</p>
+                    <p id="noResultsMessage" class="text-muted" style="text-align: center; padding: 20px; display: none;">Nenhum resultado encontrado.</p>
                     <p id="loadingMessage" class="text-muted" style="text-align: center; padding: 20px; display: none;">Carregando...</p>
-                    <p id="errorMessage" class="text-danger" style="text-align: center; padding: 20px; display: none;">Erro ao carregar e-mails.</p>
+                    <p id="errorMessage" class="text-danger" style="text-align: center; padding: 20px; display: none;">Erro ao carregar dados.</p>
                 </div>
             </div>
         </div>
@@ -105,5 +124,8 @@
 {% endblock %}
 
 {% block scripts %}
+    <script>
+        const DIRECTORATE_LABELS = {{ directorate_codes | tojson }};
+    </script>
     <script src="{{ url_for('static', filename='js/mailing.js') }}"></script>
 {% endblock %}
