@@ -35,7 +35,7 @@
                         <input type="number" id="year" name="year" class="input" min="2025" required>
                     </div>
                     <button type="submit" class="btn btn-primary">
-                         <svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                         <svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <circle cx="11" cy="11" r="8"></circle>
                             <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
                         </svg>
@@ -59,8 +59,7 @@
                             <th>Título</th>
                             <th>Status</th>
                             <th>Nível de Criticidade</th>
-                            <th>Id</th>
-                            <th>Link</th>
+                            <th>Links</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -71,8 +70,23 @@
                             <td>{{ alerta.titulo }}</td>
                             <td>{{ alerta.status }}</td>
                             <td>{{ alerta.nivel_criticidade }}</td>
-                            <td>{{ alerta.id }}</td>
-                            <td>{{ url_for('alert_detail', id=alerta.id) }}</td>
+                            <td data-id="{{ alerta.id }}">
+                                <div class="btn-action-container">
+                                    <a href="{{ url_for('email.render_email', id=alerta.id) }}" target="_blank" class="btn btn-sm" style="padding: 6px 12px; background-color: var(--bb-blue); color: white; border: none; border-radius: 4px; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; margin-right: 5px;" title="Ver Email">
+                                        <svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                                            <polyline points="22,6 12,13 2,6"></polyline>
+                                        </svg>
+                                    </a>
+                                    <a href="{{ url_for('directorate.manage_directorates', alert_id=alerta.id) }}" class="btn btn-sm" style="padding: 6px 12px; background-color: #ef4444; color: white; border: none; border-radius: 4px; cursor: pointer; display: inline-flex; align-items: center; justify-content: center;" title="Alertar Diretorias">
+                                        <svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M12 2L2 22h20L12 2z"></path>
+                                            <path d="M12 8v6"></path>
+                                            <path d="M12 18h.01"></path>
+                                        </svg>
+                                    </a>
+                                </div>
+                            </td>
                         </tr>
                         {% endfor %}
                     </tbody>
