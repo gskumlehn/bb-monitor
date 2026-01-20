@@ -8,14 +8,25 @@ const directorateCodeInput = document.getElementById('directorate_code');
 const submitBtn = document.getElementById('submitBtn');
 const toast = document.getElementById('toast');
 
+// Filter Elements
 const filterForm = document.getElementById('filterForm');
 const filterSelect = document.getElementById('filter_directorate_code');
-const listContainer = document.getElementById('emailListContainer');
-const emailTable = document.getElementById('emailTable');
-const emailTableBody = emailTable.querySelector('tbody');
-const noEmailsMessage = document.getElementById('noEmailsMessage');
+const filterEmailInput = document.getElementById('filter_email');
+const filterByDirectorateGroup = document.getElementById('filterByDirectorateGroup');
+const filterByEmailGroup = document.getElementById('filterByEmailGroup');
+
+// List Elements
+const listContainer = document.getElementById('listContainer');
+const resultsTable = document.getElementById('resultsTable');
+const resultsTableBody = resultsTable.querySelector('tbody');
+const resultHeaderMain = document.getElementById('resultHeaderMain');
+const noResultsMessage = document.getElementById('noResultsMessage');
 const loadingMessage = document.getElementById('loadingMessage');
 const errorMessage = document.getElementById('errorMessage');
+
+// Tabs
+const tabListEmails = document.getElementById('tabListEmails');
+const tabListDirectorates = document.getElementById('tabListDirectorates');
 
 // Modal Elements
 const modal = document.getElementById('deleteMailingConfirmModal');
@@ -29,6 +40,7 @@ const modalOverlay = document.querySelector('.modal-overlay');
 let isLoading = false;
 let emailToDelete = null;
 let codeToDelete = null;
+let currentMode = 'emails'; // 'emails' or 'directorates'
 
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
@@ -38,10 +50,42 @@ document.addEventListener('DOMContentLoaded', () => {
         filterForm.addEventListener('submit', handleFilterSubmit);
     }
 
+    if (tabListEmails) {
+        tabListEmails.addEventListener('click', () => switchMode('emails'));
+    }
+    if (tabListDirectorates) {
+        tabListDirectorates.addEventListener('click', () => switchMode('directorates'));
+    }
+
     if (cancelBtn) cancelBtn.addEventListener('click', closeModal);
     if (modalOverlay) modalOverlay.addEventListener('click', closeModal);
     if (confirmBtn) confirmBtn.addEventListener('click', handleConfirmDelete);
 });
+
+// Switch Mode
+function switchMode(mode) {
+    if (currentMode === mode) return;
+    currentMode = mode;
+
+    // Update Tabs
+    if (mode === 'emails') {
+        tabListEmails.classList.add('active');
+        tabListDirectorates.classList.remove('active');
+        filterByDirectorateGroup.style.display = 'block';
+        filterByEmailGroup.style.display = 'none';
+        resultHeaderMain.textContent = 'E-mail';
+    } else {
+        tabListEmails.classList.remove('active');
+        tabListDirectorates.classList.add('active');
+        filterByDirectorateGroup.style.display = 'none';
+        filterByEmailGroup.style.display = 'block';
+        resultHeaderMain.textContent = 'Diretoria';
+    }
+
+    // Clear results
+    hideAllListElements();
+    resultsTableBody.innerHTML = '';
+}
 
 // Handle form submission
 async function handleSubmit(e) {
@@ -84,13 +128,15 @@ async function handleSubmit(e) {
         if (response.ok) {
             showToast('E-mail adicionado com sucesso!', 'success');
 
-            // Update filter with the directorate used in save
-            if (filterSelect) {
+            // Update filter if applicable
+            if (currentMode === 'emails' && filterSelect) {
                 filterSelect.value = directorate_code;
-                // Only fetch if the value was successfully set (exists in options)
                 if (filterSelect.value === directorate_code) {
                     fetchEmails(directorate_code);
                 }
+            } else if (currentMode === 'directorates' && filterEmailInput) {
+                filterEmailInput.value = email;
+                fetchDirectorates(email);
             }
 
             emailInput.value = '';
@@ -116,30 +162,37 @@ async function handleSubmit(e) {
 // Handle filter submit
 function handleFilterSubmit(e) {
     e.preventDefault();
-    const code = filterSelect.value;
 
-    if (code && code !== 'null') {
-        fetchEmails(code);
+    if (currentMode === 'emails') {
+        const code = filterSelect.value;
+        if (code && code !== 'null') {
+            fetchEmails(code);
+        } else {
+            showToast('Selecione uma diretoria para filtrar', 'error');
+            hideAllListElements();
+        }
     } else {
-        showToast('Selecione uma diretoria para filtrar', 'error');
-        hideAllListElements();
+        const email = filterEmailInput.value.trim();
+        if (email) {
+            fetchDirectorates(email);
+        } else {
+            showToast('Digite um e-mail para filtrar', 'error');
+            hideAllListElements();
+        }
     }
 }
 
 function hideAllListElements() {
     listContainer.style.display = 'none';
-    emailTable.style.display = 'none';
-    noEmailsMessage.style.display = 'none';
+    resultsTable.style.display = 'none';
+    noResultsMessage.style.display = 'none';
     loadingMessage.style.display = 'none';
     errorMessage.style.display = 'none';
 }
 
 // Fetch emails
 async function fetchEmails(code) {
-
-    if (!code || code === 'null') {
-        return;
-    }
+    if (!code || code === 'null') return;
 
     hideAllListElements();
     listContainer.style.display = 'block';
@@ -152,9 +205,8 @@ async function fetchEmails(code) {
 
         if (response.ok) {
             const data = await response.json();
-            renderList(data.emails, code);
+            renderList(data.emails, code, 'email');
         } else {
-            const errorText = await response.text();
             loadingMessage.style.display = 'none';
             errorMessage.style.display = 'block';
         }
@@ -164,22 +216,70 @@ async function fetchEmails(code) {
     }
 }
 
-// Render email list
-function renderList(emails, code) {
+// Fetch directorates
+async function fetchDirectorates(email) {
+    if (!email) return;
+
+    hideAllListElements();
+    listContainer.style.display = 'block';
+    loadingMessage.style.display = 'block';
+
+    const url = `${API_BASE}/list_directorates?email=${encodeURIComponent(email)}`;
+
+    try {
+        const response = await fetch(url);
+
+        if (response.ok) {
+            const data = await response.json();
+            renderList(data.directorates, email, 'directorate');
+        } else {
+            const error = await response.json();
+            showToast(error.error || 'Erro ao buscar diretorias', 'error');
+            loadingMessage.style.display = 'none';
+            // Don't show generic error message if it's a validation error
+            if (!error.error) errorMessage.style.display = 'block';
+        }
+    } catch (error) {
+        loadingMessage.style.display = 'none';
+        errorMessage.style.display = 'block';
+    }
+}
+
+// Render list (generic)
+function renderList(items, filterValue, type) {
     loadingMessage.style.display = 'none';
 
-    if (!emails || emails.length === 0) {
-        noEmailsMessage.style.display = 'block';
+    if (!items || items.length === 0) {
+        noResultsMessage.style.display = 'block';
+        noResultsMessage.textContent = type === 'email'
+            ? 'Nenhum e-mail encontrado para esta diretoria.'
+            : 'Nenhuma diretoria encontrada para este e-mail.';
         return;
     }
 
-    emailTable.style.display = 'table';
-    emailTableBody.innerHTML = '';
+    resultsTable.style.display = 'table';
+    resultsTableBody.innerHTML = '';
 
-    emails.forEach(email => {
+    items.forEach(item => {
         const tr = document.createElement('tr');
+
+        // Determine email and code based on type
+        let email, code, displayValue;
+        if (type === 'email') {
+            email = item;
+            code = filterValue;
+            displayValue = email;
+        } else {
+            email = filterValue;
+            code = item;
+            // Use label if available, otherwise code
+            displayValue = (typeof DIRECTORATE_LABELS !== 'undefined' && DIRECTORATE_LABELS[code])
+                ? DIRECTORATE_LABELS[code]
+                : code;
+        }
+
         tr.innerHTML = `
-            <td>${email}</td>
+            <td>${displayValue}</td>
             <td class="actions-cell">
                 <div class="btn-action-container">
                     <button class="btn btn-danger btn-sm delete-btn" data-email="${email}" data-code="${code}" style="padding: 6px 12px; background-color: #ef4444; color: white; border: none; border-radius: 4px; cursor: pointer; display: inline-flex; align-items: center; justify-content: center;">
@@ -191,7 +291,7 @@ function renderList(emails, code) {
                 </div>
             </td>
         `;
-        emailTableBody.appendChild(tr);
+        resultsTableBody.appendChild(tr);
     });
 
     // Add event listeners to delete buttons
@@ -208,16 +308,14 @@ function openDeleteModal(email, code) {
     emailToDelete = email;
     codeToDelete = code;
 
+    // Try to find directorate label if possible, otherwise use code
     let directorateLabel = code;
-    if (filterSelect) {
-        const option = Array.from(filterSelect.options).find(opt => opt.value === code);
-        if (option) {
-            directorateLabel = option.text;
-        }
+    if (typeof DIRECTORATE_LABELS !== 'undefined' && DIRECTORATE_LABELS[code]) {
+        directorateLabel = DIRECTORATE_LABELS[code];
     }
 
     modalTitle.textContent = 'Confirmar exclusão';
-    modalMessage.textContent = `Remover "${email}" da diretoria "${directorateLabel}"?`;
+    modalMessage.textContent = `Remover associação entre "${email}" e "${directorateLabel}"?`;
     confirmBtn.textContent = 'Remover';
     confirmBtn.disabled = false;
 
@@ -235,7 +333,10 @@ function closeModal() {
 async function handleConfirmDelete() {
     if (!emailToDelete || !codeToDelete) return;
 
-    const currentCode = codeToDelete; // Capture code before closing modal
+    // Capture current state to refresh list
+    const savedMode = currentMode;
+    const savedFilterValue = savedMode === 'emails' ? codeToDelete : emailToDelete;
+
     confirmBtn.disabled = true;
     confirmBtn.textContent = 'Removendo...';
 
@@ -249,19 +350,28 @@ async function handleConfirmDelete() {
         });
 
         if (response.ok) {
-            showToast('E-mail removido com sucesso!', 'success');
+            showToast('Removido com sucesso!', 'success');
             closeModal();
+
+            // Refresh list after delay
             setTimeout(() => {
-                fetchEmails(currentCode); // Use captured code
+                if (savedMode === 'emails') {
+                    // If we are in emails mode, we refresh by directorate code
+                    // But if we just deleted the last email, fetchEmails will handle empty state
+                    fetchEmails(savedFilterValue);
+                } else {
+                    // If we are in directorates mode, we refresh by email
+                    fetchDirectorates(savedFilterValue);
+                }
             }, 500);
         } else {
             const error = await response.json();
-            showToast(error.error || 'Erro ao remover e-mail', 'error');
+            showToast(error.error || 'Erro ao remover', 'error');
             confirmBtn.disabled = false;
             confirmBtn.textContent = 'Remover';
         }
     } catch (error) {
-        showToast('Erro ao remover e-mail', 'error');
+        showToast('Erro ao remover', 'error');
         confirmBtn.disabled = false;
         confirmBtn.textContent = 'Remover';
     }
