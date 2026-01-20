@@ -3,8 +3,8 @@ from app.enums.directorate_codes import DirectorateCode
 from app.services.alert_service import AlertService
 from app.services.directorate_service import DirectorateService
 from app.services.email_service import EmailService
-from datetime import datetime
 from flask import Blueprint, abort, jsonify, request
+from flask_login import login_required
 import os
 
 email_bp = Blueprint("email", __name__)
@@ -52,7 +52,7 @@ def validate_recipients_for_alert(alert_id):
     return jsonify(result), 200
 
 @email_bp.route("/send_to_directorates/<alert_id>", methods=["POST"])
-# @role_required(["client"])
+@login_required
 def send_alert_to_directorates(alert_id):
     payload = request.get_json(silent=True) or {}
     dir_names = payload.get("directorates") or []
@@ -75,7 +75,7 @@ def send_alert_to_directorates(alert_id):
         abort(500, description="Falha ao enviar e-mails para as diretorias.")
 
 @email_bp.route("/validate_sent_mailing/<alert_id>", methods=["POST"])
-# @role_required(["client"])
+@login_required
 def validate_sent_mailing(alert_id):
     alert = alert_service.get_by_id(alert_id)
     if not alert:
