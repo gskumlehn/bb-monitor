@@ -1,21 +1,17 @@
-// API Base URL
 const API_BASE = '/mailing';
 
-// DOM Elements
 const saveForm = document.getElementById('saveForm');
 const emailInput = document.getElementById('email');
 const directorateCodeInput = document.getElementById('directorate_code');
 const submitBtn = document.getElementById('submitBtn');
 const toast = document.getElementById('toast');
 
-// Filter Elements
 const filterForm = document.getElementById('filterForm');
 const filterSelect = document.getElementById('filter_directorate_code');
 const filterEmailInput = document.getElementById('filter_email');
 const filterByDirectorateGroup = document.getElementById('filterByDirectorateGroup');
 const filterByEmailGroup = document.getElementById('filterByEmailGroup');
 
-// List Elements
 const listContainer = document.getElementById('listContainer');
 const resultsTable = document.getElementById('resultsTable');
 const resultsTableBody = resultsTable.querySelector('tbody');
@@ -24,11 +20,9 @@ const noResultsMessage = document.getElementById('noResultsMessage');
 const loadingMessage = document.getElementById('loadingMessage');
 const errorMessage = document.getElementById('errorMessage');
 
-// Tabs
 const tabListEmails = document.getElementById('tabListEmails');
 const tabListDirectorates = document.getElementById('tabListDirectorates');
 
-// Modal Elements
 const modal = document.getElementById('deleteMailingConfirmModal');
 const modalTitle = document.getElementById('deleteMailingConfirmTitle');
 const modalMessage = document.getElementById('deleteMailingConfirmMessage');
@@ -36,13 +30,11 @@ const confirmBtn = document.getElementById('confirmDeleteMailingBtn');
 const cancelBtn = document.getElementById('cancelDeleteMailingBtn');
 const modalOverlay = document.querySelector('.modal-overlay');
 
-// State
 let isLoading = false;
 let emailToDelete = null;
 let codeToDelete = null;
-let currentMode = 'emails'; // 'emails' or 'directorates'
+let currentMode = 'emails';
 
-// Initialize
 document.addEventListener('DOMContentLoaded', () => {
     saveForm.addEventListener('submit', handleSubmit);
 
@@ -62,12 +54,10 @@ document.addEventListener('DOMContentLoaded', () => {
     if (confirmBtn) confirmBtn.addEventListener('click', handleConfirmDelete);
 });
 
-// Switch Mode
 function switchMode(mode) {
     if (currentMode === mode) return;
     currentMode = mode;
 
-    // Update Tabs
     if (mode === 'emails') {
         tabListEmails.classList.add('active');
         tabListDirectorates.classList.remove('active');
@@ -82,19 +72,16 @@ function switchMode(mode) {
         resultHeaderMain.textContent = 'Diretoria';
     }
 
-    // Clear results
     hideAllListElements();
     resultsTableBody.innerHTML = '';
 }
 
-// Handle form submission
 async function handleSubmit(e) {
     e.preventDefault();
 
     const email = emailInput.value.trim();
     const directorate_code = directorateCodeInput.value.trim();
 
-    // Validation
     if (!email || !directorate_code) {
         showToast('Preencha todos os campos', 'error');
         return;
@@ -128,7 +115,6 @@ async function handleSubmit(e) {
         if (response.ok) {
             showToast('E-mail adicionado com sucesso!', 'success');
 
-            // Update filter if applicable
             if (currentMode === 'emails' && filterSelect) {
                 filterSelect.value = directorate_code;
                 if (filterSelect.value === directorate_code) {
@@ -159,7 +145,6 @@ async function handleSubmit(e) {
     }
 }
 
-// Handle filter submit
 function handleFilterSubmit(e) {
     e.preventDefault();
 
@@ -190,7 +175,6 @@ function hideAllListElements() {
     errorMessage.style.display = 'none';
 }
 
-// Fetch emails
 async function fetchEmails(code) {
     if (!code || code === 'null') return;
 
@@ -216,7 +200,6 @@ async function fetchEmails(code) {
     }
 }
 
-// Fetch directorates
 async function fetchDirectorates(email) {
     if (!email) return;
 
@@ -236,7 +219,6 @@ async function fetchDirectorates(email) {
             const error = await response.json();
             showToast(error.error || 'Erro ao buscar diretorias', 'error');
             loadingMessage.style.display = 'none';
-            // Don't show generic error message if it's a validation error
             if (!error.error) errorMessage.style.display = 'block';
         }
     } catch (error) {
@@ -245,7 +227,6 @@ async function fetchDirectorates(email) {
     }
 }
 
-// Render list (generic)
 function renderList(items, filterValue, type) {
     loadingMessage.style.display = 'none';
 
@@ -263,7 +244,6 @@ function renderList(items, filterValue, type) {
     items.forEach(item => {
         const tr = document.createElement('tr');
 
-        // Determine email and code based on type
         let email, code, displayValue;
         if (type === 'email') {
             email = item;
@@ -272,7 +252,6 @@ function renderList(items, filterValue, type) {
         } else {
             email = filterValue;
             code = item;
-            // Use label if available, otherwise code
             displayValue = (typeof DIRECTORATE_LABELS !== 'undefined' && DIRECTORATE_LABELS[code])
                 ? DIRECTORATE_LABELS[code]
                 : code;
@@ -294,7 +273,6 @@ function renderList(items, filterValue, type) {
         resultsTableBody.appendChild(tr);
     });
 
-    // Add event listeners to delete buttons
     document.querySelectorAll('.delete-btn').forEach(btn => {
         btn.addEventListener('click', (e) => {
             const btn = e.currentTarget;
@@ -303,12 +281,10 @@ function renderList(items, filterValue, type) {
     });
 }
 
-// Open delete modal
 function openDeleteModal(email, code) {
     emailToDelete = email;
     codeToDelete = code;
 
-    // Try to find directorate label if possible, otherwise use code
     let directorateLabel = code;
     if (typeof DIRECTORATE_LABELS !== 'undefined' && DIRECTORATE_LABELS[code]) {
         directorateLabel = DIRECTORATE_LABELS[code];
@@ -322,18 +298,15 @@ function openDeleteModal(email, code) {
     modal.style.display = 'flex';
 }
 
-// Close modal
 function closeModal() {
     modal.style.display = 'none';
     emailToDelete = null;
     codeToDelete = null;
 }
 
-// Handle confirm delete
 async function handleConfirmDelete() {
     if (!emailToDelete || !codeToDelete) return;
 
-    // Capture current state to refresh list
     const savedMode = currentMode;
     const savedFilterValue = savedMode === 'emails' ? codeToDelete : emailToDelete;
 
@@ -353,14 +326,10 @@ async function handleConfirmDelete() {
             showToast('Removido com sucesso!', 'success');
             closeModal();
 
-            // Refresh list after delay
             setTimeout(() => {
                 if (savedMode === 'emails') {
-                    // If we are in emails mode, we refresh by directorate code
-                    // But if we just deleted the last email, fetchEmails will handle empty state
                     fetchEmails(savedFilterValue);
                 } else {
-                    // If we are in directorates mode, we refresh by email
                     fetchDirectorates(savedFilterValue);
                 }
             }, 500);
@@ -377,7 +346,6 @@ async function handleConfirmDelete() {
     }
 }
 
-// Show toast notification
 function showToast(message, type = 'success') {
     toast.textContent = message;
     toast.className = `toast ${type} show`;

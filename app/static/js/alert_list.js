@@ -6,7 +6,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const baseUrl = baseUrlInput ? baseUrlInput.value : '';
     const exportCsvButton = document.getElementById('exportCsvButton');
 
-    // Set default date
     const now = new Date();
     const currentMonth = now.getMonth() + 1;
     const currentYear = now.getFullYear();
@@ -29,7 +28,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            // Clear table and hide container while loading
             alertTableBody.innerHTML = '';
             alertTableContainer.style.display = 'none';
 
@@ -46,7 +44,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     alerts.forEach(alert => {
                         const row = document.createElement('tr');
 
-                        // Format date
                         let dateStr = '-';
                         if (alert.delivery_datetime) {
                             try {
@@ -63,7 +60,6 @@ document.addEventListener('DOMContentLoaded', () => {
                             }
                         }
 
-                        // Format status
                         let statusStr = alert.mailing_status || '-';
                         if (statusStr === 'SIM') {
                             statusStr = 'Whats Enviado';
@@ -122,32 +118,29 @@ document.addEventListener('DOMContentLoaded', () => {
             const fileName = `alertas-bb-${month}-${year}.csv`;
 
             const csvContent = [];
-            // Header matches the visual table but adds ID at the end or as requested
-            // The user wanted "export em csv continue o mesmo" which implies ID column exists in CSV
             csvContent.push(['Data de Entrega', 'Código', 'Título', 'Status', 'Nível de Criticidade', 'Id', 'Links'].join(','));
 
             rows.forEach(row => {
                 const cells = Array.from(row.querySelectorAll('td'));
 
-                if (cells.length < 6) return; // Safety check
+                if (cells.length < 6) return;
 
                 const rowData = [];
-                // For CSV, we want the date in a single line, maybe with space instead of <br>
                 let dateText = cells[0].innerHTML.replace('<br>', ' ').trim();
-                rowData.push(`"${dateText}"`); // Data
+                rowData.push(`"${dateText}"`);
 
-                rowData.push(`"${cells[1].textContent.trim()}"`); // Codigo
-                rowData.push(`"${cells[2].textContent.trim()}"`); // Titulo
-                rowData.push(`"${cells[3].textContent.trim()}"`); // Status
-                rowData.push(`"${cells[4].textContent.trim()}"`); // Criticidade
+                rowData.push(`"${cells[1].textContent.trim()}"`);
+                rowData.push(`"${cells[2].textContent.trim()}"`);
+                rowData.push(`"${cells[3].textContent.trim()}"`);
+                rowData.push(`"${cells[4].textContent.trim()}"`);
 
                 const actionsCell = cells[5];
                 const id = actionsCell.getAttribute('data-id') || '';
-                rowData.push(`"${id}"`); // Id (restored for CSV)
+                rowData.push(`"${id}"`);
 
                 const emailLink = actionsCell.querySelector('a[title="Ver Email"]');
                 const linkUrl = emailLink ? emailLink.getAttribute('href') : '';
-                rowData.push(`"${linkUrl}"`); // Link
+                rowData.push(`"${linkUrl}"`);
 
                 csvContent.push(rowData.join(','));
             });

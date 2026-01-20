@@ -85,5 +85,5 @@ def validate_sent_mailing(alert_id):
         result = email_service.validate_sent_mailing(alert)
         return jsonify(result), 200
     except Exception as e:
-        print(f"Erro ao validar envio de mailing: {e}")  # Log para depuração
+        print(f"Erro ao validar envio de mailing: {e}")
         abort(500, description="Falha ao validar os dados para envio às diretorias.")

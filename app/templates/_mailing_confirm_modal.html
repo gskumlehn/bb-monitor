@@ -3,19 +3,26 @@
     <div class="modal-content" style="position:relative; background:var(--card-bg); padding:16px; border-radius:8px; width:90%; max-width:520px; box-shadow:0 8px 24px rgba(0,0,0,0.16);">
         <h3 id="mailingConfirmTitle" style="margin:0 0 8px 0; font-size:1.1rem;">Confirmar envio</h3>
         <p id="mailingConfirmMessage" style="margin:0 0 12px 0; color:var(--muted-foreground);"></p>
+
+        <div id="newDirectoratesListContainer" style="max-height:140px; overflow:auto; margin-bottom:12px;">
+            <p style="margin:0 0 4px 0; font-weight:bold; font-size:0.9rem;">Diretorias a serem alertadas:</p>
+            <ul id="newDirectoratesList" style="list-style:disc; padding-left:20px; margin:0;"></ul>
+        </div>
+
         <div id="alertedDirectoratesListContainer" style="max-height:140px; overflow:auto; margin-bottom:8px; display:none;">
-            <ul id="alertedDirectoratesList" style="list-style:none; padding-left:0; margin:0;"></ul>
+            <p style="margin:0 0 4px 0; font-weight:bold; font-size:0.9rem; color:var(--muted-foreground);">Diretorias já alertadas:</p>
+            <ul id="alertedDirectoratesList" style="list-style:disc; padding-left:20px; margin:0; color:var(--muted-foreground);"></ul>
         </div>
 
         <div id="confirmSendCheckboxContainer" style="margin:8px 0; display:none;">
             <label style="display:flex;align-items:center;gap:8px;">
                 <input type="checkbox" id="confirmSendCheckboxInput">
-                <span id="confirmSendCheckboxMessage">Deseja realmente reenviar este alerta?</span>
+                <span id="confirmSendCheckboxMessage">Confirmo o envio para as diretorias selecionadas.</span>
             </label>
         </div>
         <div style="display:flex; gap:10px; justify-content:flex-end;">
             <button id="cancelSendBtn" type="button" class="btn" style="background:transparent; border:1px solid var(--border);">Cancelar</button>
-            <button id="confirmSendBtn" type="button" class="btn btn-primary" disabled>Confirmar e enviar</button>
+            <button id="confirmSendBtn" type="button" class="btn btn-primary">Confirmar e enviar</button>
         </div>
     </div>
 </div>

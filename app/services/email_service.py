@@ -86,18 +86,31 @@ class EmailService:
         return {"status": alert.mailing_status.name, "recipients": recipients["to"], "cc": recipients["cc"]}
 
     def send_alert_to_directorates(self, alert, directorates: list[DirectorateCode]) -> dict:
+        # Filter out directorates that have already been alerted
+        mailing_histories = MailingHistoryService().list(alert.id)
+        already_alerted_codes = set()
+        for history in mailing_histories:
+            already_alerted_codes.update(history.bcc_directorates)
+        
+        # Filter directorates to only include those not in already_alerted_codes
+        # Note: history.bcc_directorates stores names (strings), directorates list contains Enums
+        new_directorates = [d for d in directorates if d.name not in already_alerted_codes]
+        
+        if not new_directorates:
+             return {"message": "Todas as diretorias selecionadas já foram alertadas.", "directorates": [], "to": [], "cc": [], "bcc": [], "status": "skipped"}
+
         email_manager = EmailManager()
 
         rendered_html = self.render_alert_html(alert)
         subject = self.get_subject(alert)
 
-        recipients = self.get_recipients_for_alert(directorates=directorates)
+        recipients = self.get_recipients_for_alert(directorates=new_directorates)
         to_list = recipients["to"]
         cc_list = recipients["cc"]
         bcc_list = recipients["bcc"]
 
         if Environment.is_development():
-            directorates_str = ", ".join([d.name for d in directorates])
+            directorates_str = ", ".join([d.name for d in new_directorates])
             subject = f"{subject} | Diretorias: {directorates_str}"
 
         try:
@@ -111,27 +124,28 @@ class EmailService:
                     "sender_email": os.getenv("EMAIL_USER"),
                     "to_directorates": [self.TO_DIRECTORATE],
                     "cc_directorates": [self.CC_DIRECTORATE],
-                    "bcc_directorates": directorates,
+                    "bcc_directorates": new_directorates,
                 }
                 MailingHistoryService().save(history_data)
-            return {"message": "Email enviado com sucesso", "directorates": [d.value for d in directorates], "to": to_list, "cc": cc_list, "bcc": bcc_list, "status": "sent"}
+            
+            # Update alert status if not already set to MAILING_SENT
+            if alert.mailing_status != MailingStatus.MAILING_SENT:
+                AlertService().update_mailing_status(alert, MailingStatus.MAILING_SENT)
+                
+            return {"message": "Email enviado com sucesso", "directorates": [d.value for d in new_directorates], "to": to_list, "cc": cc_list, "bcc": bcc_list, "status": "sent"}
         except Exception as e:
-            return {"directorates": [d.value for d in directorates], "to": to_list, "cc": cc_list, "bcc": bcc_list, "status": "error", "error": str(e)}
+            return {"directorates": [d.value for d in new_directorates], "to": to_list, "cc": cc_list, "bcc": bcc_list, "status": "error", "error": str(e)}
 
     def validate_sent_mailing(self, alert) -> dict:
-        if alert.mailing_status == MailingStatus.MAILING_SENT:
-            mailing_histories = MailingHistoryService().list(alert.id)
-            all_directorates = set()
+        # Always return alerted directorates regardless of status, so UI can disable them
+        mailing_histories = MailingHistoryService().list(alert.id)
+        all_directorates = set()
 
-            for history in mailing_histories:
-                all_directorates.update(history.bcc_directorates)
-
-            return {
-                "alerted_directorates": [directorate.value for directorate in list(all_directorates)]
-            }
+        for history in mailing_histories:
+            all_directorates.update(history.bcc_directorates)
 
         return {
-            "alerted_directorates": [],
+            "alerted_directorates": [directorate for directorate in list(all_directorates)]
         }
 
 

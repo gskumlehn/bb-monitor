@@ -29,27 +29,55 @@ document.addEventListener('DOMContentLoaded', function () {
         return;
     }
 
-    async function fetchAlertedDirectorates() {
+    let alreadyAlertedDirectorates = [];
+
+    async function fetchDirectoratesData() {
         const alertId = form.dataset.sendUrl.split('/').pop();
         const endpoint = `/directorate/list_alerted_directorates/${alertId}`;
 
         try {
             const response = await fetch(endpoint, { method: 'POST' });
             if (response.ok) {
-                const directorates = await response.json();
-                updateCheckboxes(directorates);
+                const data = await response.json();
+
+                alreadyAlertedDirectorates = data.alerted || [];
+                updateCheckboxes(data.suggested || [], data.alerted || []);
             } else {
-                showToast('Erro ao buscar diretorias alertadas.', 'error');
+                showToast('Erro ao buscar dados das diretorias.', 'error');
             }
         } catch (err) {
-            showToast('Erro ao buscar diretorias alertadas.', 'error');
+            showToast('Erro ao buscar dados das diretorias.', 'error');
         }
     }
 
-    function updateCheckboxes(directorates) {
+    function updateCheckboxes(suggested, alerted) {
         const checkboxes = document.querySelectorAll('.checkbox-input');
         checkboxes.forEach(checkbox => {
-            if (directorates.includes(checkbox.name)) {
+            const name = checkbox.name;
+
+            checkbox.checked = false;
+            checkbox.disabled = false;
+            const label = document.querySelector(`label[for="${checkbox.id}"]`);
+            if (label) {
+                label.classList.remove('disabled');
+                label.style.backgroundColor = '';
+                label.style.color = '';
+                label.style.cursor = '';
+                label.style.borderColor = '';
+            }
+
+            if (alerted.includes(name)) {
+                checkbox.checked = true;
+                checkbox.disabled = true;
+                if (label) {
+                    label.classList.add('disabled');
+                    label.style.backgroundColor = '#e0e0e0';
+                    label.style.color = '#888';
+                    label.style.cursor = 'not-allowed';
+                    label.style.borderColor = '#ccc';
+                }
+            }
+            else if (suggested.includes(name)) {
                 checkbox.checked = true;
             }
         });
@@ -68,7 +96,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     async function sendMailing() {
         const selectedDirectorates = Array.from(document.querySelectorAll('.checkbox-input'))
-            .filter(i => i.checked)
+            .filter(i => i.checked && !i.disabled)
             .map(i => i.name);
 
         if (selectedDirectorates.length === 0) {
@@ -97,6 +125,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 showToast(`Erro ao enviar mailing: ${errorText}`, 'error');
             } else {
                 showToast('Mailing enviado com sucesso!', 'success');
+                fetchDirectoratesData();
             }
         } catch (err) {
             showToast('Erro ao enviar mailing. Tente novamente mais tarde.', 'error');
@@ -105,33 +134,60 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    function showModal(alertedDirectorates) {
+    function showModal(newDirectorates) {
         const modal = document.getElementById('mailingConfirmModal');
-        const listContainer = document.getElementById('alertedDirectoratesListContainer');
-        const listEl = document.getElementById('alertedDirectoratesList');
+
+        const alertedListContainer = document.getElementById('alertedDirectoratesListContainer');
+        const alertedListEl = document.getElementById('alertedDirectoratesList');
+
+        const newListContainer = document.getElementById('newDirectoratesListContainer');
+        const newListEl = document.getElementById('newDirectoratesList');
+
         const checkboxContainer = document.getElementById('confirmSendCheckboxContainer');
         const checkboxInput = document.getElementById('confirmSendCheckboxInput');
         const confirmBtn = document.getElementById('confirmSendBtn');
 
-        if (!modal || !listEl || !confirmBtn) {
+        if (!modal || !alertedListEl || !newListEl || !confirmBtn) {
             return;
         }
 
-        const list = Array.isArray(alertedDirectorates) ? alertedDirectorates : [];
+        if (newDirectorates && newDirectorates.length > 0) {
+            const labels = newDirectorates.map(name => {
+                const cb = document.querySelector(`.checkbox-input[name="${name}"]`);
+                const label = document.querySelector(`label[for="${cb.id}"]`);
+                return label ? label.textContent : name;
+            });
 
-        if (list.length > 0) {
-            listEl.innerHTML = list.map(d => `<li>${d}</li>`).join('');
-            listContainer.style.display = 'block';
+            newListEl.innerHTML = labels.map(d => `<li>${d}</li>`).join('');
+            newListContainer.style.display = 'block';
+        } else {
+            newListContainer.style.display = 'none';
+        }
+
+        if (alreadyAlertedDirectorates.length > 0) {
+            const labels = alreadyAlertedDirectorates.map(name => {
+                const cb = document.querySelector(`.checkbox-input[name="${name}"]`);
+                if (cb) {
+                    const label = document.querySelector(`label[for="${cb.id}"]`);
+                    return label ? label.textContent : name;
+                }
+                return name;
+            });
+
+            alertedListEl.innerHTML = labels.map(d => `<li>${d}</li>`).join('');
+            alertedListContainer.style.display = 'block';
+
             checkboxContainer.style.display = 'block';
             checkboxInput.checked = false;
             confirmBtn.disabled = true;
 
-            checkboxInput.addEventListener('change', function () {
+            checkboxInput.onchange = function() {
                 confirmBtn.disabled = !this.checked;
-            });
+            };
         } else {
-            listContainer.style.display = 'none';
-            listEl.innerHTML = '';
+            alertedListContainer.style.display = 'none';
+            alertedListEl.innerHTML = '';
+
             checkboxContainer.style.display = 'none';
             confirmBtn.disabled = false;
         }
@@ -152,29 +208,13 @@ document.addEventListener('DOMContentLoaded', function () {
         };
     }
 
-    async function validateSentMailing() {
-        try {
-            const response = await fetch(ASSIGN_API.VALIDATE_SENT_MAILING, { method: 'POST' });
-            if (response.ok) {
-                const data = await response.json();
-                return data;
-            } else {
-                showToast('Erro ao validar envio anterior.', 'error');
-                return null;
-            }
-        } catch (err) {
-            showToast('Erro ao validar envio anterior.', 'error');
-            return null;
-        }
-    }
-
-    fetchAlertedDirectorates();
+    fetchDirectoratesData();
 
     form.addEventListener('submit', async function (e) {
         e.preventDefault();
 
         const selectedDirectorates = Array.from(document.querySelectorAll('.checkbox-input'))
-            .filter(i => i.checked)
+            .filter(i => i.checked && !i.disabled)
             .map(i => i.name);
 
         if (selectedDirectorates.length === 0) {
@@ -183,13 +223,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         setLoading(true);
-        const validationResult = await validateSentMailing();
 
-        if (validationResult === null) {
-            setLoading(false);
-            return;
-        }
-
-        showModal(validationResult.alerted_directorates);
+        showModal(selectedDirectorates);
     });
 });
