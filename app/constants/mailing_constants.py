@@ -136,6 +136,7 @@ class MailingConstants:
             DirectorateCode.DIGOV
         ],
         AlertSubcategory.CUSTOMER_RELATIONS_AGENCIES: [
+            DirectorateCode.CRM,
             DirectorateCode.DIREC,
             DirectorateCode.DIVAR
         ],
