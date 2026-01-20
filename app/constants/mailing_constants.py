@@ -155,7 +155,7 @@ class MailingConstants:
             DirectorateCode.CRM,
             DirectorateCode.DIREC,
             DirectorateCode.DIVAR,
-            DirectorateCode.CRM
+            DirectorateCode.DISEC
         ],
         AlertSubcategory.CUSTOMER_RELATIONS_DIGITAL: [
             DirectorateCode.UAC,
