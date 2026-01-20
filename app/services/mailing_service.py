@@ -48,4 +48,4 @@ class MailingService:
 
     def list_directorates_by_email(self, email: str) -> List[str]:
         email_norm = self.validate_email(email)
-        return MailingRepository.get_directorates_by_email(email_norm)
+        return MailingRepository.list_directorates_by_email(email_norm)
