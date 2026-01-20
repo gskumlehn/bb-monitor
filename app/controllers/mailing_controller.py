@@ -53,3 +53,15 @@ def list_emails():
         return jsonify({"emails": emails})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+@mailing_bp.get("/list_directorates")
+@role_required(["client"])
+def list_directorates():
+    try:
+        email = request.args.get("email", "")
+        directorates = mailing_service.list_directorates_by_email(email)
+        return jsonify({"directorates": directorates})
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 400
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500

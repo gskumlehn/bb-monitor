@@ -45,3 +45,7 @@ class MailingService:
     def list_by_directorate(self, directorate_code: str) -> List[str]:
         code = DirectorateCode.from_name(directorate_code)
         return MailingRepository.get_emails_by_directorates([code])
+
+    def list_directorates_by_email(self, email: str) -> List[str]:
+        email_norm = self.validate_email(email)
+        return MailingRepository.get_directorates_by_email(email_norm)

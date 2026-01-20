@@ -37,3 +37,11 @@ class MailingRepository(BaseRepository[Mailing]):
         ).distinct().order_by(Mailing.email)
 
         return db.session.scalars(q).all()
+
+    @staticmethod
+    def get_directorates_by_email(email: str) -> List[str]:
+        q = select(Mailing.directorate_code).where(
+            Mailing.email == email
+        ).distinct().order_by(Mailing.directorate_code)
+
+        return db.session.scalars(q).all()
