@@ -11,10 +11,12 @@ class MailingConstants:
     SUBCATEGORY_TO_DIRECTORATE_MAP = {
         AlertSubcategory.ESG_HARASSMENT_OR_PAY_INEQUITY: [
             DirectorateCode.ASG,
-            DirectorateCode.DIPES
+            DirectorateCode.DIPES,
+            DirectorateCode.URI
         ],
         AlertSubcategory.ESG_HUMAN_RIGHTS_AND_DIVERSITY: [
-            DirectorateCode.ASG
+            DirectorateCode.ASG,
+            DirectorateCode.URI
         ],
         AlertSubcategory.AGRIBUSINESS_SUSTAINABILITY_IN_AGRO: [
             DirectorateCode.DIRAG,
@@ -25,7 +27,8 @@ class MailingConstants:
             DirectorateCode.DIGOV
         ],
         AlertSubcategory.AGRIBUSINESS_GENERAL_AGRO_OPERATIONS: [
-            DirectorateCode.DIRAG
+            DirectorateCode.DIRAG,
+            DirectorateCode.DICRE
         ],
         AlertSubcategory.RELATED_ENTITIES_BB_ASSET: [
             DirectorateCode.BB_ASSET,
@@ -43,10 +46,12 @@ class MailingConstants:
             DirectorateCode.UPE
         ],
         AlertSubcategory.STRATEGY_CORPORATE_POLICIES: [
-            DirectorateCode.DIREO
+            DirectorateCode.DIREO,
+            DirectorateCode.DIPES
         ],
         AlertSubcategory.STRATEGY_AGENCY_GOALS_AND_BUSINESS: [
-            DirectorateCode.DIVAR
+            DirectorateCode.DIVAR,
+            DirectorateCode.DIREO
         ],
         AlertSubcategory.FINANCE_ACCOUNTING_AND_TREASURY: [
             DirectorateCode.DIFIN,
@@ -56,7 +61,8 @@ class MailingConstants:
             DirectorateCode.COGER
         ],
         AlertSubcategory.SUPPLIER_GENERAL: [
-            DirectorateCode.DISEC
+            DirectorateCode.DISEC,
+            DirectorateCode.DIJUR
         ],
         AlertSubcategory.GOVERNANCE_COMPLIANCE: [
             DirectorateCode.DICOI,
@@ -74,30 +80,35 @@ class MailingConstants:
             DirectorateCode.UGR
         ],
         AlertSubcategory.INSTITUTIONAL_REGULATORY: [
-            DirectorateCode.UCI
+            DirectorateCode.URI
         ],
         AlertSubcategory.INSTITUTIONAL_SPEECHES: [
-            DirectorateCode.UGR
+            DirectorateCode.UGR,
+            DirectorateCode.URI
         ],
         AlertSubcategory.INTERNATIONAL_GENERAL: [
-            DirectorateCode.UNI
+            DirectorateCode.UNI,
+            DirectorateCode.UPE
         ],
         AlertSubcategory.LEGAL_GENERAL: [
             DirectorateCode.DIJUR
         ],
         AlertSubcategory.MARKETING_COMMUNICATION_CHANNELS: [
             DirectorateCode.CRM,
-            DirectorateCode.DIMAC_GERAL
+            DirectorateCode.DIMAC_GERAL,
+            DirectorateCode.UGR
         ],
         AlertSubcategory.MARKETING_CCBB: [
             DirectorateCode.DIMAC_GERAL,
-            DirectorateCode.CCBB
+            DirectorateCode.CCBB,
+            DirectorateCode.UGR
         ],
         AlertSubcategory.MARKETING_CAMPAIGN_CONTENT: [
             DirectorateCode.DIMAC_GERAL
         ],
         AlertSubcategory.MARKETING_INVESTMENT: [
-            DirectorateCode.UCI
+            DirectorateCode.UCI,
+            DirectorateCode.DIMAC_GERAL
         ],
         AlertSubcategory.MARKETING_EVENTS_PROMOTIONS: [
             DirectorateCode.DIMAC_GERAL
@@ -114,15 +125,20 @@ class MailingConstants:
             DirectorateCode.DIREO
         ],
         AlertSubcategory.PEOPLE_UNIONS: [
-            DirectorateCode.DIPES
+            DirectorateCode.DIPES,
+            DirectorateCode.DIJUR,
+            DirectorateCode.DIREO
         ],
         AlertSubcategory.PEOPLE_EMPLOYEES: [
             DirectorateCode.DIPES
         ],
         AlertSubcategory.PRODUCTS_SERVICES_INVESTMENTS: [
+            DirectorateCode.BB_ASSET,
             DirectorateCode.UCI
         ],
         AlertSubcategory.PRODUCTS_SERVICES_LOANS_AND_FINANCING: [
+            DirectorateCode.DICRE,
+            DirectorateCode.UNJ,
             DirectorateCode.DIEMP
         ],
         AlertSubcategory.PRODUCTS_SERVICES_LOYALTY_PROGRAM: [
@@ -138,21 +154,27 @@ class MailingConstants:
         AlertSubcategory.CUSTOMER_RELATIONS_AGENCIES: [
             DirectorateCode.CRM,
             DirectorateCode.DIREC,
-            DirectorateCode.DIVAR
+            DirectorateCode.DIVAR,
+            DirectorateCode.CRM
         ],
         AlertSubcategory.CUSTOMER_RELATIONS_DIGITAL: [
             DirectorateCode.UAC,
-            DirectorateCode.DINED
+            DirectorateCode.DINED,
+            DirectorateCode.CRM
         ],
         AlertSubcategory.CUSTOMER_RELATIONS_TELEPHONIC: [
-            DirectorateCode.UAC
+            DirectorateCode.UAC,
+            DirectorateCode.CRM
         ],
         AlertSubcategory.CUSTOMER_RELATIONS_GENERAL_OPERATIONAL: [
-            DirectorateCode.DIOPE
+            DirectorateCode.DIOPE,
+            DirectorateCode.CRM,
+            DirectorateCode.UAC
         ],
         AlertSubcategory.CUSTOMER_RELATIONS_ACCESSIBILITY: [
             DirectorateCode.DISEC,
-            DirectorateCode.UAC
+            DirectorateCode.UAC,
+            DirectorateCode.ASG
         ],
         AlertSubcategory.SECURITY_EXTERNAL_SCAMS_AND_FRAUDS: [
             DirectorateCode.USD,
@@ -180,7 +202,9 @@ class MailingConstants:
         AlertSubcategory.TERRITORIES_TECHNOLOGY: [
             DirectorateCode.DIMAC_GERAL,
             DirectorateCode.DINED,
-            DirectorateCode.DITEC
+            DirectorateCode.DITEC,
+            DirectorateCode.USD,
+            DirectorateCode.UAN
         ],
         AlertSubcategory.TERRITORIES_CULTURE_AND_SPORTS: [
             DirectorateCode.DIMAC_GERAL
@@ -191,9 +215,11 @@ class MailingConstants:
         ],
         AlertSubcategory.CREDIT_DEFAULT: [
             DirectorateCode.UCR,
-            DirectorateCode.DIVAR
+            DirectorateCode.DIVAR,
+            DirectorateCode.DICRE
         ],
         AlertSubcategory.CREDIT_DEBT_RENEGOTIATION: [
-            DirectorateCode.UCR
+            DirectorateCode.UCR,
+            DirectorateCode.DICRE
         ],
     }
