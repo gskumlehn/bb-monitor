@@ -17,4 +17,4 @@ class CriticalTopic(EnumInterface):
     SYSTEM_UNAVAILABILITY = "Indisponibilidade de sistemas"
     SERVICE_LOCATION_SECURITY = "Segurança de locais de serviço"
     EVENT_WITH_VICTIMS = "Evento com vítimas"
-
+    REPUTATION_THREAT = "Ocorrência que representa ameaça à reputação"
